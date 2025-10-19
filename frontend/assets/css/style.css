@@ -1,412 +1,246 @@
-/* INICIO */
+/* =================================== */
+/* ===== MOBILE FIRST STYLES (BASE) ===== */
+/* =================================== */
 
-/* ===== Sección Inicio ===== */
+/* --- General Body --- */
+body {
+    background-color: #faf0eb;
+    margin: 0;
+    padding: 0;
+    font-family: "Cerebri Sans", Arial, sans-serif;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container-body {
+    color: red;
+}
+
+/* --- Padding Between Sections --- */
+section {
+    padding: 30px 18px;
+}
+
+/* --- Section Inicio --- */
 #inicio {
-  display: flex;
-  flex-direction: column; /* todo apilado en móvil */
-  align-items: center;
-  text-align: center;
-  padding: 20px 15px;
-  gap: 15px;
-  background-color: #faf0eb; 
-
-}
-
-/* Logo centrado arriba */
-.inicio-logo img {
-  width: 100%;
-  height: auto;
-  margin-bottom: -50px;
-  
-}
-
-/* Texto descriptivo */
-.primer-text {
-  font-family: "Cerebri Sans", Arial, sans-serif;
-  font-size: 1.1em;
-  color: #333;
-  line-height: 1.6em;
-  max-width: 900px; /* evita que el texto sea demasiado ancho en móviles grandes */
-  margin-top: 0px;
-  margin: 30px 20px;
-}
-
-
-/* ===== Desktop ===== */
-@media (min-width: 768px) {
-  #inicio {
-    flex-direction: row; /* imagen a un lado, texto al otro */
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 30px;
-    text-align: left;
-  }
-
-  .inicio-logo {
-    display: none; /* en desktop podemos omitir el logo arriba si ya aparece en header */
-  }
-
-  .primer-text {
-    width: 50%;
-    font-size: 1rem;
-  }
+    text-align: center;
+    gap: 15px;
+    background-color: #faf0eb;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* RESEÑAS */
-
-/* ===== Sección Reseñas (Mobile first) ===== */
-.reviews-section {
-  padding: 30px 18px;
-  background-color: #faf0eb; /* ajusta si quieres un fondo distinto */
+.inicio-logo img {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    margin-bottom: 0;
 }
+
+.primer-text {
+    font-size: 1.1em;
+    color: #333;
+    line-height: 1.6em;
+    max-width: 600px;
+    margin: 0 10px;
+}
+.primer-text p { margin-bottom: 1em; }
+.primer-text strong { color: #8c5f41; }
+
+/* --- Section Servicios --- */
+.services-section { background-color: #faf0eb; }
+
+.services-title {
+    text-align: center;
+    margin-bottom: 24px;
+    font-family: "Tropika Script", cursive;
+    font-size: 2.2rem;
+    color: #8c5f41;
+}
+
+.service {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 40px;
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.service-image img { width: 100%; height: auto; border-radius: 8px; display: block; }
+
+.service-content { font-family: "Cerebri Sans", Arial, sans-serif; text-align: center; }
+.service-title { font-size: 1.3rem; font-weight: 700; color: #333; margin-bottom: 6px; }
+.service-subtitle { font-size: 1rem; font-weight: 500; color: #8c5f41; margin-bottom: 12px; }
+.service-description { font-size: 0.95rem; color: #555; line-height: 1.6; margin-bottom: 16px; }
+
+.btn-service {
+    display: inline-block; background-color: #8c5f41; color: #fff; padding: 10px 20px;
+    border-radius: 8px; font-weight: 600; font-size: 0.9rem; text-decoration: none;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.btn-service:hover { background-color: #704932; transform: translateY(-2px); }
+
+/* --- Section Reseñas --- */
+.reviews-section { background-color: #faf0eb; }
 
 .reviews-title {
-  text-align: center;
-  margin-bottom: 18px;
-  font-family: "Tropika Script", cursive; /* nombre de la fuente de marca */
-  font-size: 1.6rem;
-  color: #8c5f41;
+    text-align: center; margin-bottom: 24px; font-family: "Tropika Script", cursive;
+    font-size: 2.2rem; color: #8c5f41;
 }
 
-/* FORMULARIO */
+/* Formulario */
 .review-form {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 18px;
+    display: flex; flex-direction: column; gap: 15px; margin-bottom: 30px;
+    background-color: #fff; padding: 1.5rem; border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); max-width: 600px;
+    margin-left: auto; margin-right: auto;
 }
 
-.form-row {
-  width: 100%;
-}
+.form-row { width: 100%; }
 
-.form-input {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #e4d7df;
-  border-radius: 12px;
-  font-family: "Cerebri Sans", Arial, sans-serif;
-  font-size: 0.95rem;
-  outline: none;
-  box-shadow: none;
+.form-input, .form-textarea {
+    width: 100%; padding: 12px 15px; border: 1px solid #e0d8e0; border-radius: 8px;
+    font-family: "Cerebri Sans", Arial, sans-serif; font-size: 1rem; outline: none;
+    box-shadow: none; box-sizing: border-box; transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
+.form-input::placeholder, .form-textarea::placeholder { color: #aaa; }
+.form-input:focus, .form-textarea:focus { border-color: #8c5f41; box-shadow: 0 0 0 3px rgba(140, 95, 65, 0.1); }
+.form-textarea { min-height: 100px; resize: vertical; line-height: 1.5; }
 
-.form-input:focus {
-  border-color: #a84a7a;
-  box-shadow: 0 0 0 3px rgba(168,74,122,0.08);
-}
-
-/* Caja de comentario redondeada */
-.form-textarea {
-  width: 100%;
-  min-height: 110px; /* altura cómoda en móvil */
-  padding: 12px;
-  border: 1px solid #e4d7df;
-  border-radius: 14px; /* puntas redondeadas */
-  resize: vertical; /* usuario puede ajustar altura si quiere */
-  font-family: "Cerebri Sans", Arial, sans-serif;
-  font-size: 1rem;
-  line-height: 1.4;
-  outline: none;
-}
-
-.form-textarea:focus {
-  border-color: #a84a7a;
-  box-shadow: 0 0 0 3px rgba(168,74,122,0.08);
-}
-
-/* Botón */
-.form-actions {
-  display: flex;
-  justify-content: flex-end;
-}
-
+/* Botón Submit */
+.form-actions { display: flex; justify-content: flex-end; }
 .btn-submit {
-  background-color: #8c5f41;
-  color: #fff;
-  border: none;
-  padding: 10px 16px;
-  border-radius: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  font-family: "Cerebri Sans", Arial, sans-serif;
+    background-color: #8c5f41; color: #fff; border: none; padding: 12px 20px;
+    border-radius: 8px; font-weight: 600; cursor: pointer; font-family: "Cerebri Sans", Arial, sans-serif;
+    transition: background-color 0.2s ease, transform 0.2s ease;
 }
+.btn-submit:hover { background-color: #704932; transform: translateY(-2px); }
+.btn-submit:active, .btn-submit:focus { transform: translateY(0); outline: none; }
 
-.btn-submit:active,
-.btn-submit:focus {
-  transform: translateY(1px);
-  outline: none;
-}
-
-/* GRID de reseñas (móvil: 1 por fila) */
-.reviews-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-}
+/* Grid de reseñas */
+.reviews-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
 
 /* Tarjeta de reseña */
 .review-card {
-  background: #fff;
-  border: 1px solid #f0e6ea;
-  border-radius: 14px;
-  padding: 14px;
-  box-shadow: 0 6px 18px rgba(24,24,24,0.04);
+    background: #fff; border: 1px solid #f0e6ea; border-radius: 12px;
+    padding: 1rem 1.25rem; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
 }
 
 .review-content {
-  font-family: "Cerebri Sans", Arial, sans-serif;
-  font-size: 0.95rem;
-  color: #333;
-  margin-bottom: 10px;
-  line-height: 1.5;
+    font-family: "Cerebri Sans", Arial, sans-serif; font-size: 0.95rem; color: #444;
+    margin-bottom: 12px; line-height: 1.6; font-style: italic;
 }
+.review-content::before { content: '“'; }
+.review-content::after { content: '”'; }
 
 .review-author {
-  font-family: "Cerebri Sans", Arial, sans-serif;
-  font-size: 0.88rem;
-  color: #8c5f41;
-  font-weight: 700;
-  margin: 0;
-  text-align: right;
+    font-family: "Cerebri Sans", Arial, sans-serif; font-size: 0.9rem; color: #8c5f41;
+    font-weight: 600; margin: 0; text-align: right;
 }
 
-/* Accesibilidad: clase visualmente oculta */
+/* Accesibilidad */
 .visually-hidden {
-  position: absolute !important;
-  height: 1px;
-  width: 1px;
-  overflow: hidden;
-  clip: rect(1px, 1px, 1px, 1px);
-  white-space: nowrap;
-}
-
-#productos{
-  background-color: rgb(255, 234, 239);
-
-
-}
-
-/* Servicios */
-
-/* ===== Sección Servicios ===== */
-.services-section {
-  padding: 30px 18px;
-  background-color: #faf0eb;
-}
-
-.services-title {
-  text-align: center;
-  margin-bottom: 24px;
-  font-family: "Tropika Script", cursive;
-  font-size: 35px;
-  color: #8c5f41;
-}
-
-/* Servicio (mobile first → todo en columna) */
-.service {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  margin-bottom: 30px;
-}
-
-.service-image img {
-
-  width: 100%;
-  height: auto;
-  border-radius: 12px;
-  display: block;
-}
-
-.service-content {
-  font-family: "Cerebri Sans", Arial, sans-serif;
-  margin: 0% 5%;
-}
-
-.service-title {
-  font-size: 1.2rem;
-  font-weight: 700;
-  color: #333;
-  margin-bottom: 6px;
-}
-
-.service-subtitle {
-  font-size: 1rem;
-  font-weight: 500;
-  color: #8c5f41;
-  margin-bottom: 10px;
-}
-
-.service-description {
-  font-size: 0.95rem;
-  color: #555;
-  line-height: 1.5;
-  margin-bottom: 12px;
-}
-
-.btn-service {
-  display: inline-block;
-  background-color: #8c5f41;
-  color: #fff;
-  padding: 8px 16px;
-  border-radius: 10px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  text-decoration: none;
-  transition: background-color 0.2s ease;
-}
-
-.btn-service:hover {
-  background-color: #a84a7a;
-}
-
-/* ESPACIO ENTRE SECCIONES */
-section {
-    padding: 5px 5px;  /* espacio arriba y abajo de cada sección */
+    position: absolute !important; height: 1px; width: 1px;
+    overflow: hidden; clip: rect(1px, 1px, 1px, 1px); white-space: nowrap;
 }
 
 
 
 
-/* ========================== */
-/* ===== VISTA WEEEEEEB ===== */
-/* ========================== */
 
-/* PARA TABLET O MENOR */
+
+
+
+
+
+
+
+
+
+
+
+
+/* =============================================== */
+/* ===== ESTILOS WEB / DESKTOP Y TABLET ========== */
+/* =============================================== */
+
 @media (min-width: 768px) {
 
-    section {
-        padding: 50px 40px;
+    /* --- Contenedor General --- */
+    .container-body {
+        max-width: 1100px; /* Ancho máximo del contenido */
+        margin: 0 auto;    /* Centrar */
     }
 
-    .container-body {
-        max-width: 1100px; /* Limit overall content width */
-        margin: 0 auto; /* Center the container */
+    /* --- Padding Secciones --- */
+    section {
+        padding: 50px 40px; /* Más padding */
     }
 
     /* --- Section Inicio --- */
     #inicio {
-        flex-direction: row; /* Side-by-side layout */
+        flex-direction: row;     /* Lado a lado */
         align-items: center;
-        text-align: left; /* Align text left */
-        gap: 40px; /* More space between image and text */
-        padding: 60px 40px; /* More padding */
+        text-align: left;        /* Texto a la izquierda */
+        gap: 50px;               /* Más espacio */
+        padding: 60px 40px;
     }
 
     .inicio-logo {
-        flex: 0 0 45%; /* Give logo container a fixed percentage width */
-        max-width: 450px; /* Max width for the logo */
-        margin-bottom: 0; /* Reset margin */
+        flex: 0 0 40%;          /* Ancho fijo para logo */
+        max-width: 400px;
     }
-     .inicio-logo img {
-         max-width: 100%; /* Ensure logo scales within its container */
-         margin-bottom: 0;
-     }
-
+    .inicio-logo img { max-width: 100%; margin-bottom: 0; }
 
     .primer-text {
-        flex: 1; /* Allow text to take remaining space */
-        font-size: 1.1rem; /* Slightly larger text */
-        margin: 0; /* Reset margins */
-        max-width: none; /* Remove max-width */
+        flex: 1;                 /* Texto ocupa resto */
+        font-size: 1.15rem;      /* Texto un poco más grande */
+        margin: 0; max-width: none;
     }
 
     /* --- Section Servicios --- */
-    .services-title {
-        font-size: 2.5rem; /* Larger title */
-        margin-bottom: 40px;
-    }
+    .services-title { font-size: 2.5rem; margin-bottom: 40px; }
 
     .service {
-        flex-direction: row; /* Image and text side-by-side */
+        flex-direction: row;     /* Lado a lado */
         align-items: center;
-        gap: 40px; /* Increase gap */
-        padding: 2rem; /* More padding inside card */
+        gap: 40px;
+        padding: 2rem;
         margin-bottom: 50px;
     }
 
-    .service-right {
-        flex-direction: row-reverse; /* Reverse order for alternating layout */
-    }
+    .service-right { flex-direction: row-reverse; } /* Alternar layout */
 
     .service-image, .service-content {
-        flex: 1; /* Each takes half the space */
-        margin: 0; /* Reset margins */
-        text-align: left; /* Align text left */
+        flex: 1;                 /* Mitad y mitad */
+        margin: 0;
+        text-align: left;        /* Texto a la izquierda */
     }
-    .service-image {
-        max-width: 50%; /* Prevent image getting too large */
-    }
-    .service-image img {
-         border-radius: 10px; /* Slightly larger radius */
-    }
+    .service-image { max-width: 50%; } /* Limitar imagen */
+    .service-image img { border-radius: 10px; }
 
-    .service-title { font-size: 1.6rem; }
-    .service-subtitle { font-size: 1.1rem; }
+    .service-title { font-size: 1.7rem; }
+    .service-subtitle { font-size: 1.15rem; }
     .service-description { font-size: 1rem; margin-bottom: 20px;}
     .btn-service { padding: 12px 24px; font-size: 1rem;}
 
     /* --- Section Reseñas --- */
-    .reviews-title {
-        font-size: 2.5rem; /* Larger title */
-        margin-bottom: 40px;
-    }
+    .reviews-title { font-size: 2.5rem; margin-bottom: 40px; }
 
-    .review-form {
-        padding: 2rem; /* More padding */
-        margin-bottom: 40px; /* More space */
-    }
-
+    .review-form { padding: 2rem; margin-bottom: 40px; }
     .btn-submit { padding: 12px 24px; }
 
     .reviews-grid {
-        grid-template-columns: repeat(3, 1fr); /* 3 columns */
-        gap: 25px; /* Increase gap */
+        grid-template-columns: repeat(3, 1fr); /* 3 columnas */
+        gap: 25px;
     }
 
-    .review-card { padding: 1.5rem; } /* More padding */
+    .review-card { padding: 1.5rem; }
     .review-content { font-size: 1rem; }
     .review-author { font-size: 0.95rem; }
 
-} /* aqui termina tablet */
-
-/* WEEEEB */
-@media (min-width: 1024px) { 
-
-    .primer-text {
-        font-size: 1.5rem;
-    }
-
-    .service {
-        gap: 60px;
-    }
-
-    .reviews-grid {
-        gap: 30px;
-    }
-
-} /* End @media 1024px */
+} /*Fin*/
