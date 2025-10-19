@@ -147,7 +147,7 @@ body{
 
 /* Ajustes del calendario inline de Flatpickr */
 .flatpickr-calendar.inline {
-  width: 95% !important;    /* ocupa todo el contenedor */
+  width: 100% !important;    /* ocupa todo el contenedor */
   max-width: 400px;          /* ancho máximo */
   margin: 0 auto;            /* centrado horizontal */
   box-shadow: 0 4px 12px rgba(0,0,0,0.2);
