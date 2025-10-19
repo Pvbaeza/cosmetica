@@ -3,7 +3,7 @@
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 const API_BASE_URL = isLocal 
     ? 'http://localhost:3000' // URL para desarrollo local
-    : 'https://cosmeticabackend.onrender.com'; // URL para producción
+    : 'https://cosmeticabackend-dqxh.onrender.com'; // URL para producción
 
 let allWorkers = []; // Variable global para guardar los datos de los trabajadores
 

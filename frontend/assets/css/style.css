@@ -204,47 +204,11 @@
   white-space: nowrap;
 }
 
-/* ===== Responsive: en pantallas grandes mostramos 3 columnas ===== */
-@media (min-width: 768px) {
-  .reviews-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-  }
-
-  .reviews-section {
-    padding: 50px 40px;
-  }
-
-  .reviews-title {
-    font-size: 2rem;
-  }
-
-  .form-textarea {
-    min-height: 140px;
-  }
-}
-
-
-
-/* PRODUCTOS SECCION */
-
 #productos{
   background-color: rgb(255, 234, 239);
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* Servicios */
 
@@ -320,55 +284,6 @@
   background-color: #a84a7a;
 }
 
-/* ===== Vista desktop ===== */
-@media (min-width: 768px) {
-  .service {
-    flex-direction: row;
-    align-items: center;
-    gap: 30px;
-  }
-
-  .service-right {
-    flex-direction: row-reverse;
-  }
-
-  .service-image, .service-content {
-    margin: 0%;
-    flex: 1;
-  }
-
-  .service-title {
-    font-size: 1.5rem;
-  }
-
-  .service-subtitle {
-    font-size: 1.1rem;
-  }
-
-  .service-description {
-    font-size: 1rem;
-  }
-}
-
-/* Fin Servicios */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* ESPACIO ENTRE SECCIONES */
 section {
     padding: 5px 5px;  /* espacio arriba y abajo de cada sección */
@@ -377,3 +292,121 @@ section {
 
 
 
+/* ========================== */
+/* ===== VISTA WEEEEEEB ===== */
+/* ========================== */
+
+/* PARA TABLET O MENOR */
+@media (min-width: 768px) {
+
+    section {
+        padding: 50px 40px;
+    }
+
+    .container-body {
+        max-width: 1100px; /* Limit overall content width */
+        margin: 0 auto; /* Center the container */
+    }
+
+    /* --- Section Inicio --- */
+    #inicio {
+        flex-direction: row; /* Side-by-side layout */
+        align-items: center;
+        text-align: left; /* Align text left */
+        gap: 40px; /* More space between image and text */
+        padding: 60px 40px; /* More padding */
+    }
+
+    .inicio-logo {
+        flex: 0 0 45%; /* Give logo container a fixed percentage width */
+        max-width: 450px; /* Max width for the logo */
+        margin-bottom: 0; /* Reset margin */
+    }
+     .inicio-logo img {
+         max-width: 100%; /* Ensure logo scales within its container */
+         margin-bottom: 0;
+     }
+
+
+    .primer-text {
+        flex: 1; /* Allow text to take remaining space */
+        font-size: 1.1rem; /* Slightly larger text */
+        margin: 0; /* Reset margins */
+        max-width: none; /* Remove max-width */
+    }
+
+    /* --- Section Servicios --- */
+    .services-title {
+        font-size: 2.5rem; /* Larger title */
+        margin-bottom: 40px;
+    }
+
+    .service {
+        flex-direction: row; /* Image and text side-by-side */
+        align-items: center;
+        gap: 40px; /* Increase gap */
+        padding: 2rem; /* More padding inside card */
+        margin-bottom: 50px;
+    }
+
+    .service-right {
+        flex-direction: row-reverse; /* Reverse order for alternating layout */
+    }
+
+    .service-image, .service-content {
+        flex: 1; /* Each takes half the space */
+        margin: 0; /* Reset margins */
+        text-align: left; /* Align text left */
+    }
+    .service-image {
+        max-width: 50%; /* Prevent image getting too large */
+    }
+    .service-image img {
+         border-radius: 10px; /* Slightly larger radius */
+    }
+
+    .service-title { font-size: 1.6rem; }
+    .service-subtitle { font-size: 1.1rem; }
+    .service-description { font-size: 1rem; margin-bottom: 20px;}
+    .btn-service { padding: 12px 24px; font-size: 1rem;}
+
+    /* --- Section Reseñas --- */
+    .reviews-title {
+        font-size: 2.5rem; /* Larger title */
+        margin-bottom: 40px;
+    }
+
+    .review-form {
+        padding: 2rem; /* More padding */
+        margin-bottom: 40px; /* More space */
+    }
+
+    .btn-submit { padding: 12px 24px; }
+
+    .reviews-grid {
+        grid-template-columns: repeat(3, 1fr); /* 3 columns */
+        gap: 25px; /* Increase gap */
+    }
+
+    .review-card { padding: 1.5rem; } /* More padding */
+    .review-content { font-size: 1rem; }
+    .review-author { font-size: 0.95rem; }
+
+} /* aqui termina tablet */
+
+/* WEEEEB */
+@media (min-width: 1024px) { 
+
+    .primer-text {
+        font-size: 1.5rem;
+    }
+
+    .service {
+        gap: 60px;
+    }
+
+    .reviews-grid {
+        gap: 30px;
+    }
+
+} /* End @media 1024px */
