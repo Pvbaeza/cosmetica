@@ -54,13 +54,34 @@
 }
 
 /* --- Formulario General --- */
-.settings-form { display: flex; flex-direction: column; gap: 1rem; }
-.form-group { margin-bottom: 0.5rem; }
-.form-label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--color-texto-secundario); margin-bottom: 0.3rem; }
+.settings-form { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 1rem; 
+}
+
+.form-group {
+    margin-bottom: 0.5rem; 
+}
+
+.form-label {
+    display: block;
+    font-size: 0.85rem; 
+    font-weight: 600; 
+    color: var(--color-texto-secundario); 
+    margin-bottom: 0.3rem; 
+}
+
 .form-input, .form-select {
-    width: 100%; border: 1px solid var(--color-borde-suave); border-radius: 8px;
-    padding: 0.8rem; font-size: 1rem; color: var(--color-texto-principal);
-    background-color: #fff; transition: all 0.2s ease-in-out; box-sizing: border-box;
+    width: 100%;
+    border: 1px solid var(--color-borde-suave); 
+    border-radius: 8px;
+    padding: 0.8rem; 
+    font-size: 1rem; 
+    color: var(--color-texto-principal);
+    background-color: #fff;
+    transition: all 0.2s ease-in-out; 
+    box-sizing: border-box;
 }
 .form-input::placeholder { color: var(--color-texto-placeholder); }
 .form-input:focus, .form-select:focus {
