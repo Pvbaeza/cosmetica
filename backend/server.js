@@ -50,7 +50,12 @@ const PORT = 3000;
 const JWT_SECRET = 'tu_clave_secreta_super_dificil_de_adivinar';
 
 // 3. Middlewares (ESTE ES EL ORDEN CORRECTO)
-app.use(cors()); 
+app.use(cors({
+    origin: 'https://cosmetica-cvsi.onrender.com', // tu frontend
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true
+}));
+
 app.use(express.json()); 
 
 // TERCERO: Sirve los archivos estáticos
