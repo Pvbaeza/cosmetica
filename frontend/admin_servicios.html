@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrar Servicios</title>
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/footer.css">
+    <link rel="stylesheet" href="assets/css/admin_servicios.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <span>Cosmetología Morín</span>
+            <img src="assets/img/Logo_header.png" alt="Logo Cosmetología Morín">
+        </div>
+        <nav>
+            <button id="menu-toggle"><span></span><span></span><span></span></button>
+            <ul id="menu">
+                 <li class="menu-normal"><a href="index.html">Inicio</a></li>
+                 <li class="menu-normal"><a href="servicios.html">Servicios</a></li>
+                 <li class="menu-normal"><a href="productos.html">Productos</a></li>
+                 <li class="menu-admin hidden"><a href="admin_reservas.html">Reservas</a></li>
+                 <li class="menu-admin hidden"><a href="admin_productos.html">Productos</a></li>
+                 <li class="menu-admin hidden"><a href="admin_servicios.html">Servicios</a></li>
+                 <li class="menu-admin hidden"><a href="admin_resenas.html">Reseñas</a></li>
+                 <li class="menu-admin hidden"><a href="admin_ajustes.html">Ajustes</a></li>
+                 <li class="menu-admin hidden"><a href="#" id="logout">Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <div class="actions">
+            <button class="btn btn-primary">
+                <i class="fas fa-plus"></i> Añadir Nuevo Servicio
+            </button>
+        </div>
+
+        <!-- La lista de servicios se llenará dinámicamente -->
+        <section class="services-list">
+            <h2>Servicios Existentes</h2>
+            <p>Cargando servicios...</p>
+        </section>
+    </main>
+
+    <div class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" title="Cerrar"><i class="fas fa-times"></i></button>
+            <h2>Añadir/Editar Servicio</h2>
+            <form class="service-form">
+                <div class="form-group">
+                    <label for="service-title-input">Título del Servicio</label>
+                    <input type="text" id="service-title-input" placeholder="Ej: Pedicure Completa" required>
+                </div>
+                <div class="form-group">
+                    <label for="service-subtitle-input">Subtítulo</label>
+                    <input type="text" id="service-subtitle-input" placeholder="Ej: Relajación y cuidado para tus pies">
+                </div>
+
+                <!-- CAMBIO: De input de texto a select -->
+                <div class="form-group">
+                    <label for="service-staff-input">Área</label>
+                    <select id="service-staff-input" required>
+                        <option value="" disabled selected>Selecciona un área...</option>
+                        <!-- Opciones se cargarán desde la BD -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="service-description-input">Descripción</label>
+                    <textarea id="service-description-input" rows="4" placeholder="Describe los detalles del servicio..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="service-price-input">Valor (CLP)</label>
+                    <input type="number" id="service-price-input" placeholder="Ej: 18000" required>
+                </div>
+                <div class="form-group">
+                    <label for="service-image-input">Imagen del Servicio</label>
+                    <input type="file" id="service-image-input" accept="image/png, image/jpeg">
+                    <img id="image-preview" src="" alt="Previsualización de imagen">
+                </div>
+                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            </form>
+        </div>
+    </div>
+
+    <footer class="site-footer">
+      <!-- Tu footer -->
+    </footer>
+
+    <script src="assets/js/auth-guard.js"></script>
+    <script src="assets/js/menuhamburguesa.js"></script>
+    <script src="assets/js/admin_servicios.js"></script>
+</body>
+</html>

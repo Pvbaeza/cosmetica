@@ -1,0 +1,113 @@
+body {
+  font-family: "Cerebri Sans", Arial, sans-serif;
+  background-color: #faf0eb;
+  display: flex;
+  flex-direction: column;  /* elementos en vertical */
+  min-height: 100vh;
+  margin: 0;
+}
+
+main {
+  flex: 1; /* ocupa el espacio disponible */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+
+#login {
+  flex: 1; /* ocupa todo el espacio disponible */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px; /* aire en móvil */
+}
+
+
+.login-container {
+  background: #fff;
+  padding: 30px 25px;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  width: 100%;
+  max-width: 360px;
+}
+
+.login-title {
+  font-family: "Tropika Script", cursive;
+  text-align: center;
+  color: #8c5f41;
+  margin-bottom: 20px;
+  font-size: 1.8rem;
+}
+
+.login-form .form-group {
+  margin-bottom: 18px;
+}
+
+.login-form label {
+  display: block;
+  font-size: 0.9rem;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+.login-form input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.3s ease;
+}
+
+.login-form input:focus {
+  border-color: #8c5f41;
+}
+
+.login-btn {
+  width: 100%;
+  padding: 12px;
+  background: #8c5f41;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.login-btn:hover {
+  background: #8c5f41;
+}
+
+.login-footer {
+  margin-top: 15px;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.login-footer a {
+  color: #6a1b4d;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.login-footer a:hover {
+  text-decoration: underline;
+}
+
+/* ===== Desktop ===== */
+@media (min-width: 768px) {
+  .login-container {
+    padding: 40px 35px;
+  }
+
+  .login-title {
+    font-size: 2rem;
+  }
+}

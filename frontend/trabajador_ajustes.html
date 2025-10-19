@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Reservas y Perfil</title> <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/footer.css">
+    <link rel="stylesheet" href="assets/css/admin_reservas.css">
+    <link rel="stylesheet" href="assets/css/trabajador_ajustes.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <span>Cosmetología Morín</span>
+            <img src="assets/img/Logo_header.png" alt="Logo Cosmetología Morín">
+        </div>
+        <nav>
+            <button id="menu-toggle"><span></span><span></span><span></span></button>
+            <ul id="menu">
+                <li class="menu-trabajador"><a href="trabajador_reservas.html">Mis Reservas</a></li>
+                <li class="menu-trabajador"><a href="#mi-perfil">Mi Perfil</a></li>
+                <li class="menu-trabajador"><a href="#cambiar-contrasena">Cambiar Contraseña</a></li>
+                <li class="menu-trabajador"><a href="#" id="logout">Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <h1 class="title-page">Portal del Trabajador</h1>
+
+    <main class="container">
+        <hr class="section-divider"> <article id="mi-perfil" class="settings-card profile-section">
+            <h2 class="subsection-title"><i class="fas fa-user"></i> Mi Perfil</h2>
+            <div id="profile-info">
+                <p><strong>Nombre:</strong> <span id="profile-name">Cargando...</span></p>
+                <p><strong>Usuario:</strong> <span id="profile-username">Cargando...</span></p>
+                <p><strong>Correo:</strong> <span id="profile-email">Cargando...</span></p>
+                <p><strong>Área:</strong> <span id="profile-area">Cargando...</span></p>
+            </div>
+        </article>
+
+        <hr class="section-divider"> <article id="cambiar-contrasena" class="settings-card">
+             <h2 class="subsection-title collapsible-title"> <span><i class="fas fa-key"></i> Cambiar mi Contraseña</span>
+                 <i class="fas fa-chevron-down toggle-icon"></i>
+            </h2>
+             <div class="collapsible-content"> <form id="change-password-form" class="settings-form">
+                     <div class="form-group">
+                        <label for="current-password" class="form-label">Contraseña Actual</label>
+                        <input type="password" id="current-password" class="form-input" required autocomplete="current-password">
+                    </div>
+                     <div class="form-group">
+                        <label for="new-password" class="form-label">Nueva Contraseña</label>
+                        <input type="password" id="new-password" class="form-input" required autocomplete="new-password">
+                    </div>
+                     <div class="form-group">
+                        <label for="confirm-new-password" class="form-label">Confirmar Nueva Contraseña</label>
+                        <input type="password" id="confirm-new-password" class="form-input" required autocomplete="new-password">
+                        <p class="error-message" id="change-password-error" style="display: none;">Las contraseñas nuevas no coinciden.</p>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Guardar Nueva Contraseña
+                    </button>
+                </form>
+            </div>
+        </article>
+
+    </main>
+
+    <div class="modal-overlay">
+       </div>
+
+    <footer class="site-footer">
+       </footer>
+
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/menuhamburguesa.js"></script>
+    <script src="assets/js/trabajador_ajustes.js"></script>
+
+</body>
+</html>

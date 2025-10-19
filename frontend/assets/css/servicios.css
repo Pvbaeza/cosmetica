@@ -1,0 +1,126 @@
+/* ===== Sección Servicios ===== */
+.servicios-section {
+  padding: 60px 20px;
+  background: #faf0eb;
+  font-family: "Cerebri Sans", Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* Tarjetas de servicio */
+.servicio-card {
+  display: flex;
+  flex-direction: column;
+  background: #faf0eb;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.servicio-card:hover {
+  transform: translateY(-5px);
+}
+
+.servicio-img img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.servicio-info {
+  padding: 20px;
+  text-align: center;
+}
+
+.servicio-titulo {
+  color: #000000;
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+}
+
+.servicio-subtitulo {
+  color: #8c5f41;
+  font-size: 1rem;
+  margin-bottom: 12px;
+}
+
+.servicio-info p {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+.btn-reservar {
+  display: inline-block;
+  padding: 0.8rem 2rem;
+  background: #8c5f41;
+  color: #fff;
+  text-decoration: none; /* elimina subrayado */
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-reservar:hover {
+  background: #54005c;
+}
+
+
+/* ===== Desktop ===== */
+@media (min-width: 768px) {
+  .servicio-card {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .servicio-card.invertido {
+    flex-direction: row-reverse;
+  }
+
+  .servicio-img, 
+  .servicio-info {
+    flex: 1;
+  }
+
+  .servicio-info {
+    text-align: left;
+    padding: 40px;
+  }
+
+  .servicio-titulo {
+    font-size: 2rem;
+  }
+}
+
+
+
+
+/* Encabezado de servicios */
+.servicios-header {
+  text-align: center;
+  background-color: #faf0eb;
+  padding: 60px 20px;
+  
+  
+}
+
+.servicios-header h1 {
+  margin-bottom: 0.5rem;
+  font-family: "Cerebri Sans", Arial, sans-serif;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #8c5f41;
+}
+
+.servicios-header p {
+  max-width: 800px;
+  margin: 0 auto;
+  font-family: "Cerebri Sans", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #444;
+}

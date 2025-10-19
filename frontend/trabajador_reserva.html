@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Reservas Programadas</title>
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/footer.css">
+    <link rel="stylesheet" href="assets/css/admin_reservas.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <span>Cosmetología Morín</span>
+            <img src="assets/img/Logo_header.png" alt="Logo Cosmetología Morín">
+        </div>
+        <nav>
+            <button id="menu-toggle"><span></span><span></span><span></span></button>
+            <ul id="menu">
+                <li class="menu-trabajador"><a href="trabajador_reservas.html">Mis Reservas</a></li>
+                <li class="menu-trabajador"><a href="trabajador_ajustes.html">Ajustes</a></li>
+                <li class="menu-trabajador"><a href="#" id="logout">Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <h1 class="title-page">Mis Reservas Programadas</h1>
+
+    <main class="container">
+        <section class="booking-list">
+            <h2>Próximas Reservas</h2>
+
+            <div class="booking-card" data-reserva='{"id_reserva": 1, "nombre_cliente": "Cliente Ejemplo", "tipo_servicio": "Servicio Asignado", "fecha_reserva": "2025-10-21T14:00:00.000Z", "hora_reserva": "11:00-13:00", "rut_cliente": "11.111.111-1", "telefono_cliente":"+56911111111", "fecha_creacion": "2025-10-19T12:00:00.000Z", "area_servicio": "Peluqueria"}'>
+                <div class="booking-header">
+                    <h3 class="client-name">Cliente Ejemplo</h3>
+                </div>
+                <div class="booking-body">
+                    <p><strong>Servicio:</strong> Servicio Asignado</p>
+                    <p><strong>Fecha:</strong> Martes, 21 de Octubre, 2025</p>
+                    <p><strong>Hora:</strong> 11:00 - 13:00</p>
+                </div>
+                <div class="booking-footer">
+                    <div class="client-contact">
+                        <p><i class="fas fa-id-card"></i> 11.111.111-1</p>
+                        <p><i class="fas fa-phone"></i> +56 9 1111 1111</p>
+                    </div>
+                    <small class="creation-date">Creado: 19/10/2025</small>
+                </div>
+            </div>
+            <div id="loading-placeholder">
+                <p>Cargando tus reservas...</p>
+            </div>
+
+        </section>
+    </main>
+
+    <div class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" title="Cerrar"><i class="fas fa-times"></i></button>
+            <h2>Gestionar Reserva</h2>
+            <form id="manage-booking-form" class="booking-form">
+                <input type="hidden" id="edit-reserva-id">
+                <p><strong>Cliente:</strong> <span id="modal-cliente-nombre"></span></p>
+                <p><strong>Servicio:</strong> <span id="modal-servicio-nombre"></span></p>
+                <p><strong>Fecha/Hora:</strong> <span id="modal-fecha-hora"></span></p>
+                <div class="form-group">
+                    <label for="reserva-status" class="form-label">Estado:</label>
+                    <select id="reserva-status" class="form-select">
+                        <option value="programada">Programada</option>
+                        <option value="confirmada">Confirmada</option>
+                        <option value="completada">Completada</option>
+                        <option value="cancelada">Cancelada</option>
+                        <option value="no_asistio">No Asistió</option>
+                    </select>
+                </div>
+                 <div class="form-group">
+                    <label for="reserva-notas" class="form-label">Notas (Opcional):</label>
+                    <textarea id="reserva-notas" rows="3" class="form-input"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Actualizar Estado</button>
+            </form>
+        </div>
+    </div>
+
+
+    <footer class="site-footer">
+       </footer>
+
+    <script src="assets/js/auth.js"></script> <script src="assets/js/menuhamburguesa.js"></script>
+    <script src="assets/js/trabajador_reservas.js"></script> </body>
+</html>

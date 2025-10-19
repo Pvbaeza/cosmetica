@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ajustes de Administrador</title>
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/footer.css">
+    <link rel="stylesheet" href="assets/css/admin_ajustes.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo">
+            <span>Cosmetología Morín</span>
+            <img src="assets/img/Logo_header.png" alt="Logo Cosmetología Morín">
+        </div>
+        <nav>
+            <button id="menu-toggle"><span></span><span></span><span></span></button>
+            <ul id="menu">
+                <li class="menu-normal"><a href="index.html">Inicio</a></li>
+                <li class="menu-normal"><a href="servicios.html">Servicios</a></li>
+                <li class="menu-normal"><a href="productos.html">Productos</a></li>
+                <li class="menu-admin hidden"><a href="admin_reservas.html">Reservas</a></li>
+                <li class="menu-admin hidden"><a href="admin_productos.html">Productos</a></li>
+                <li class="menu-admin hidden"><a href="admin_servicios.html">Servicios</a></li>
+                <li class="menu-admin hidden"><a href="admin_resenas.html">Reseñas</a></li>
+                <li class="menu-admin hidden"><a href="trabajador_reserva.html">reservas trabajador</a></li>
+                <li class="menu-admin hidden"><a href="admin_ajustes.html">Ajustes</a></li>
+                <li class="menu-admin hidden"><a href="#" id="logout">Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="admin-section">
+            <h1 class="section-title">Ajustes de Administrador</h1>
+
+            <article class="settings-card">
+                <h2 class="subsection-title collapsible-title" id="add-worker-title">
+                    <span>Añadir Nuevo Trabajador</span> <i class="fas fa-chevron-down toggle-icon"></i>
+                </h2>
+                <div class="collapsible-content" id="add-worker-content">
+                    <form id="add-worker-form" class="settings-form">
+                        <div class="form-group"><label for="worker-name" class="form-label">Nombre Completo</label><input type="text" id="worker-name" class="form-input" required></div>
+                        <div class="form-group"><label for="worker-area" class="form-label">Área</label>
+                            <select id="worker-area" class="form-select" required>
+                                <option value="" disabled selected>Selecciona...</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label for="worker-email" class="form-label">Correo</label><input type="email" id="worker-email" class="form-input" required></div>
+                        <div class="form-group"><label for="worker-username" class="form-label">Usuario</label><input type="text" id="worker-username" class="form-input" required></div>
+                        <div class="form-group"><label for="worker-password" class="form-label">Contraseña</label><input type="password" id="worker-password" class="form-input" required></div>
+                        <div class="form-group"><label for="worker-confirm-password" class="form-label">Confirmar Contraseña</label><input type="password" id="worker-confirm-password" class="form-input" required><p class="error-message" id="add-password-error" style="display: none;">Las contraseñas no coinciden.</p></div>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-user-plus"></i> Añadir</button>
+                    </form>
+                </div>
+            </article>
+
+            <article class="settings-card">
+                <h2 class="subsection-title collapsible-title" id="edit-worker-title">
+                    <span>Editar Trabajador</span> <i class="fas fa-chevron-down toggle-icon"></i>
+                </h2>
+                <div class="collapsible-content" id="edit-worker-content">
+                    <form id="edit-worker-select-form" class="settings-form">
+                        <div class="form-group">
+                            <label for="select-worker-edit" class="form-label">Selecciona Trabajador</label>
+                            <select id="select-worker-edit" class="form-select"><option value="" disabled selected>Cargando...</option></select>
+                        </div>
+                    </form>
+                    <form id="edit-worker-details-form" class="settings-form" style="display: none; margin-top: 1rem; border-top: 1px solid var(--color-borde-suave); padding-top: 1rem;">
+                        <input type="hidden" id="edit-worker-id">
+                        <div class="form-group"><label for="edit-worker-name" class="form-label">Nombre</label><input type="text" id="edit-worker-name" class="form-input" required></div>
+                        <div class="form-group"><label for="edit-worker-area" class="form-label">Área</label>
+                            <select id="edit-worker-area" class="form-select" required>
+                                <option value="" disabled selected>Selecciona...</option>
+                            </select>
+                        </div>
+                        <div class="form-group"><label for="edit-worker-email" class="form-label">Correo</label><input type="email" id="edit-worker-email" class="form-input" required></div>
+                        <div class="form-group"><label for="edit-worker-username" class="form-label">Usuario</label><input type="text" id="edit-worker-username" class="form-input" required></div>
+                        <p class="info-message">Dejar contraseña en blanco para no cambiarla.</p>
+                        <div class="form-group"><label for="edit-worker-password" class="form-label">Nueva Contraseña (Opc)</label><input type="password" id="edit-worker-password" class="form-input"></div>
+                        <div class="form-group"><label for="edit-worker-confirm-password" class="form-label">Confirmar Nueva Contraseña</label><input type="password" id="edit-worker-confirm-password" class="form-input"><p class="error-message" id="edit-password-error" style="display: none;">Las contraseñas no coinciden.</p></div>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+                    </form>
+                </div>
+            </article>
+
+            <article class="settings-card">
+                <h2 class="subsection-title collapsible-title" id="change-pass-title">
+                    <span>Cambiar mi Contraseña</span> <i class="fas fa-chevron-down toggle-icon"></i>
+                </h2>
+                <div class="collapsible-content" id="change-pass-content">
+                    <form id="change-password-form" class="settings-form">
+                        <div class="form-group"><label for="current-password" class="form-label">Actual</label><input type="password" id="current-password" class="form-input" required></div>
+                        <div class="form-group"><label for="new-password" class="form-label">Nueva</label><input type="password" id="new-password" class="form-input" required></div>
+                        <div class="form-group"><label for="confirm-new-password" class="form-label">Confirmar Nueva</label><input type="password" id="confirm-new-password" class="form-input" required><p class="error-message" id="change-password-error" style="display: none;">Las contraseñas nuevas no coinciden.</p></div>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-key"></i> Cambiar</button>
+                    </form>
+                </div>
+            </article>
+
+            <article class="settings-card">
+                <h2 class="subsection-title collapsible-title" id="manage-areas-title">
+                    <span>Administrar Áreas de Trabajo</span> <i class="fas fa-chevron-down toggle-icon"></i>
+                </h2>
+                <div class="collapsible-content" id="manage-areas-content">
+                    <div id="area-list" class="area-list-container"><p>Cargando áreas...</p></div>
+                    <form id="add-area-form" class="settings-form add-area-form">
+                        <div class="form-group">
+                            <label for="new-area-name" class="form-label">Nueva Área</label>
+                            <input type="text" id="new-area-name" class="form-input" placeholder="Ej: Manicurista" required>
+                        </div>
+                        <button type="submit" class="btn btn-secondary"><i class="fas fa-plus"></i> Añadir</button>
+                    </form>
+                </div>
+            </article>
+
+        </section>
+    </main>
+
+    <footer class="site-footer">
+    </footer>
+
+    <script src="assets/js/auth-guard.js"></script>
+    <script src="assets/js/menuhamburguesa.js"></script>
+    <script src="assets/js/admin_ajustes.js"></script> 
+</body>
+</html>

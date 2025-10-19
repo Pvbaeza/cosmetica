@@ -1,0 +1,97 @@
+
+/* ===== Footer NUEOOOOO ===== */
+
+.site-footer {
+  background-color: #8c5f41;
+  color: #fff;
+  padding: 24px 18px;
+  font-family: "Cerebri Sans", Arial, sans-serif;
+  text-align: center;
+}
+
+/* Logo */
+.footer-logo img {
+  width: 150px;
+  height: auto;
+  margin: 0 auto 20px;
+}
+
+/* Contenedor de redes sociales */
+.footer-socials-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 25px;
+  margin-bottom: 20px;
+}
+
+/* Cada red social + texto */
+.footer-social {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.footer-social a{
+    color: #fff;
+}
+
+.footer-social img {
+  width: 48px;
+  height: 48px;
+  transition: transform 0.2s ease;
+}
+
+.footer-social img:hover {
+  transform: scale(1.1);
+}
+
+/* Texto bajo el icono */
+.social-text {
+  font-size: 0.85rem;
+  color: #fff;
+}
+
+/* Derechos reservados */
+.footer-bottom {
+  font-size: 17px;
+  color: rgba(255,255,255,0.7);
+}
+
+/* ===== Desktop ===== */
+@media (min-width: 768px) {
+  .footer-logo img {
+    width: 170px;
+  }
+
+  .footer-social img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .social-text {
+    font-size: 0.9rem;
+  }
+}
+
+
+/* footer al final del todo */
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* asegura que el body tenga al menos la altura de la ventana */
+}
+
+main, .reserva-container, .reviews-container {
+  flex: 1; /* hace que el contenido principal ocupe todo el espacio disponible */
+}

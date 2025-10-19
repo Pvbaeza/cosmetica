@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administración de Reseñas</title>
+  <link rel="stylesheet" href="assets/css/header.css">
+  <link rel="stylesheet" href="assets/css/admin_resenas.css">
+  <link rel="stylesheet" href="assets/css/footer.css">
+  <!-- 2. Colocamos el guardián en el head. Se ejecuta ANTES de que el body se renderice. -->
+  <script src="assets/js/auth-guard.js"></script>
+
+</head>
+
+<header>
+        <div class="logo">
+            <span>Cosmetología Morín</span>
+            <img src="assets/img/Logo_header.png" alt="Logo Cosmetología Morín">
+        </div>
+        <nav>
+            <button id="menu-toggle"><span></span><span></span><span></span></button>
+            <ul id="menu">
+                 <li class="menu-normal"><a href="index.html">Inicio</a></li>
+                 <li class="menu-normal"><a href="servicios.html">Servicios</a></li>
+                 <li class="menu-normal"><a href="productos.html">Productos</a></li>
+                 <li class="menu-admin hidden"><a href="admin_reservas.html">Reservas</a></li>
+                 <li class="menu-admin hidden"><a href="admin_productos.html">Productos</a></li>
+                 <li class="menu-admin hidden"><a href="admin_servicios.html">Servicios</a></li>
+                 <li class="menu-admin hidden"><a href="admin_resenas.html">Reseñas</a></li>
+                 <li class="menu-admin hidden"><a href="admin_ajustes.html">Ajustes</a></li>
+                 <li class="menu-admin hidden"><a href="#" id="logout">Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+    </header>
+
+<body>
+  <section class="admin-reviews-container">
+    <h1 class="login-title">Administración de Reseñas</h1>
+    <p class="admin-desc">Aquí puedes aprobar, ocultar o eliminar las reseñas de los clientes.</p>
+
+    <!-- Reseñas sin publicar -->
+    <div class="reviews-section">
+      <h2>Reseñas Pendientes de Aprobación</h2>
+      <!-- ID AÑADIDO para que JS encuentre esta lista -->
+      <div id="unpublished-reviews-list" class="reviews-list">
+        <!-- Las reseñas pendientes se cargarán aquí dinámicamente -->
+      </div>
+    </div>
+
+    <!-- Reseñas publicadas -->
+    <div class="reviews-section">
+      <h2>Reseñas Publicadas</h2>
+      <!-- ID AÑADIDO para que JS encuentre esta lista -->
+      <div id="published-reviews-list" class="reviews-list">
+        <!-- Las reseñas publicadas se cargarán aquí dinámicamente -->
+      </div>
+    </div>
+  </section>
+</body>
+
+<footer class="site-footer">
+
+  <div class="footer-socials-container">
+    <div class="footer-social">
+      <a href="#" aria-label="Tiktok">
+        <img src="assets/img/Logos/tik-tok.png" alt="Tiktok">
+      </a>
+      <span class="social-text">Tiktok</span>
+    </div>
+    <div class="footer-social">
+      <a href="#" aria-label="Instagram">
+        <img src="assets/img/Logos/instagram.png" alt="Instagram">
+      </a>
+      <span class="social-text">Instagram</span>
+    </div>
+    <div class="footer-social">
+      <a href="#" aria-label="WhatsApp">
+        <img src="assets/img/Logos/whatsapp.png" alt="WhatsApp">
+      </a>
+      <span class="social-text">WhatsApp</span>
+    </div>
+    <div class="footer-social">
+      <a href="#" aria-label="WhatsApp">
+        <img src="assets/img/Logos/gmail.png" alt="Correo">
+      </a>
+      <span class="social-text">Correo</span>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; 2025 Cosmetología Morín. Todos los derechos reservados MindMatrix.</p>
+  </div>
+
+  <div class="footer-social">
+      <a href="login.html" aria-label="Administración">
+        <img alt="Administración">
+      </a>
+    </div>
+</footer>
+<script src="assets/js/auth-guard.js"></script>
+<script src="assets/js/menuhamburguesa.js"></script>
+<script src="assets/js/admin-reviews.js"></script>
+</html>

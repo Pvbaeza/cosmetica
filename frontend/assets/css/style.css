@@ -1,0 +1,379 @@
+/* INICIO */
+
+/* ===== Sección Inicio ===== */
+#inicio {
+  display: flex;
+  flex-direction: column; /* todo apilado en móvil */
+  align-items: center;
+  text-align: center;
+  padding: 20px 15px;
+  gap: 15px;
+  background-color: #faf0eb; 
+
+}
+
+/* Logo centrado arriba */
+.inicio-logo img {
+  width: 100%;
+  height: auto;
+  margin-bottom: -50px;
+  
+}
+
+/* Texto descriptivo */
+.primer-text {
+  font-family: "Cerebri Sans", Arial, sans-serif;
+  font-size: 1.1em;
+  color: #333;
+  line-height: 1.6em;
+  max-width: 900px; /* evita que el texto sea demasiado ancho en móviles grandes */
+  margin-top: 0px;
+  margin: 30px 20px;
+}
+
+
+/* ===== Desktop ===== */
+@media (min-width: 768px) {
+  #inicio {
+    flex-direction: row; /* imagen a un lado, texto al otro */
+    align-items: center;
+    gap: 30px;
+    text-align: left;
+  }
+
+  .inicio-logo {
+    display: none; /* en desktop podemos omitir el logo arriba si ya aparece en header */
+  }
+
+  .primer-text {
+    width: 50%;
+    font-size: 1rem;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* RESEÑAS */
+
+/* ===== Sección Reseñas (Mobile first) ===== */
+.reviews-section {
+  padding: 30px 18px;
+  background-color: #faf0eb; /* ajusta si quieres un fondo distinto */
+}
+
+.reviews-title {
+  text-align: center;
+  margin-bottom: 18px;
+  font-family: "Tropika Script", cursive; /* nombre de la fuente de marca */
+  font-size: 1.6rem;
+  color: #8c5f41;
+}
+
+/* FORMULARIO */
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.form-row {
+  width: 100%;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e4d7df;
+  border-radius: 12px;
+  font-family: "Cerebri Sans", Arial, sans-serif;
+  font-size: 0.95rem;
+  outline: none;
+  box-shadow: none;
+}
+
+.form-input:focus {
+  border-color: #a84a7a;
+  box-shadow: 0 0 0 3px rgba(168,74,122,0.08);
+}
+
+/* Caja de comentario redondeada */
+.form-textarea {
+  width: 100%;
+  min-height: 110px; /* altura cómoda en móvil */
+  padding: 12px;
+  border: 1px solid #e4d7df;
+  border-radius: 14px; /* puntas redondeadas */
+  resize: vertical; /* usuario puede ajustar altura si quiere */
+  font-family: "Cerebri Sans", Arial, sans-serif;
+  font-size: 1rem;
+  line-height: 1.4;
+  outline: none;
+}
+
+.form-textarea:focus {
+  border-color: #a84a7a;
+  box-shadow: 0 0 0 3px rgba(168,74,122,0.08);
+}
+
+/* Botón */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-submit {
+  background-color: #8c5f41;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: "Cerebri Sans", Arial, sans-serif;
+}
+
+.btn-submit:active,
+.btn-submit:focus {
+  transform: translateY(1px);
+  outline: none;
+}
+
+/* GRID de reseñas (móvil: 1 por fila) */
+.reviews-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+/* Tarjeta de reseña */
+.review-card {
+  background: #fff;
+  border: 1px solid #f0e6ea;
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 6px 18px rgba(24,24,24,0.04);
+}
+
+.review-content {
+  font-family: "Cerebri Sans", Arial, sans-serif;
+  font-size: 0.95rem;
+  color: #333;
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.review-author {
+  font-family: "Cerebri Sans", Arial, sans-serif;
+  font-size: 0.88rem;
+  color: #8c5f41;
+  font-weight: 700;
+  margin: 0;
+  text-align: right;
+}
+
+/* Accesibilidad: clase visualmente oculta */
+.visually-hidden {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap;
+}
+
+/* ===== Responsive: en pantallas grandes mostramos 3 columnas ===== */
+@media (min-width: 768px) {
+  .reviews-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .reviews-section {
+    padding: 50px 40px;
+  }
+
+  .reviews-title {
+    font-size: 2rem;
+  }
+
+  .form-textarea {
+    min-height: 140px;
+  }
+}
+
+
+
+/* PRODUCTOS SECCION */
+
+#productos{
+  background-color: rgb(255, 234, 239);
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Servicios */
+
+/* ===== Sección Servicios ===== */
+.services-section {
+  padding: 30px 18px;
+  background-color: #faf0eb;
+}
+
+.services-title {
+  text-align: center;
+  margin-bottom: 24px;
+  font-family: "Tropika Script", cursive;
+  font-size: 35px;
+  color: #8c5f41;
+}
+
+/* Servicio (mobile first → todo en columna) */
+.service {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 30px;
+}
+
+.service-image img {
+
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  display: block;
+}
+
+.service-content {
+  font-family: "Cerebri Sans", Arial, sans-serif;
+  margin: 0% 5%;
+}
+
+.service-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+.service-subtitle {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #8c5f41;
+  margin-bottom: 10px;
+}
+
+.service-description {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.btn-service {
+  display: inline-block;
+  background-color: #8c5f41;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.btn-service:hover {
+  background-color: #a84a7a;
+}
+
+/* ===== Vista desktop ===== */
+@media (min-width: 768px) {
+  .service {
+    flex-direction: row;
+    align-items: center;
+    gap: 30px;
+  }
+
+  .service-right {
+    flex-direction: row-reverse;
+  }
+
+  .service-image, .service-content {
+    margin: 0%;
+    flex: 1;
+  }
+
+  .service-title {
+    font-size: 1.5rem;
+  }
+
+  .service-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .service-description {
+    font-size: 1rem;
+  }
+}
+
+/* Fin Servicios */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ESPACIO ENTRE SECCIONES */
+section {
+    padding: 5px 5px;  /* espacio arriba y abajo de cada sección */
+}
+
+
+
+

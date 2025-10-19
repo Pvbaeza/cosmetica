@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login</title>
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/login.css">
+    <link rel="stylesheet" href="assets/css/footer.css">
+</head>
+<header>
+    <div class="logo">
+        <span>Cosmetología Morín</span>
+        <img src="assets/img/Logo_header.png" alt="Logo Cosmetología Morín">
+    </div>
+
+    <nav>
+        <!-- Botón hamburguesa -->
+        <button id="menu-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <!-- Menú desplegable -->
+        <ul id="menu">
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="servicios.html">Servicios</a></li>
+            <li><a href="productos.html">Productos</a></li>
+        </ul>
+    </nav>
+</header>
+
+<body>
+  <section id="login">
+    <div class="login-container">
+      <h1 class="login-title">Iniciar Sesión</h1>
+      <!-- Es crucial que el formulario tenga un ID -->
+      <form id="login-form" class="login-form">
+        <div class="form-group">
+          <label for="username">Usuario</label>
+          <input type="text" id="username" name="username" placeholder="Ingresa tu usuario" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Contraseña</label>
+          <input type="password" id="password" name="password" placeholder="Ingresa tu contraseña" required>
+        </div>
+        <button type="submit" class="login-btn">Entrar</button>
+        <p class="login-footer">
+          ¿Olvidaste tu contraseña? <a href="#">Recupérala aquí</a>
+        </p>
+      </form>
+    </div>
+  </section>
+</body>
+
+<footer class="site-footer">
+
+  <!-- Redes sociales centradas con texto bajo cada icono -->
+  <div class="footer-socials-container">
+    <div class="footer-social">
+      <a href="#" aria-label="Tiktok">
+        <img src="assets/img/Logos/tik-tok.png" alt="Tiktok">
+      </a>
+      <span class="social-text">Tiktok</span>
+    </div>
+    <div class="footer-social">
+      <a href="#" aria-label="Instagram">
+        <img src="assets/img/Logos/instagram.png" alt="Instagram">
+      </a>
+      <span class="social-text">Instagram</span>
+    </div>
+    <div class="footer-social">
+      <a href="#" aria-label="WhatsApp">
+        <img src="assets/img/Logos/whatsapp.png" alt="WhatsApp">
+      </a>
+      <span class="social-text">WhatsApp</span>
+    </div>
+    <div class="footer-social">
+      <a href="#" aria-label="WhatsApp">
+        <img src="assets/img/Logos/gmail.png" alt="Correo">
+      </a>
+      <span class="social-text">Correo</span>
+    </div>
+
+  </div>
+
+  <!-- Derechos reservados -->
+  <div class="footer-bottom">
+    <p>&copy; 2025 Cosmetología Morín. Todos los derechos reservados MindMatrix.</p>
+  </div>
+
+  <div class="footer-social">
+      <a href="login.html" aria-label="Administración">
+        <img alt="Administración">
+      </a>
+    </div>
+</footer>
+<script src="assets/js/menuhamburguesa.js"></script>   
+<script src="assets/js/login.js"></script> 
+</html>

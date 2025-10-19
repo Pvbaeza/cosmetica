@@ -1,0 +1,6 @@
+npm install express pg cors bcrypt jsonwebtoken multer
+
+npm install --save-dev nodemon
+
+
+para iniciar el servidor se usa //npm run dev

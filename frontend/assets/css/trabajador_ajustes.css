@@ -1,0 +1,126 @@
+/* ===== ESTILOS PARA AJUSTES TRABAJADOR ===== */
+/* Reutiliza variables y estilos base si los tienes definidos globalmente */
+:root {
+    --color-fondo: #faf0eb;
+    --color-tarjeta: #ffffff;
+    --color-texto-principal: #333;
+    --color-texto-secundario: #555;
+    --color-texto-placeholder: #888;
+    --color-borde-suave: #e5e5e5;
+    --color-acento: #8c5f41;
+    --color-error: #ef4444;
+    --sombra-tarjeta: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --radio-borde: 12px;
+}
+
+/*Titulo de Página*/
+.title-page {
+    text-align: center;
+    font-size: 1.8rem; 
+    color: #8c5f41;
+    font-weight: 700;
+    margin: 3rem auto 1.5rem auto;
+    max-width: 20ch; 
+    word-wrap: break-word; 
+    overflow-wrap: break-word;
+}
+
+/* --- Contenedor Principal (Si no está global) --- */
+.container { 
+    padding: 1rem; 
+    max-width: 900px; 
+    margin: 0 auto 2rem auto;
+}
+
+/* --- Tarjetas/Secciones de Ajustes --- */
+.settings-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.subsection-title {
+    color: var(--color-acento); font-size: 1.3rem; font-weight: 600;
+    margin-bottom: 1.5rem; padding-bottom: 0.5rem; text-align: left;
+    border-bottom: 1px solid var(--color-borde-suave);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* --- Formulario General --- */
+.settings-form { display: flex; flex-direction: column; gap: 1rem; }
+.form-group { margin-bottom: 0.5rem; }
+.form-label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--color-texto-secundario); margin-bottom: 0.3rem; }
+.form-input, .form-select {
+    width: 100%; border: 1px solid var(--color-borde-suave); border-radius: 8px;
+    padding: 0.8rem; font-size: 1rem; color: var(--color-texto-principal);
+    background-color: #fff; transition: all 0.2s ease-in-out; box-sizing: border-box;
+}
+.form-input::placeholder { color: var(--color-texto-placeholder); }
+.form-input:focus, .form-select:focus {
+    outline: none; border-color: var(--color-acento);
+    box-shadow: 0 0 0 3px rgba(140, 95, 65, 0.15);
+}
+
+
+/* --- Mensajes --- */
+.error-message { color: var(--color-error); font-size: 0.85rem; margin-top: 0.25rem; }
+
+/* --- Sección Mi Perfil --- */
+.profile-section #profile-info p {
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+    color: var(--color-texto-secundario);
+}
+.profile-section #profile-info strong {
+    color: var(--color-texto-principal);
+    min-width: 80px; /* Alineación */
+    display: inline-block;
+}
+.profile-section #profile-info span {
+    color: #333; /* Color específico para los datos */
+}
+
+
+/* --- Separador Visual --- */
+.section-divider {
+    border: none;
+    border-top: 1px dashed var(--color-borde-suave);
+    margin: 2.5rem auto; /* Más espacio */
+    max-width: 600px;
+}
+
+/* --- Estilos Colapsables (Reutilizados de ajustes_admin.css) --- */
+.collapsible-title {
+    cursor: pointer; display: flex; justify-content: space-between;
+    align-items: center; border-bottom: none; margin-bottom: 0;
+    padding-bottom: 0.5rem; user-select: none;
+}
+.collapsible-content {
+    max-height: 0; overflow: hidden;
+    transition: max-height 0.3s ease-out, padding-top 0.3s ease-out, margin-top 0.3s ease-out, border-top 0.3s ease-out;
+    padding-top: 0; margin-top: 0; border-top: 1px solid transparent;
+}
+.collapsible-content.active {
+    max-height: 500px; /* Ajustar si el form es más alto */
+    padding-top: 1.5rem; margin-top: 1rem;
+    border-top: 1px solid var(--color-borde-suave);
+    transition: max-height 0.5s ease-in, padding-top 0.5s ease-in, margin-top 0.5s ease-in, border-top 0.5s ease-in;
+}
+.toggle-icon { transition: transform 0.3s ease; font-size: 0.9em; color: var(--color-texto-secundario); }
+.collapsible-title.active .toggle-icon { transform: rotate(180deg); }
+
+
+/* --- Responsividad --- */
+@media (min-width: 768px) {
+    .admin-section { padding: 3rem; }
+    .subsection-title { text-align: left; }
+    .btn-primary { width: auto; align-self: flex-end; }
+    .profile-section #profile-info p { font-size: 1.1rem; }
+}

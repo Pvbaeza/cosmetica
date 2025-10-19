@@ -1,0 +1,141 @@
+/* lo movil primero*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #faf0eb;
+    padding: 10px 20px;
+}
+
+
+.logo {
+    display: flex;
+    align-items: center;
+    font-family: "Tropika Script";
+    gap: 10px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #6a1b4d;
+}
+
+.logo img {
+    height: 30px;
+}
+
+
+
+
+
+
+
+
+
+/* MENU HAMBURGUESA */
+
+
+/* ===== Botón Hamburguesa ===== */
+#menu-toggle {
+    width: 35px;
+    height: 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+#menu-toggle span {
+    display: block;
+    height: 3px;
+    width: 100%;
+    background-color: #8c5f41; /* color de las líneas */
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+/* Animación a X */
+#menu-toggle.open span:nth-child(1) {
+    transform: rotate(45deg) translate(9px, 9px);
+}
+
+#menu-toggle.open span:nth-child(2) {
+    opacity: 0;
+}
+
+#menu-toggle.open span:nth-child(3) {
+    transform: rotate(-45deg) translate(6px, -6px);
+}
+
+/* ===== Menú Mobile ===== */
+nav ul {
+    list-style: none;
+    display: none;
+    flex-direction: column;
+    gap: 15px;
+    background: rgba(255,255,255,0.95);
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+}
+
+/* Clase usada en JS para mostrar menú */
+nav ul.open {
+    display: flex;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #8c5f41;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: color 0.2s ease;
+}
+
+nav ul li a:hover {
+    color: #FEE9E7;
+}
+
+/* ===== Clase para ocultar elementos ===== */
+.hidden {
+    display: none !important;
+}
+
+/* ===== Desktop ===== */
+@media (min-width: 768px) {
+    #menu-toggle {
+        display: none;
+    }
+
+    nav ul {
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+        position: static;
+        background: none;
+        border: none;
+        padding: 0;
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    nav ul li a {
+        color: #8c5f41;
+        font-weight: 500;
+    }
+
+    .logo img {
+        height: 45px;
+    }
+}

@@ -1,0 +1,89 @@
+body{
+    background-color: #faf0eb;
+}
+
+.login-title {
+  font-family: "Tropika Script", cursive;
+  text-align: center;
+  color: #8c5f41;
+  margin-bottom: 10px;
+  font-size: 1.8rem;
+}
+
+.admin-desc {
+  text-align: center;
+  color: #555;
+  margin-bottom: 30px;
+  font-size: 1rem;
+}
+
+.admin-reviews-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.reviews-section {
+  margin-bottom: 40px;
+}
+
+.reviews-section h2{
+  font-family: "Tropika Script", cursive;
+  color: #8c5f41;
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+
+.reviews-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.review-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 15px;
+  flex: 1 1 calc(33.333% - 20px);
+  box-sizing: border-box;
+  min-width: 250px;
+} 
+
+.review-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.review-actions button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.btn-ocultar {
+  background-color: #e9b8cb;
+  color: white;
+}
+
+.btn-eliminar {
+  background-color: #9b0500;
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .reviews-list {
+    flex-direction: column;
+  }
+
+  .review-card {
+    flex: 1 1 100%;
+  }
+}
