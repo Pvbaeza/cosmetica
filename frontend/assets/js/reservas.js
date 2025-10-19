@@ -1,28 +1,32 @@
-// Archivo: assets/js/reservas.js
+// --- LÓGICA DE ENTORNO AUTOMÁTICO ---
+// Detecta si estamos en localhost o en el servidor de Render
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_BASE_URL = isLocal 
+    ? 'http://localhost:3000' // URL para desarrollo local
+    : 'https://cosmetica-cvsi.onrender.com'; // URL para producción
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- 1. OBTENER ELEMENTOS DEL DOM ---
-    const stepServicio = document.getElementById('step-servicio'); // ¡NUEVO!
+    // --- OBTENER ELEMENTOS DEL DOM ---
+    const stepServicio = document.getElementById('step-servicio');
     const stepFecha = document.getElementById('step-fecha');
     const stepHorarios = document.getElementById('step-horarios');
     const stepFormulario = document.getElementById('step-formulario');
     const stepAdvertencia = document.getElementById('step-advertencia');
     const stepExito = document.getElementById('step-exito');
 
-    const servicioSeleccionadoSpan = document.getElementById('servicio-seleccionado'); // ¡NUEVO!
+    const servicioSeleccionadoSpan = document.getElementById('servicio-seleccionado');
     const fechaSeleccionadaSpan = document.getElementById('fecha-seleccionada');
     const horarioSeleccionadoSpan = document.getElementById('horario-seleccionado');
     const horarioBotones = document.querySelectorAll('.horario-btn');
     
     const serviceSelect = document.getElementById('servicio');
 
-    // Objeto para guardar los datos de la reserva
     let datosReserva = {};
     
-    // --- FUNCIÓN PARA CARGAR SERVICIOS --- (Sin cambios)
+    // --- FUNCIÓN PARA CARGAR SERVICIOS ---
     const loadServices = async () => {
         try {
-            const response = await fetch('http://localhost:3000/api/servicios');
+            const response = await fetch(`${API_BASE_URL}/api/servicios`);
             if (!response.ok) throw new Error('No se pudieron cargar los servicios.');
             const services = await response.json();
 
@@ -32,7 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const option = document.createElement('option');
                 option.value = service.titulo;
                 option.textContent = `${service.titulo} ($${Number(service.valor).toLocaleString('es-CL')})`;
-                // Guardamos el rol (peluquero/cosmetologo) en el dataset
                 option.dataset.area = service.tipo_trabajador; 
                 serviceSelect.appendChild(option);
             });
@@ -42,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- FUNCIÓN PARA VERIFICAR DISPONIBILIDAD --- (¡MODIFICADA!)
+    // --- FUNCIÓN PARA VERIFICAR DISPONIBILIDAD ---
     async function consultarYActualizarHorarios(fechaSeleccionada, areaServicio) {
         horarioBotones.forEach(btn => {
             btn.disabled = true;
@@ -50,10 +53,8 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.classList.remove('ocupado');
         });
 
-        // ¡IMPORTANTE! Tu API debe ser actualizada para aceptar el parámetro "area"
-        // La consulta ahora envía la fecha Y el rol (área)
         try {
-            const respuesta = await fetch(`http://localhost:3000/api/horarios-ocupados?fecha=${fechaSeleccionada}&area=${areaServicio}`);
+            const respuesta = await fetch(`${API_BASE_URL}/api/horarios-ocupados?fecha=${fechaSeleccionada}&area=${areaServicio}`);
             if (!respuesta.ok) throw new Error('Error al obtener horarios.');
             
             const horariosOcupados = await respuesta.json();
@@ -74,18 +75,17 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error("Error al verificar horarios:", error);
             alert("No se pudo verificar la disponibilidad de horarios en este momento.");
-            // ... (manejo de error sin cambios)
         }
     }
 
-    // --- 2. LÓGICA DE LA INTERFAZ DE PASOS (UI) --- (¡MODIFICADA!)
+    // --- LÓGICA DE LA INTERFAZ DE PASOS (UI) ---
 
-    // ¡NUEVO! Paso 1: Seleccionar Servicio
+    // Paso 1: Seleccionar Servicio
     serviceSelect.addEventListener('change', () => {
         const selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
         
         datosReserva.servicio = selectedOption.value;
-        datosReserva.area_servicio = selectedOption.dataset.area; // ¡Guardamos el rol (área) aquí!
+        datosReserva.area_servicio = selectedOption.dataset.area;
         
         servicioSeleccionadoSpan.textContent = datosReserva.servicio;
 
@@ -105,7 +105,6 @@ document.addEventListener('DOMContentLoaded', () => {
             stepFecha.style.display = 'none';
             stepHorarios.style.display = 'block';
             
-            // ¡MODIFICADO! Ahora pasamos el rol (área) a la función de consulta
             consultarYActualizarHorarios(datosReserva.fecha, datosReserva.area_servicio);
         }
     });
@@ -122,7 +121,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Botones "Volver" ---
     
-    // ¡NUEVO! Volver del calendario al selector de servicio
     document.getElementById('back-servicio').addEventListener('click', () => {
         stepFecha.style.display = 'none';
         stepServicio.style.display = 'block';
@@ -146,7 +144,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Paso 4: Enviar Formulario (lleva a la advertencia)
     stepFormulario.addEventListener('submit', (e) => {
         e.preventDefault();
-        // Guardamos los datos del formulario en el objeto
         datosReserva.nombre = document.getElementById('nombre').value;
         datosReserva.rut = document.getElementById('rut').value;
         datosReserva.telefono = document.getElementById('telefono').value;
@@ -155,20 +152,19 @@ document.addEventListener('DOMContentLoaded', () => {
         stepAdvertencia.style.display = 'block';
     });
 
-    // --- 3. LÓGICA DE ENVÍO AL SERVIDOR ---
+    // --- LÓGICA DE ENVÍO AL SERVIDOR ---
     document.getElementById('confirmar-reserva').addEventListener('click', async () => {
         
-        // ¡MODIFICADO! Los datos ya están en 'datosReserva', no hay que leerlos del formulario de nuevo
         if (!datosReserva.nombre || !datosReserva.servicio || !datosReserva.fecha || !datosReserva.hora) {
             alert('Faltan datos en la reserva. Por favor, vuelve atrás y completa todo.');
             return;
         }
         
         try {
-            const respuesta = await fetch('http://localhost:3000/api/reservas', {
+            const respuesta = await fetch(`${API_BASE_URL}/api/reservas`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(datosReserva), // 'datosReserva' ya tiene todo (incluida el área)
+                body: JSON.stringify(datosReserva),
             });
             const resultado = await respuesta.json();
             if (resultado.success) {
@@ -190,3 +186,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- CARGA INICIAL ---
     loadServices();
 });
+

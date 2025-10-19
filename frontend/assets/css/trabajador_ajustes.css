@@ -1,19 +1,4 @@
-/* ===== ESTILOS PARA AJUSTES TRABAJADOR ===== */
-/* Reutiliza variables y estilos base si los tienes definidos globalmente */
-:root {
-    --color-fondo: #faf0eb;
-    --color-tarjeta: #ffffff;
-    --color-texto-principal: #333;
-    --color-texto-secundario: #555;
-    --color-texto-placeholder: #888;
-    --color-borde-suave: #e5e5e5;
-    --color-acento: #8c5f41;
-    --color-error: #ef4444;
-    --sombra-tarjeta: 0 4px 12px rgba(0, 0, 0, 0.08);
-    --radio-borde: 12px;
-}
-
-/*Titulo de Página*/
+/* Titulo */
 .title-page {
     text-align: center;
     font-size: 1.8rem; 
@@ -25,14 +10,14 @@
     overflow-wrap: break-word;
 }
 
-/* --- Contenedor Principal (Si no está global) --- */
+/*Contenedor Principal */
 .container { 
     padding: 1rem; 
     max-width: 900px; 
     margin: 0 auto 2rem auto;
 }
 
-/* --- Tarjetas/Secciones de Ajustes --- */
+/*Tarjetas*/
 .settings-card {
     background-color: #ffffff;
     border-radius: 12px;
@@ -45,9 +30,13 @@
 }
 
 .subsection-title {
-    color: var(--color-acento); font-size: 1.3rem; font-weight: 600;
-    margin-bottom: 1.5rem; padding-bottom: 0.5rem; text-align: left;
-    border-bottom: 1px solid var(--color-borde-suave);
+    color: #8c5f41;
+    font-size: 1.3rem; 
+    font-weight: 600;
+    margin-bottom: 1.5rem; 
+    padding-bottom: 0.5rem; 
+    text-align: left;
+    border-bottom: 1px solid #e5e5e5;
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -68,39 +57,43 @@
     display: block;
     font-size: 0.85rem; 
     font-weight: 600; 
-    color: var(--color-texto-secundario); 
+    color: #555;
     margin-bottom: 0.3rem; 
 }
 
 .form-input, .form-select {
     width: 100%;
-    border: 1px solid var(--color-borde-suave); 
+    border: 1px solid #e5e5e5;
     border-radius: 8px;
     padding: 0.8rem; 
     font-size: 1rem; 
-    color: var(--color-texto-principal);
+    color: #333;
     background-color: #fff;
     transition: all 0.2s ease-in-out; 
     box-sizing: border-box;
 }
-.form-input::placeholder { color: var(--color-texto-placeholder); }
+
+.form-input::placeholder { 
+    color: #888;
+}
+
 .form-input:focus, .form-select:focus {
-    outline: none; border-color: var(--color-acento);
+    outline: none; border-color: #8c5f41;
     box-shadow: 0 0 0 3px rgba(140, 95, 65, 0.15);
 }
 
 
 /* --- Mensajes --- */
-.error-message { color: var(--color-error); font-size: 0.85rem; margin-top: 0.25rem; }
+.error-message { color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem; }
 
 /* --- Sección Mi Perfil --- */
 .profile-section #profile-info p {
     margin-bottom: 0.75rem;
     font-size: 1rem;
-    color: var(--color-texto-secundario);
+    color: #555;
 }
 .profile-section #profile-info strong {
-    color: var(--color-texto-principal);
+    color: #333;
     min-width: 80px; /* Alineación */
     display: inline-block;
 }
@@ -112,7 +105,7 @@
 /* --- Separador Visual --- */
 .section-divider {
     border: none;
-    border-top: 1px dashed var(--color-borde-suave);
+    border-top: 1px dashed #e5e5e5;
     margin: 2.5rem auto; /* Más espacio */
     max-width: 600px;
 }
@@ -131,10 +124,10 @@
 .collapsible-content.active {
     max-height: 500px; /* Ajustar si el form es más alto */
     padding-top: 1.5rem; margin-top: 1rem;
-    border-top: 1px solid var(--color-borde-suave);
+    border-top: 1px solid #e5e5e5;
     transition: max-height 0.5s ease-in, padding-top 0.5s ease-in, margin-top 0.5s ease-in, border-top 0.5s ease-in;
 }
-.toggle-icon { transition: transform 0.3s ease; font-size: 0.9em; color: var(--color-texto-secundario); }
+.toggle-icon { transition: transform 0.3s ease; font-size: 0.9em; color: #555; }
 .collapsible-title.active .toggle-icon { transform: rotate(180deg); }
 
 

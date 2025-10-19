@@ -1,4 +1,9 @@
-// Archivo: assets/js/login.js
+// --- LÓGICA DE ENTORNO AUTOMÁTICO ---
+// Detecta si estamos en localhost o en el servidor de Render
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_BASE_URL = isLocal 
+    ? 'http://localhost:3000' // URL para desarrollo local
+    : 'https://cosmetica-cvsi.onrender.com'; // URL para producción
 
 document.addEventListener('DOMContentLoaded', () => {
     // Seleccionamos el formulario por el ID que le pusimos en el HTML
@@ -16,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 // Usamos fetch para enviar los datos a la ruta /api/login de nuestro servidor
-                const respuesta = await fetch('http://localhost:3000/api/login', {
+                const respuesta = await fetch(`${API_BASE_URL}/api/login`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -30,13 +35,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Si el servidor nos dice que todo salió bien...
                     alert(resultado.message); 
 
-                    // --- ¡ESTA ES LA LÍNEA NUEVA Y MÁS IMPORTANTE! ---
                     // Guardamos el token en el almacenamiento local del navegador.
                     localStorage.setItem('authToken', resultado.token);
-                    // ----------------------------------------------------
 
-                    // Ahora sí, redirigimos al usuario a la página de administración.
-                    window.location.href = 'admin_resenas.html';
+                    // Redirigimos al usuario a la página de administración.
+                    window.location.href = 'admin_reservas.html'; // Cambiado a admin_reservas como página principal
                 } else {
                     // Si el servidor nos dice que hubo un error, mostramos el mensaje que nos envió.
                     alert(resultado.message);

@@ -1,4 +1,9 @@
-// Archivo: assets.js/admin-reviews.js
+// --- LÓGICA DE ENTORNO AUTOMÁTICO ---
+// Detecta si estamos en localhost o en el servidor de Render
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_BASE_URL = isLocal 
+    ? 'http://localhost:3000' // URL para desarrollo local
+    : 'https://cosmetica-cvsi.onrender.com'; // URL para producción
 
 document.addEventListener('DOMContentLoaded', () => {
     const unpublishedList = document.getElementById('unpublished-reviews-list');
@@ -7,23 +12,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- FUNCIÓN PRINCIPAL PARA CARGAR LAS RESEÑAS ---
     async function cargarResenas() {
         try {
-            const response = await fetch('http://localhost:3000/api/admin/resenas');
+            const response = await fetch(`${API_BASE_URL}/api/admin/resenas`);
             if (!response.ok) {
                 throw new Error('No se pudieron cargar las reseñas.');
             }
             const resenas = await response.json();
 
-            // Limpiamos las listas antes de volver a llenarlas
             unpublishedList.innerHTML = '';
             publishedList.innerHTML = '';
 
-            if (resenas.length === 0) {
+            const unpublishedCount = resenas.filter(r => !r.estado_aprobacion).length;
+            const publishedCount = resenas.length - unpublishedCount;
+
+            if (unpublishedCount === 0) {
                 unpublishedList.innerHTML = '<p>No hay reseñas pendientes.</p>';
+            }
+            if (publishedCount === 0) {
                 publishedList.innerHTML = '<p>No hay reseñas publicadas.</p>';
-                return;
             }
             
-            // Clasificamos cada reseña en su lista correspondiente
             resenas.forEach(resena => {
                 const reviewCard = crearTarjetaResena(resena);
                 if (resena.estado_aprobacion) {
@@ -46,7 +53,6 @@ document.addEventListener('DOMContentLoaded', () => {
         div.className = 'review-card';
         div.dataset.id = resena.id_resena;
 
-        // El texto del botón cambia según el estado de la reseña
         const botonPublicarTexto = resena.estado_aprobacion ? 'Ocultar' : 'Aprobar';
         const nuevoEstado = !resena.estado_aprobacion;
 
@@ -58,7 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
 
-        // Añadimos los "escuchadores" de eventos a los botones
         const btnPublicar = div.querySelector('.btn-publicar');
         btnPublicar.addEventListener('click', () => actualizarEstado(resena.id_resena, nuevoEstado));
 
@@ -71,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- FUNCIÓN PARA ACTUALIZAR EL ESTADO (APROBAR/OCULTAR) ---
     async function actualizarEstado(id, nuevoEstado) {
         try {
-            const response = await fetch(`http://localhost:3000/api/admin/resenas/${id}`, {
+            const response = await fetch(`${API_BASE_URL}/api/admin/resenas/${id}`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ estado: nuevoEstado }),
@@ -81,7 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error('No se pudo actualizar la reseña.');
             }
             
-            // Recargamos las listas para ver el cambio al instante
             cargarResenas(); 
 
         } catch (error) {
@@ -92,13 +96,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- FUNCIÓN PARA ELIMINAR UNA RESEÑA ---
     async function eliminarResena(id) {
-        // Pedimos confirmación antes de una acción destructiva
         if (!confirm('¿Estás seguro de que quieres eliminar esta reseña permanentemente?')) {
             return;
         }
 
         try {
-            const response = await fetch(`http://localhost:3000/api/admin/resenas/${id}`, {
+            const response = await fetch(`${API_BASE_URL}/api/admin/resenas/${id}`, {
                 method: 'DELETE',
             });
             
@@ -106,7 +109,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error('No se pudo eliminar la reseña.');
             }
 
-            // Recargamos las listas para ver el cambio al instante
             cargarResenas();
 
         } catch (error) {
@@ -118,3 +120,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Carga inicial de las reseñas al entrar a la página ---
     cargarResenas();
 });
+

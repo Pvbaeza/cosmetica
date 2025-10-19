@@ -1,45 +1,42 @@
-// Archivo: servicios.js
-// Este script carga los servicios desde el servidor y los muestra en la página de servicios para los clientes.
+// --- LÓGICA DE ENTORNO AUTOMÁTICO ---
+// Detecta si estamos en localhost o en el servidor de Render
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_BASE_URL = isLocal 
+    ? 'http://localhost:3000' // URL para desarrollo local
+    : 'https://cosmetica-cvsi.onrender.com'; // URL para producción
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Seleccionamos el contenedor donde se mostrarán las tarjetas de servicios.
     const servicesContainer = document.getElementById('servicios');
 
-    // Función asíncrona para buscar y renderizar los servicios.
     const fetchAndRenderServices = async () => {
         try {
-            // Hacemos la petición a la API del backend.
-            const response = await fetch('http://localhost:3000/api/servicios');
+            // Hacemos la petición a la API del backend usando la URL base correcta.
+            const response = await fetch(`${API_BASE_URL}/api/servicios`);
             if (!response.ok) {
                 throw new Error('No se pudo conectar al servidor para obtener los servicios.');
             }
             const services = await response.json();
 
-            // Limpiamos el contenido actual del contenedor (ej. "Cargando...").
             servicesContainer.innerHTML = '';
 
-            // Si no hay servicios, mostramos un mensaje.
             if (services.length === 0) {
                 servicesContainer.innerHTML = '<p class="empty-message">No hay servicios disponibles en este momento.</p>';
                 return;
             }
 
-            // Recorremos cada servicio y creamos su tarjeta HTML.
             services.forEach((service, index) => {
                 const serviceCard = document.createElement('div');
                 serviceCard.classList.add('servicio-card');
 
-                // Para alternar el diseño (imagen a la izquierda o derecha), añadimos la clase 'invertido' a las tarjetas pares.
                 if (index % 2 !== 0) {
                     serviceCard.classList.add('invertido');
                 }
                 
-                // Usamos una imagen de reemplazo si el servicio no tiene una asignada.
+                // Usamos API_BASE_URL para construir la URL completa de la imagen.
                 const imageUrl = service.imagen_url 
-                    ? service.imagen_url 
-                    : 'https://placehold.co/600x400/EFEFEF/AAAAAA&text=Servicio';
+                    ? `${API_BASE_URL}/${service.imagen_url}`
+                    : 'https://placehold.co/600x400/EFEFEF/AAAAAA?text=Servicio';
 
-                // Creamos el contenido HTML de la tarjeta.
                 serviceCard.innerHTML = `
                     <div class="servicio-img">
                         <img src="${imageUrl}" alt="Imagen de ${service.titulo}">
@@ -52,7 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 `;
 
-                // Añadimos la tarjeta recién creada al contenedor.
                 servicesContainer.appendChild(serviceCard);
             });
 
@@ -62,6 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Llamamos a la función para que se ejecute al cargar la página.
     fetchAndRenderServices();
 });
+

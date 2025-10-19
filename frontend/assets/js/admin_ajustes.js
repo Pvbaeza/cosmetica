@@ -1,6 +1,10 @@
-// Archivo: assets/js/admin_ajustes.js
+// --- LÓGICA DE ENTORNO AUTOMÁTICO ---
+// Detecta si estamos en localhost o en el servidor de Render
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_BASE_URL = isLocal 
+    ? 'http://localhost:3000' // URL para desarrollo local
+    : 'https://cosmetica-cvsi.onrender.com'; // URL para producción
 
-const API_BASE_URL = 'http://localhost:3000';
 let allWorkers = []; // Variable global para guardar los datos de los trabajadores
 
 document.addEventListener('DOMContentLoaded', () => {

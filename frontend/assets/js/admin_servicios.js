@@ -1,8 +1,11 @@
-// Archivo: assets/js/admin_servicios.js
+// --- LÓGICA DE ENTORNO AUTOMÁTICO ---
+// Detecta si estamos en localhost o en el servidor de Render
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_BASE_URL = isLocal 
+    ? 'http://localhost:3000' // URL para desarrollo local
+    : 'https://cosmetica-cvsi.onrender.com'; // URL para producción
 
 document.addEventListener('DOMContentLoaded', () => {
-
-    const API_BASE_URL = 'http://localhost:3000';
 
     // --- SELECCIÓN DE ELEMENTOS DEL DOM ---
     const modalOverlay = document.querySelector('.modal-overlay');
@@ -19,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const priceInput = document.getElementById('service-price-input');
     const imageInput = document.getElementById('service-image-input');
     const imagePreview = document.getElementById('image-preview');
-    const staffInput = document.getElementById('service-staff-input'); // Ahora es un <select>
+    const staffSelect = document.getElementById('service-staff-select'); // Asegúrate que el ID sea 'service-staff-select' en el HTML
 
     let editingServiceId = null;
 
@@ -33,25 +36,24 @@ document.addEventListener('DOMContentLoaded', () => {
         imagePreview.src = '';
     };
 
-    // --- FUNCIÓN PARA CARGAR ÁREAS EN EL SELECT (NUEVA) ---
+    // --- FUNCIÓN PARA CARGAR ÁREAS EN EL SELECT ---
     const loadAreasIntoSelect = async () => {
         try {
             const response = await fetch(`${API_BASE_URL}/api/areas`);
             if (!response.ok) throw new Error('No se pudieron cargar las áreas.');
             const areas = await response.json();
 
-            // Limpia opciones existentes y añade el placeholder
-            staffInput.innerHTML = '<option value="" disabled selected>Selecciona un área...</option>';
+            staffSelect.innerHTML = '<option value="" disabled selected>Selecciona un área...</option>';
 
             areas.forEach(area => {
                 const option = document.createElement('option');
-                option.value = area.nombre_area; // El valor es el nombre del área
+                option.value = area.nombre_area;
                 option.textContent = area.nombre_area;
-                staffInput.appendChild(option);
+                staffSelect.appendChild(option);
             });
         } catch (error) {
             console.error('Error al cargar áreas en el select:', error);
-            staffInput.innerHTML = '<option value="">Error al cargar áreas</option>';
+            staffSelect.innerHTML = '<option value="">Error al cargar áreas</option>';
         }
     };
 
@@ -133,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('subtitulo', subtitleInput.value);
         formData.append('descripcion', descriptionInput.value);
         formData.append('valor', priceInput.value);
-        formData.append('tipo_trabajador', staffInput.value);
+        formData.append('tipo_trabajador', staffSelect.value);
         
         if (imageInput.files[0]) {
             formData.append('imagen', imageInput.files[0]);
@@ -172,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
             subtitleInput.value = service.subtitulo || '';
             descriptionInput.value = service.descripcion || '';
             priceInput.value = service.valor;
-            staffInput.value = service.tipo_trabajador || '';
+            staffSelect.value = service.tipo_trabajador || '';
 
             if (service.imagen_url) {
                 imagePreview.src = `${API_BASE_URL}/${service.imagen_url}`;
@@ -202,5 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- CARGA INICIAL DE DATOS ---
     fetchServices();
-    loadAreasIntoSelect(); // Llamamos a la nueva función
+    loadAreasIntoSelect();
 });
+

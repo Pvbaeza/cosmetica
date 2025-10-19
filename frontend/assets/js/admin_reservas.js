@@ -1,8 +1,11 @@
-// Archivo: admin_reservas.js
+// --- LÓGICA DE ENTORNO AUTOMÁTICO ---
+// Detecta si estamos en localhost o en el servidor de Render
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_BASE_URL = isLocal 
+    ? 'http://localhost:3000' // URL para desarrollo local
+    : 'https://cosmetica-cvsi.onrender.com'; // URL para producción
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- URL BASE DE LA API ---
-    const API_BASE_URL = 'http://localhost:3000';
 
     // --- SELECCIÓN DE ELEMENTOS DEL DOM ---
     const modalOverlay = document.querySelector('.modal-overlay');
@@ -11,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeModalBtn = document.querySelector('.modal-close');
     const bookingListContainer = document.querySelector('.booking-list');
     const bookingForm = document.querySelector('.booking-form');
-    const areaFilter = document.getElementById('area-filter'); // El filtro de área
+    const areaFilter = document.getElementById('area-filter');
 
     // Inputs del formulario del modal
     const nameInput = document.getElementById('nombre_cliente');
@@ -29,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
         modalOverlay.classList.remove('active');
         bookingForm.reset();
         editingBookingId = null;
-        // Resetea el select de horas a su estado original
         Array.from(timeSelect.options).forEach(opt => {
             opt.disabled = false;
             opt.style.color = '';
@@ -45,25 +47,22 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const areas = await response.json();
             
-            // Limpiamos opciones viejas (excepto la primera de "Todas") y añadimos las nuevas
             areaFilter.innerHTML = '<option value="todos">Todas las Áreas</option>';
             areas.forEach(area => {
                 const option = document.createElement('option');
-                option.value = area.nombre_area; // Usamos el nombre del área como valor para el filtro
+                option.value = area.nombre_area;
                 option.textContent = area.nombre_area;
                 areaFilter.appendChild(option);
             });
         } catch (error) {
             console.error('Error cargando áreas para el filtro:', error);
-            // Si falla, el filtro se quedará con la opción "Todas las Áreas"
         }
     };
 
-    // --- FUNCIÓN PARA OBTENER Y MOSTRAR LAS RESERVAS (YA FILTRADAS DESDE EL BACKEND) ---
+    // --- FUNCIÓN PARA OBTENER Y MOSTRAR LAS RESERVAS ---
     const fetchBookings = async () => {
-        const selectedArea = areaFilter.value; // Obtenemos el valor actual del filtro
+        const selectedArea = areaFilter.value;
         try {
-            // Construimos la URL con el filtro como parámetro de consulta
             const url = `${API_BASE_URL}/api/admin/reservas?area=${selectedArea}`;
             const response = await fetch(url);
             if (!response.ok) throw new Error('No se pudieron obtener las reservas.');
@@ -78,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- FUNCIÓN PARA RENDERIZAR LAS TARJETAS DE RESERVA ---
     const renderBookings = (bookings) => {
-        bookingListContainer.innerHTML = '<h2>Reservas Programadas</h2>'; // Limpia y resetea el título
+        bookingListContainer.innerHTML = '<h2>Reservas Programadas</h2>';
         if (!bookings || bookings.length === 0) {
             bookingListContainer.innerHTML += '<p>No hay reservas programadas para el área seleccionada.</p>';
             return;
@@ -86,7 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
         bookings.forEach(booking => {
             const bookingCard = document.createElement('div');
             bookingCard.className = 'booking-card';
-            // Guardamos todos los datos de la reserva en el dataset para usarlos al editar
             bookingCard.dataset.booking = JSON.stringify(booking);
 
             const bookingDate = new Date(booking.fecha_reserva);
@@ -122,7 +120,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     // --- LÓGICA DEL FORMULARIO DEL MODAL ---
-
     const loadServicesIntoSelect = async () => {
         try {
             const response = await fetch(`${API_BASE_URL}/api/servicios`);
@@ -133,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const option = document.createElement('option');
                 option.value = service.titulo;
                 option.textContent = service.titulo;
-                option.dataset.area = service.tipo_trabajador; // Guardamos el área en el dataset
+                option.dataset.area = service.tipo_trabajador;
                 serviceSelect.appendChild(option);
             });
         } catch (error) {
@@ -190,11 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- MANEJO DE EVENTOS ---
-
-    // Evento para el filtro de área
     areaFilter.addEventListener('change', fetchBookings);
-
-    // Eventos para el modal
     dateInput.addEventListener('change', checkAvailability);
     serviceSelect.addEventListener('change', checkAvailability);
     openModalBtn.addEventListener('click', () => {
@@ -204,7 +197,6 @@ document.addEventListener('DOMContentLoaded', () => {
     closeModalBtn.addEventListener('click', closeModal);
     modalOverlay.addEventListener('click', e => e.target === modalOverlay && closeModal());
 
-    // Evento para enviar el formulario (Crear o Editar)
     bookingForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         const selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
@@ -234,13 +226,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(errorData.message);
             }
             closeModal();
-            fetchBookings(); // Recarga las reservas (respetando el filtro actual)
+            fetchBookings();
         } catch (error) {
             alert(`Error: ${error.message}`);
         }
     });
 
-    // Delegación de eventos para los botones de Editar y Eliminar en las tarjetas
     bookingListContainer.addEventListener('click', (event) => {
         const editButton = event.target.closest('.btn-edit');
         const deleteButton = event.target.closest('.btn-delete');
@@ -277,15 +268,16 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (res.status !== 204 && !res.ok) {
                             return res.json().then(err => { throw new Error(err.message || 'Error desconocido') });
                         }
-                        fetchBookings(); // Recarga las reservas
+                        fetchBookings();
                     })
                     .catch(err => alert(`Error al eliminar: ${err.message}`));
             }
         }
     });
 
-    // --- CARGA INICIAL DE DATOS AL ABRIR LA PÁGINA ---
+    // --- CARGA INICIAL ---
     loadServicesIntoSelect();
     loadAreasIntoFilter();
     fetchBookings();
 });
+

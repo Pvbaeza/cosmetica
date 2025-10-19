@@ -1,10 +1,15 @@
-// --- SECCIÓN 1: Lógica para MOSTRAR las reseñas al cargar la página ---
+// --- LÓGICA DE ENTORNO AUTOMÁTICO ---
+// Detecta si estamos en localhost o en el servidor de Render
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_BASE_URL = isLocal 
+    ? 'http://localhost:3000' // URL para desarrollo local
+    : 'https://cosmetica-cvsi.onrender.com'; // URL para producción
 
 // Función que pide las reseñas al servidor y las dibuja en el HTML
 async function cargarResenas() {
     try {
-        // 1. Pedimos las reseñas a la ruta GET que creamos en el servidor
-        const respuesta = await fetch('http://localhost:3000/api/resenas');
+        // 1. Pedimos las reseñas a la ruta GET usando la URL base correcta
+        const respuesta = await fetch(`${API_BASE_URL}/api/resenas`);
         
         if (!respuesta.ok) {
             console.error("No se pudieron cargar las reseñas.");
@@ -14,7 +19,7 @@ async function cargarResenas() {
         const resenas = await respuesta.json();
         const reviewsList = document.getElementById('reviews-list');
         
-        // 2. ¡CLAVE! Borramos el contenido de ejemplo del HTML
+        // 2. Borramos el contenido de ejemplo del HTML
         reviewsList.innerHTML = '';
 
         // Si no hay reseñas, mostramos un mensaje
@@ -30,11 +35,11 @@ async function cargarResenas() {
 
             const content = document.createElement('p');
             content.className = 'review-content';
-            content.textContent = `"${resena.Comentario}"`; // Asegúrate que la columna se llame "Comentario"
+            content.textContent = `"${resena.Comentario}"`;
 
             const author = document.createElement('h3');
             author.className = 'review-author';
-            author.textContent = `- ${resena.nombre}`; // Asegúrate que la columna se llame "nombre"
+            author.textContent = `- ${resena.nombre}`;
 
             article.appendChild(content);
             article.appendChild(author);
@@ -46,8 +51,6 @@ async function cargarResenas() {
     }
 }
 
-
-// --- SECCIÓN 2: Lógica para ENVIAR una nueva reseña desde el formulario ---
 
 document.addEventListener('DOMContentLoaded', () => {
     
@@ -71,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             try {
-                const respuesta = await fetch('http://localhost:3000/api/resenas', {
+                const respuesta = await fetch(`${API_BASE_URL}/api/resenas`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(datosResena)
@@ -95,4 +98,3 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-

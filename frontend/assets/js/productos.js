@@ -1,4 +1,9 @@
-// Archivo: assets/js/productos.js
+// --- LÓGICA DE ENTORNO AUTOMÁTICO ---
+// Detecta si estamos en localhost o en el servidor de Render
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_BASE_URL = isLocal 
+    ? 'http://localhost:3000' // URL para desarrollo local
+    : 'https://cosmetica-cvsi.onrender.com'; // URL para producción
 
 document.addEventListener('DOMContentLoaded', () => {
     const catalogoProductos = document.getElementById('catalogo-productos');
@@ -6,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Función para obtener los productos de la API y mostrarlos
     async function cargarProductos() {
         try {
-            const respuesta = await fetch('http://localhost:3000/api/productos');
+            const respuesta = await fetch(`${API_BASE_URL}/api/productos`);
             if (!respuesta.ok) {
                 throw new Error('La respuesta de la red no fue satisfactoria.');
             }
@@ -14,18 +19,15 @@ document.addEventListener('DOMContentLoaded', () => {
             mostrarProductosEnCatalogo(productos);
         } catch (error) {
             console.error('Error al cargar los productos:', error);
-            if (catalogoProductos) { // Check if element exists
+            if (catalogoProductos) {
                 catalogoProductos.innerHTML = '<p>No se pudieron cargar los productos en este momento.</p>';
-            } else {
-                console.error("Elemento 'catalogo-productos' no encontrado.");
             }
         }
     }
 
     // Función para construir el HTML de cada producto y mostrarlo
     function mostrarProductosEnCatalogo(productos) {
-        if (!catalogoProductos) { // Check if element exists
-            console.error("Elemento 'catalogo-productos' no encontrado para mostrar productos.");
+        if (!catalogoProductos) {
             return;
         }
         catalogoProductos.innerHTML = ''; // Limpiar catálogo
@@ -35,17 +37,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         productos.forEach(producto => {
-            // *** FORMATEAR PRECIO A PESO CHILENO ***
-            const valorNumerico = Number(producto.valor || 0); // Asegura que sea número
+            const valorNumerico = Number(producto.valor || 0);
             const precioFormateado = valorNumerico.toLocaleString('es-CL', {
                 style: 'currency',
                 currency: 'CLP'
-                // Puedes añadir , minimumFractionDigits: 0, maximumFractionDigits: 0 si no quieres decimales
             });
-            // *** FIN FORMATEO ***
 
-            // Asegurar que la imagen tenga URL completa
-            const imageUrl = producto.imagen_url ? `http://localhost:3000/${producto.imagen_url}` : 'https://via.placeholder.com/300x200?text=Sin+Imagen'; // Placeholder por defecto
+            // Usamos API_BASE_URL para construir la URL completa de la imagen
+            const imageUrl = producto.imagen_url ? `${API_BASE_URL}/${producto.imagen_url}` : 'https://placehold.co/300x200/EFEFEF/AAAAAA?text=Sin+Imagen';
 
             const productoCardHTML = `
                 <div class="producto-card">
@@ -63,3 +62,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // Iniciar la carga de productos cuando la página esté lista
     cargarProductos();
 });
+
