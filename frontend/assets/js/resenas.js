@@ -3,7 +3,7 @@
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 const API_BASE_URL = isLocal 
     ? 'http://localhost:3000' // URL para desarrollo local
-    : 'https://cosmetica-cvsi.onrender.com'; // URL para producción
+    : 'https://cosmeticabackend.onrender.com'; // URL para producción
 
 // Función que pide las reseñas al servidor y las dibuja en el HTML
 async function cargarResenas() {

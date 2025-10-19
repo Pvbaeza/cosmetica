@@ -3,7 +3,7 @@
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 const API_BASE_URL = isLocal 
     ? 'http://localhost:3000' // URL para desarrollo local
-    : 'https://cosmetica-cvsi.onrender.com'; // URL para producción
+    : 'https://cosmeticabackend.onrender.com'; // URL para producción
 
 document.addEventListener('DOMContentLoaded', () => {
     // Seleccionamos el formulario por el ID que le pusimos en el HTML
