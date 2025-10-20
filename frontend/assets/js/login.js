@@ -31,15 +31,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const resultado = await respuesta.json();
 
+                // --- INICIO DE LA MODIFICACIÓN ---
                 if (resultado.success) {
                     // Si el servidor nos dice que todo salió bien...
                     alert(resultado.message); 
 
-                    // Guardamos el token en el almacenamiento local del navegador.
+                    // 1. Guardamos el token (como ya hacías)
                     localStorage.setItem('authToken', resultado.token);
+                    
+                    // 2. ¡NUEVO! Guardamos el 'id_area' del usuario.
+                    //    Asegúrate que tu backend envíe 'resultado.user.id_area'
+                    //    (Si tu backend lo envía como 'resultado.id_area', usa eso)
+                    localStorage.setItem('userArea', resultado.user.id_area);
 
-                    // Redirigimos al usuario a la página de administración.
-                    window.location.href = 'admin_reservas.html'; // Cambiado a admin_reservas como página principal
+                    // 3. ¡MODIFICADO! Redirigimos según el rol (área)
+                    
+                    // Comparamos el id_area (el 7 es el admin según tu tabla)
+                    if (resultado.user.id_area === 7) {
+                        // Es Admin, va a la página de admin
+                        window.location.href = 'admin_reservas.html';
+                    } else {
+                        // Es otro trabajador (Área 3, 5, etc.)
+                        // CAMBIA 'mis_reservas.html' por el nombre de tu página para trabajadores
+                        window.location.href = 'trabajador_reserva.html'; 
+                    }
+                
+                // --- FIN DE LA MODIFICACIÓN ---
+
                 } else {
                     // Si el servidor nos dice que hubo un error, mostramos el mensaje que nos envió.
                     alert(resultado.message);
@@ -53,4 +71,3 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 });
-
