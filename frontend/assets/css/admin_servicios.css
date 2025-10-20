@@ -127,8 +127,7 @@ body {
     color: #555; /* Color base para los iconos */
 }
 
-/* --- Modal para Añadir/Editar --- */
-/* --- Modal para Añadir/Editar --- */
+/* Formulario para añadir y editar */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -145,13 +144,10 @@ body {
     transition: opacity 0.3s ease, visibility 0.3s ease;
     padding: 1rem;
 }
-
-/* Esta nueva regla hace visible el modal cuando JS le añade la clase 'active' */
 .modal-overlay.active {
     opacity: 1;
     visibility: visible;
 }
-
 .modal-content {
     background: #ffffff;
     padding: 2rem;
@@ -160,8 +156,17 @@ body {
     max-width: 500px;
     position: relative;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    max-height: 90vh;
+    overflow-y: auto;
 }
-
+.modal-content select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
 .modal-close {
     position: absolute;
     top: 1rem;
@@ -172,7 +177,6 @@ body {
     cursor: pointer;
     color: #999;
 }
-
 .modal-content h2 {
     margin-bottom: 1.5rem;
     text-align: center;

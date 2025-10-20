@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="assets/css/footer.css">
 </head>
 <body>
+  <main>
     <!-- HEADER -->
     <header>
         <div class="logo">
@@ -37,44 +38,34 @@
       <p>Explora nuestros servicios personalizados pensados para ofrecerte la mejor experiencia. Reserva fácilmente el que más se adapte a tus necesidades.</p>
     </section>
 
+    <section class="filter-section">
+            <!-- Filtro -->
+            <div class="filter-container">
+                <label for="area-filter" class="filter-label">
+                    <i class="fas fa-filter"></i> Área:
+                </label>
+                <select id="area-filter" class="filter-select">
+                    <option value="todos">Mostrar Todas</option>
+                    </select>
+
+                <!-- Buscador -->
+                <label for="search-input" class="filter-label search-label">
+                    <i class="fas fa-search"></i> Buscar:
+                </label>
+                <input type="search" id="search-input" class="filter-input" placeholder="Nombre del servicio...">
+                
+            </div>
+        </section>
 
 
     <section id="servicios" class="servicios-section">
-  <!-- Servicio 1 -->
-  <div class="servicio-card">
-    <div class="servicio-img">
-      <img src="assets/img/Sin_titulo-4.png" alt="Limpieza Facial">
-    </div>
-    <div class="servicio-info">
-      <h2 class="servicio-titulo">Limpieza Facial Profunda</h2>
-      <h4 class="servicio-subtitulo">Renueva tu piel</h4>
-      <p>
-        Tratamiento diseñado para eliminar impurezas, puntos negros y exceso de grasa, 
-        dejando tu piel fresca, luminosa y revitalizada. Ideal para mantener un cutis sano.
-      </p>
-      <a href="reserva.html" class="btn-reservar">Reservar</a>
-    </div>
-  </div>
 
-  <!-- Servicio 2 -->
-  <div class="servicio-card invertido">
-    <div class="servicio-img">
-      <img src="assets/img/imagen-servicio2.png" alt="Masaje Relajante">
-    </div>
-    <div class="servicio-info">
-      <h2 class="servicio-titulo">Masaje Relajante</h2>
-      <h4 class="servicio-subtitulo">Equilibra tu cuerpo</h4>
-      <p>
-        Sesión de masaje con técnicas relajantes para reducir el estrés y la tensión muscular, 
-        mejorando tu bienestar físico y mental en un ambiente tranquilo.
-      </p>
-      <a href="reserva.html" class="btn-reservar">Reservar</a>
-    </div>
-  </div>
-</section>
-
-    
+    </main>
 </body>
+
+
+
+
 <footer class="site-footer">
 
   <!-- Redes sociales centradas con texto bajo cada icono -->
@@ -116,6 +107,9 @@
         <img alt="Administración">
       </a>
     </div>
+
+
+    
 </footer>
     <script src="assets/js/servicios.js"></script>
     <script src="assets/js/menuhamburguesa.js"></script>

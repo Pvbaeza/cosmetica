@@ -1,126 +1,298 @@
-/* ===== Sección Servicios ===== */
-.servicios-section {
-  padding: 60px 20px;
-  background: #faf0eb;
-  font-family: "Cerebri Sans", Arial, sans-serif;
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
+/* =================================== */
+/* ===== ESTILOS GENERALES (BASE) ===== */
+/* =================================== */
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #faf0eb;
+    font-family: "Cerebri Sans", Arial, sans-serif;
+    color: #333;
+    line-height: 1.6;
 }
 
-/* Tarjetas de servicio */
-.servicio-card {
-  display: flex;
-  flex-direction: column;
-  background: #faf0eb;
-  border-radius: 16px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  overflow: hidden;
-  transition: transform 0.2s ease;
-}
+/* =================================== */
+/* ===== ENCABEZADO DE PÁGINA ===== */
+/* =================================== */
 
-.servicio-card:hover {
-  transform: translateY(-5px);
-}
-
-.servicio-img img {
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-}
-
-.servicio-info {
-  padding: 20px;
-  text-align: center;
-}
-
-.servicio-titulo {
-  color: #000000;
-  font-size: 1.5rem;
-  margin-bottom: 8px;
-}
-
-.servicio-subtitulo {
-  color: #8c5f41;
-  font-size: 1rem;
-  margin-bottom: 12px;
-}
-
-.servicio-info p {
-  font-size: 0.95rem;
-  color: #555;
-  margin-bottom: 15px;
-  line-height: 1.6;
-}
-
-.btn-reservar {
-  display: inline-block;
-  padding: 0.8rem 2rem;
-  background: #8c5f41;
-  color: #fff;
-  text-decoration: none; /* elimina subrayado */
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.3s;
-}
-
-.btn-reservar:hover {
-  background: #54005c;
-}
-
-
-/* ===== Desktop ===== */
-@media (min-width: 768px) {
-  .servicio-card {
-    flex-direction: row;
-    align-items: center;
-  }
-
-  .servicio-card.invertido {
-    flex-direction: row-reverse;
-  }
-
-  .servicio-img, 
-  .servicio-info {
-    flex: 1;
-  }
-
-  .servicio-info {
-    text-align: left;
-    padding: 40px;
-  }
-
-  .servicio-titulo {
-    font-size: 2rem;
-  }
-}
-
-
-
-
-/* Encabezado de servicios */
 .servicios-header {
-  text-align: center;
-  background-color: #faf0eb;
-  padding: 60px 20px;
-  
-  
+    text-align: center;
+    background-color: #faf0eb;
+    padding: 30px 20px 20px 20px;
 }
 
 .servicios-header h1 {
-  margin-bottom: 0.5rem;
-  font-family: "Cerebri Sans", Arial, sans-serif;
-  font-size: 2rem;
-  font-weight: bold;
-  color: #8c5f41;
+    margin-bottom: 0.5rem;
+    font-family: "Poppins", sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #8c5f41;
 }
 
 .servicios-header p {
-  max-width: 800px;
-  margin: 0 auto;
-  font-family: "Cerebri Sans", Arial, sans-serif;
-  font-size: 1rem;
-  line-height: 1.6;
-  color: #444;
+    max-width: 650px;
+    margin: 0 auto;
+    font-size: 0.95rem;
+    color: #555;
+}
+
+/* =================================== */
+/* ===== FILTROS (ÁREA Y BÚSQUEDA) ===== */
+/* =================================== */
+
+.filter-section {
+    background-color: #f7f2f0;
+    padding: 1rem 15px;
+    border-bottom: 1px solid #e0d8e0;
+}
+
+.filter-container {
+    max-width: 290px; 
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;    
+    align-items: center; 
+    gap: 0.75rem 1rem; 
+}
+
+.filter-label {
+    font-weight: 600;
+    color: #555;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    display: inline-flex; 
+    align-items: center;
+}
+.filter-label i {
+    margin-right: 0.3rem;
+    color: #8c5f41;
+}
+
+.filter-select,
+.filter-input {
+    padding: 0.7rem 1rem;    
+    border: 1px solid #d1c6be; 
+    border-radius: 8px;      
+    font-size: 0.95rem;
+    background-color: #fff;
+    flex-grow: 1;
+    min-width: 160px;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease; /* Transición suave */
+}
+
+.filter-select {
+    cursor: pointer;
+    appearance: none;
+    /* Flechita para abajo del filtro */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23888888' class='bi bi-chevron-down' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.7rem center;
+    background-size: 1em 1em;
+    padding-right: 2.5rem; /* Espacio para la flecha */
+}
+
+/* Estilo específico para el input de búsqueda (con icono) */
+.filter-input {
+    padding-left: 1rem;
+    background-repeat: no-repeat;
+}
+
+.filter-input::placeholder {
+    color: #242424;
+    font-style: italic;
+}
+
+/* Estilo focus común */
+.filter-select:focus,
+.filter-input:focus {
+    outline: none;
+    border-color: #8c5f41; /* Color acento al enfocar */
+    box-shadow: 0 0 0 3px rgba(140, 95, 65, 0.15); /* Anillo de foco */
+}
+
+
+/* =================================== */
+/* ===== SECCIÓN PRINCIPAL SERVICIOS ===== */
+/* =================================== */
+
+.servicios-section {
+    padding: 25px 15px;
+    background: #faf0eb;
+}
+
+/* Mensajes */
+.loading-message,
+.error-message,
+.empty-message {
+    text-align: center;
+    padding: 2rem;
+    color: #888;
+    font-style: italic;
+}
+.error-message { color: #ef4444; }
+
+/* Ocultar tarjetas filtradas */
+.servicio-card.hidden { display: none; }
+
+
+/* =================================== */
+/* ===== TARJETAS DE SERVICIO (MÓVIL) ===== */
+/* =================================== */
+
+.servicio-card {
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    margin-bottom: 25px;
+}
+.servicios-section > .servicio-card:last-child { margin-bottom: 0; }
+
+.servicio-img img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+}
+
+.servicio-info {
+    padding: 1rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.servicio-titulo {
+    color: #333;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 0.2rem 0;
+}
+
+.servicio-subtitulo {
+    color: #8c5f41;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 0.6rem;
+}
+
+.servicio-info p { /* Descripción */
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 0.8rem;
+    line-height: 1.5;
+    flex-grow: 1; /* Empuja botón hacia abajo */
+}
+
+.btn-reservar {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    background: #8c5f41;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    align-self: center; /* Centrar botón */
+    margin-top: auto;   /* Empujar al fondo */
+}
+.btn-reservar:hover {
+    background: #704932;
+    transform: translateY(-2px);
+}
+
+
+/* =============================================== */
+/* ===== ESTILOS WEB / DESKTOP (768px Y MÁS) ===== */
+/* =============================================== */
+
+@media (min-width: 768px) {
+
+    /* --- Filtros en Web --- */
+    .filter-section {
+        padding: 1.5rem 40px;
+    }
+    .filter-container {
+        max-width: 1100px; /* Ancho máximo igual a la sección de servicios */
+        flex-wrap: nowrap; /* Evitar que bajen */
+    }
+    .filter-label { font-size: 1rem; }
+    .filter-select {
+        font-size: 1rem;
+        min-width: 200px; /* Ancho mínimo para select */
+        flex-grow: 0;     /* No crece mucho */
+    }
+    .filter-input {
+        font-size: 1rem;
+        flex-grow: 1;     /* Buscador ocupa resto del espacio */
+    }
+
+    /* --- Contenedor General Servicios (Grid) --- */
+    .servicios-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr; /* Dos columnas */
+        gap: 2.5rem;                   /* Espacio entre tarjetas */
+        padding: 50px 40px;
+        max-width: 1100px;             /* Ancho de sección */
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .servicios-header h1 { font-size: 2.3rem; }
+    .servicios-header p { font-size: 1rem; }
+
+
+    /* --- Tarjetas de Servicio (Web - Layout Interno Columna) --- */
+    .servicio-card {
+        flex-direction: column; /* Imagen arriba, texto abajo */
+        align-items: stretch;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.06);
+        margin-bottom: 0; /* Espacio controlado por grid gap */
+    }
+    .servicio-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 7px 20px rgba(0,0,0,0.08);
+    }
+
+    /* --- Imagen (Web) --- */
+    .servicio-img { width: 100%; max-width: 100%; }
+    .servicio-img img {
+        width: 100%; height: auto; aspect-ratio: 16 / 9; /* Proporción ancha */
+        object-fit: cover; display: block; border-bottom: 1px solid #eee;
+    }
+
+    /* --- Info (Web) --- */
+    .servicio-info {
+        padding: 1.5rem; /* Padding ajustado */
+        text-align: left;
+        display: flex; flex-direction: column;
+    }
+
+    .servicio-titulo { font-size: 1.5rem; } /* Tamaños ajustados */
+    .servicio-subtitulo { font-size: 1rem; }
+    .servicio-info p { font-size: 0.95rem; } /* Descripción */
+
+    .btn-reservar {
+        align-self: flex-start; /* Alinear a la izquierda */
+        margin-top: 1rem;
+        padding: 0.75rem 1.6rem; /* Botón ligeramente más grande */
+    }
+} /* Fin @media (min-width: 768px) */
+
+@media (min-width: 1024px) { /* Ajustes adicionales para pantallas más grandes */
+     .servicios-section {
+        max-width: 1200px; /* Ancho puede ser un poco mayor */
+        gap: 3rem;
+    }
+     .servicio-info {
+         padding: 1.75rem; /* Padding ajustado */
+     }
+     .servicio-titulo { font-size: 1.6rem; }
 }

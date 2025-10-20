@@ -1,6 +1,6 @@
 body {
   font-family: "Cerebri Sans", Arial, sans-serif;
-  background-color: rgb(255, 234, 239);
+  background-color: #faf0eb;
   display: flex;
   flex-direction: column;  /* elementos en vertical */
   min-height: 100vh;

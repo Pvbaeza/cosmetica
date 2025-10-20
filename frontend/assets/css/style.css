@@ -364,3 +364,7 @@ section {
     .review-author { font-size: 0.95rem; }
 
 } /*Fin*/
+
+p{
+  text-align: center;
+}

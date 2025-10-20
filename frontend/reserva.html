@@ -54,6 +54,10 @@
         <select id="servicio" name="servicio" required>
             <option value="" disabled selected>Cargando servicios...</option>
             </select>
+
+            <button id="btn-continuar-fecha" class="btn-enviar" style="margin-top: 1rem;">
+                Continuar<i class="fas fa-arrow-right" style="margin-left: 0.5em;"></i>
+            </button>
         </div>
 
     <div id="step-fecha" class="reserva-step" style="display:none;">
@@ -97,6 +101,13 @@
 
     <div id="step-advertencia" class="reserva-step" style="display:none;">
         <h2>⚠️ Aviso importante</h2>
+        
+        <p>Para garantizar una atención personalizada y respetuosa con tu tiempo y el de otros clientes, hemos establecido las siguientes condiciones:</p>
+        <ul>
+            <li>💳 <strong>Reserva anticipada:</strong> Se solicita un abono de $10.000 para confirmar tu hora. Este monto no es reembolsable en caso de cancelación o inasistencia.</li>
+            <li>⏰ <strong>Tolerancia de llegada:</strong> Se esperará un máximo de 10 minutos por atraso. Pasado ese tiempo, la sesión se considerará perdida y deberá reagendarse con nuevo abono.</li>
+        </ul>
+        <p>Tu compromiso nos permite ofrecerte un servicio de calidad, organizado y justo para todos. Gracias por tu comprensión y confianza.</p>
         <div class="reserva-buttons">
             <button id="back-formulario" class="btn-back">← Volver al formulario</button>
             <button id="confirmar-reserva" class="btn-enviar">Confirmar reserva</button>

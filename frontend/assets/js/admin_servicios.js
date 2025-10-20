@@ -18,11 +18,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Inputs del formulario
     const titleInput = document.getElementById('service-title-input');
     const subtitleInput = document.getElementById('service-subtitle-input');
+    const staffSelect = document.getElementById('service-staff-input');
     const descriptionInput = document.getElementById('service-description-input');
     const priceInput = document.getElementById('service-price-input');
     const imageInput = document.getElementById('service-image-input');
     const imagePreview = document.getElementById('image-preview');
-    const staffSelect = document.getElementById('service-staff-select'); // Asegúrate que el ID sea 'service-staff-select' en el HTML
 
     let editingServiceId = null;
 
