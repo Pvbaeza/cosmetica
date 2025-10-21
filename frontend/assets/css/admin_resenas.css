@@ -1,4 +1,4 @@
-body{
+body {
   margin: 0;
   padding: 0;
   background-color: #faf0eb;
@@ -17,52 +17,54 @@ body{
 
 .login-title::after {
   content: "";
-  display: block; 
-  width: 100px; 
+  display: block;
+  width: 100px;
   height: 3px;
   background-color: #8c5f41;
-  margin: 1rem auto 0; 
+  margin: 1rem auto 0;
   border-radius: 2px;
-}
-
-.reviews-section h2{
-  margin-top: 5rem;
-}
-
-.admin-reviews-container {
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 20px;
 }
 
 .reviews-section {
   margin-bottom: 40px;
 }
 
-.reviews-section h2{
+.reviews-section h2 {
   font-family: "Tropika Script", cursive;
   color: #8c5f41;
   font-size: 1.3rem;
   margin-bottom: 10px;
   text-align: center;
+  margin-top: 3rem;
 }
 
+.admin-reviews-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
 
+/* --- Base móvil (stack) --- */
 .reviews-list {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 20px;
 }
 
+/* --- Tarjeta individual --- */
 .review-card {
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   padding: 15px;
-  flex: 1 1 calc(33.333% - 20px);
   box-sizing: border-box;
-  min-width: 250px;
-} 
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.review-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
 
 .review-actions {
   display: flex;
@@ -89,28 +91,41 @@ body{
   color: white;
 }
 
-/* Responsive */
-@media (min-width: 1024px) {
+/* --- Vista Web / Escritorio --- */
+@media (min-width: 768px) {
   .reviews-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
     justify-items: center;
   }
 
-  .review-card {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    padding: 15px;
-    width: 100%;
-    max-width: 300px;
-    box-sizing: border-box;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
 
-  .review-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-  }
+  .review-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  padding: 15px;
+  box-sizing: border-box;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+  /* 🔽 Nuevo: estructura interna */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%; /* Para igualar altura dentro del grid */
+}
+
+.review-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+
+/* 🔽 Mantiene los botones abajo */
+.review-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: auto; /* Empuja los botones hacia el final */
+}
 }
