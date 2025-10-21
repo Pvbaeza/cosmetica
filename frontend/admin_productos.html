@@ -19,15 +19,16 @@
         <nav>
             <button id="menu-toggle"><span></span><span></span><span></span></button>
             <ul id="menu">
-                 <li class="menu-normal"><a href="index.html">Inicio</a></li>
-                 <li class="menu-normal"><a href="servicios.html">Servicios</a></li>
-                 <li class="menu-normal"><a href="productos.html">Productos</a></li>
-                 <li class="menu-admin hidden"><a href="admin_reservas.html">Reservas</a></li>
-                 <li class="menu-admin hidden"><a href="admin_productos.html">Productos</a></li>
-                 <li class="menu-admin hidden"><a href="admin_servicios.html">Servicios</a></li>
-                 <li class="menu-admin hidden"><a href="admin_resenas.html">Reseñas</a></li>
-                 <li class="menu-admin hidden"><a href="admin_ajustes.html">Ajustes</a></li>
-                 <li class="menu-admin hidden"><a href="#" id="logout">Cerrar Sesión</a></li>
+                <li class="menu-normal"><a href="index.html">Inicio</a></li>
+                <li class="menu-normal"><a href="servicios.html">Servicios</a></li>
+                <li class="menu-normal"><a href="productos.html">Productos</a></li>
+
+                <!-- Opciones solo visibles si hay sesión iniciada -->
+                <li class="menu-admin hidden"><a href="admin_reservas.html">Reservas</a></li>
+                <li class="menu-admin hidden"><a href="admin_productos.html">Administrar Productos</a></li>
+                <li class="menu-admin hidden"><a href="admin_servicios.html">Administrar Servicios</a></li>
+                <li class="menu-admin hidden"><a href="admin_resenas.html">Administrar Reseñas</a></li>
+                <li class="menu-admin hidden"><a href="#" id="logout">Cerrar Sesión</a></li>
             </ul>
         </nav>
     </header>
@@ -36,29 +37,30 @@
         <section class="admin-section">
             <h1 class="section-title">Administración de Productos</h1>
 
+            <!-- FORMULARIO DE CREACIÓN -->
             <div class="form-container">
                 <form id="form-producto" class="product-form">
                     <div class="form-group">
                         <label for="nombre" class="form-label">Nombre del producto</label>
-                        <input type="text" id="nombre" class="form-input" required>
+                        <input type="text" id="nombre" name="nombre" class="form-input" required>
                     </div>
                     <div class="form-group">
                         <label for="descripcion" class="form-label">Descripción</label>
-                        <textarea id="descripcion" rows="3" class="form-input" required></textarea>
+                        <textarea id="descripcion" name="descripcion" rows="3" class="form-input" required></textarea>
                     </div>
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="valor" class="form-label">Valor</label>
-                            <input type="number" id="valor" class="form-input" required>
+                            <input type="number" id="valor" name="valor" class="form-input" required>
                         </div>
                         <div class="form-group">
                             <label for="stock" class="form-label">Stock disponible</label>
-                            <input type="number" id="stock" class="form-input" required>
+                            <input type="number" id="stock" name="stock" class="form-input" required>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="imagen" class="form-label">Imagen del producto</label>
-                        <input type="file" id="imagen" accept="image/*" class="form-input-file" required>
+                        <input type="file" id="imagen" name="imagen" accept="image/*" class="form-input-file" required>
                     </div>
                 </form>
                 <div class="form-actions">
@@ -69,77 +71,51 @@
             </div>
 
             <h2 class="subsection-title">Productos Existentes</h2>
-            <div id="lista-productos" class="product-grid">
-
-                <div class="product-card" data-producto='{"id_producto": "ejemplo1", "nombre": "Producto de Ejemplo 1", "descripcion": "Esta es una descripción placeholder para el producto.", "valor": 12000, "stock": 15, "imagen_url": "https://via.placeholder.com/300x180/eee/aaa?text=Ejemplo+1"}'>
-                    <img class="product-image" src="https://via.placeholder.com/300x180/eee/aaa?text=Ejemplo+1" alt="Producto de Ejemplo 1">
-                    <div class="product-info">
-                        <h3 class="product-title">Producto de Ejemplo 1</h3>
-                        <p class="product-description">Esta es una descripción placeholder para el producto.</p>
-                        <div class="product-details">
-                            <span class="product-price">$12.000</span>
-                            <span class="product-stock">Stock: 15</span>
-                        </div>
-                    </div>
-                    <div class="product-actions">
-                        <button class="btn-action btn-edit" data-id="ejemplo1" title="Editar"><i class="fas fa-pencil-alt"></i></button>
-                        <button class="btn-action btn-delete" data-id="ejemplo1" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
-                    </div>
-                </div>
-
-                <div class="product-card" data-producto='{"id_producto": "ejemplo2", "nombre": "Otro Producto de Muestra", "descripcion": "Descripción breve para este segundo producto.", "valor": 9500, "stock": 8, "imagen_url": "https://via.placeholder.com/300x180/ddd/888?text=Ejemplo+2"}'>
-                    <img class="product-image" src="https://via.placeholder.com/300x180/ddd/888?text=Ejemplo+2" alt="Otro Producto de Muestra">
-                    <div class="product-info">
-                        <h3 class="product-title">Otro Producto de Muestra</h3>
-                        <p class="product-description">Descripción breve para este segundo producto.</p>
-                        <div class="product-details">
-                            <span class="product-price">$9.500</span>
-                            <span class="product-stock">Stock: 8</span>
-                        </div>
-                    </div>
-                    <div class="product-actions">
-                        <button class="btn-action btn-edit" data-id="ejemplo2" title="Editar"><i class="fas fa-pencil-alt"></i></button>
-                        <button class="btn-action btn-delete" data-id="ejemplo2" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
-                    </div>
-                </div>
-                </div>
+            <div id="lista-productos" class="product-grid"></div>
         </section>
     </main>
 
+    <!-- MODAL PARA EDITAR PRODUCTO -->
     <div class="modal-overlay">
         <div class="modal-content">
             <button class="modal-close" title="Cerrar"><i class="fas fa-times"></i></button>
             <h2>Editar Producto</h2>
             <form id="edit-product-form" class="product-form">
-                <input type="hidden" id="edit-product-id">
+                <input type="hidden" id="edit-product-id" name="id_producto">
+
                 <div class="form-group">
                     <label for="edit-nombre" class="form-label">Nombre</label>
-                    <input type="text" id="edit-nombre" class="form-input" required>
+                    <input type="text" id="edit-nombre" name="nombre" class="form-input" required>
                 </div>
+
                 <div class="form-group">
                     <label for="edit-descripcion" class="form-label">Descripción</label>
-                    <textarea id="edit-descripcion" rows="3" class="form-input" required></textarea>
+                    <textarea id="edit-descripcion" name="descripcion" rows="3" class="form-input" required></textarea>
                 </div>
+
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="edit-valor" class="form-label">Valor</label>
-                        <input type="number" id="edit-valor" class="form-input" required>
+                        <input type="number" id="edit-valor" name="valor" class="form-input" required>
                     </div>
                     <div class="form-group">
                         <label for="edit-stock" class="form-label">Stock</label>
-                        <input type="number" id="edit-stock" class="form-input" required>
+                        <input type="number" id="edit-stock" name="stock" class="form-input" required>
                     </div>
                 </div>
+
                 <div class="form-group">
                     <label for="edit-imagen" class="form-label">Cambiar imagen (opcional)</label>
-                    <input type="file" id="edit-imagen" accept="image/*" class="form-input-file">
-                    <img id="edit-image-preview" src="" alt="Previsualización">
+                    <input type="file" id="edit-imagen" name="imagen" accept="image/*" class="form-input-file">
+                    <img id="edit-image-preview" src="" alt="Previsualización" style="max-width:150px; margin-top:10px; border-radius:8px;">
                 </div>
+
                 <button type="submit" class="btn btn-primary">Guardar Cambios</button>
             </form>
         </div>
     </div>
 
+    <!-- FOOTER -->
     <footer class="site-footer">
         <div class="footer-socials-container">
             <div class="footer-social">
@@ -162,11 +138,9 @@
         <div class="footer-bottom">
             <p>&copy; 2025 Cosmetología Morín. Todos los derechos reservados MindMatrix.</p>
         </div>
-        <div class="footer-social">
-            <a href="login.html" aria-label="Administración"><img alt="Administración"></a>
-        </div>
     </footer>
 
+    <!-- SCRIPTS -->
     <script src="assets/js/admin-guard.js"></script>
     <script src="assets/js/menuhamburguesa.js"></script>
     <script src="assets/js/admin_productos.js"></script>

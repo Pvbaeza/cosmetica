@@ -20,7 +20,7 @@ body {
     color: var(--color-texto-principal);
     margin: 0;
     padding: 0;
-    line-height: 1.6; /* Mejora legibilidad general */
+    line-height: 1.6;
 }
 
 main {
@@ -226,8 +226,12 @@ textarea.form-input { min-height: 80px; } /* Altura mínima para textarea */
     background-color: #eee; /* Fondo gris claro en hover */
     transform: scale(1.1);
 }
-.btn-edit { color: var(--color-editar); }
-.btn-delete { color: var(--color-eliminar); }
+.btn-edit {
+    color: #8c5f41;
+}
+.btn-delete {
+    color: #8c5f41;
+}
 
 /* ===== Modal de Edición ===== */
 .modal-overlay {
@@ -259,41 +263,115 @@ textarea.form-input { min-height: 80px; } /* Altura mínima para textarea */
 }
 
 #edit-image-preview {
-    display: none; max-width: 100px; max-height: 100px; object-fit: cover;
-    margin-top: 0.5rem; border-radius: 8px; border: 1px dashed #ccc; padding: 3px;
+    display: none; 
+    max-width: 100px; 
+    max-height: 100px; 
+    object-fit: cover;
+    margin-top: 0.5rem; 
+    border-radius: 8px; 
+    border: 1px dashed #ccc; 
+    padding: 3px;
 }
 
 /* ===== Responsividad (Desktop) ===== */
 @media (min-width: 640px) { /* Punto de quiebre para 2 columnas */
      .product-grid { grid-template-columns: repeat(2, 1fr); }
+
+
+/* FORMULARIO DE EDICION DE PRODUCTO  */
+.modal-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: left; 
+    background-color: var(--color-tarjeta);
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: var(--sombra-tarjeta);
+    max-width: 600px;
+    width: 90%;
+    margin: auto;
 }
 
-@media (min-width: 1024px) { /* Punto de quiebre para 3 columnas */
-    .admin-section { padding: 3rem; }
-    .section-title { font-size: 2.2rem; }
-    .subsection-title { text-align: left; }
+.modal-content h2 {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
 
-    .form-container { flex-direction: row; align-items: flex-start; }
-    .product-form { width: 66.66%; }
-    .form-actions { width: 33.33%; justify-content: center; padding-top: 1.5rem; }
-    .btn-primary { width: auto; } /* Ancho automático en desktop */
+.modal-content .product-form {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-    .product-grid { grid-template-columns: repeat(3, 1fr); } /* 3 columnas */
+.modal-content .form-group {
+    width: 100%;
+}
+
+.modal-content button.btn-primary {
+    margin-top: 1rem;
+    width: 100%;
+}
+
+
+}
+
+@media (min-width: 1024px) {
+    .admin-section {
+        padding: 3rem; 
+    }
+
+    .form-container {
+        flex-direction: row; 
+        align-items: flex-start; 
+    }
+    .product-form { 
+        width: 66.66%; 
+    }
+    .form-actions {
+        width: 33.33%; 
+        justify-content: center; 
+        padding-top: 1.5rem; 
+    }
+    .btn-primary {
+        width: auto; 
+    }
+
+    .product-grid { 
+        grid-template-columns: repeat(3, 1fr); 
+    } 
 
     .product-details {
-        flex-direction: row; /* Precio y stock en horizontal */
-        justify-content: space-between; /* Uno a cada lado */
+        flex-direction: row; 
+        justify-content: space-between;
         align-items: center;
     }
 
-    .modal-content { padding: 2rem; }
-    .modal-close { top: 1rem; right: 1rem; }
+    .modal-content { 
+        padding: 2rem; 
+    }
+    .modal-close { 
+        top: 1rem; 
+        right: 1rem; 
+    }
 }
 
-@media (min-width: 1280px) { /* Opcional: 4 columnas en pantallas muy grandes */
-     .product-grid { grid-template-columns: repeat(4, 1fr); }
+@media (min-width: 1280px) {
+     .product-grid {
+        grid-template-columns: repeat(4, 1fr); 
+    }
 }
 
-/* Mensajes de error/info */
-.error-msg { color: var(--color-eliminar); text-align: center; padding: 1rem; }
-.info-msg { color: var(--color-texto-placeholder); text-align: center; padding: 1rem; }
+.error-msg {
+    color: var(--color-eliminar); 
+    text-align: center; padding: 1rem; 
+}
+.info-msg {
+    color: var(--color-texto-placeholder); 
+    text-align: center; 
+    padding: 1rem; 
+}

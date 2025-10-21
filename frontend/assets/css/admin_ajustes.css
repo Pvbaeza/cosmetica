@@ -120,10 +120,100 @@ main { flex: 1; display: flex; flex-direction: column; }
 }
 
 
-/* --- Responsividad --- */
-@media (min-width: 768px) {
-    .admin-section { padding: 3rem; }
-    .section-title { font-size: 2.2rem; }
-    .btn-primary, .btn-secondary { width: auto; align-self: flex-end; }
-    .add-area-form button { align-self: flex-end; }
+/* ======== MEJORAS EXCLUSIVAS PARA VISTA WEB (1 POR FILA) ======== */
+@media (min-width: 1024px) {
+    main {
+        display: flex;
+        justify-content: center;
+        background: linear-gradient(180deg, #faf0eb 0%, #fff 100%);
+        padding: 3rem 0;
+    }
+
+    .admin-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+        width: 100%;
+        max-width: 1100px; /* controla el ancho máximo de la columna central */
+    }
+
+    .section-title {
+        width: 100%;
+        text-align: center;
+        font-size: 2rem;
+        color: #8c5f41;
+        margin-bottom: 1rem;
+    }
+
+    .settings-card {
+        width: 90%;
+        max-width: 900px; /* más ancho */
+        background: #fff;
+        padding: 2rem 3rem;
+        border-radius: 20px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .settings-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .subsection-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: var(--color-acento, #d28a6d);
+        border-bottom: 2px solid #f3d5c8;
+        padding-bottom: 0.5rem;
+    }
+
+    .settings-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem 2rem;
+    }
+
+    .settings-form .form-group {
+        flex: 1 1 45%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Inputs largos como correo o contraseñas */
+    #worker-email,
+    #edit-worker-email,
+    #worker-password,
+    #worker-confirm-password,
+    #edit-worker-password,
+    #edit-worker-confirm-password {
+        width: 100%;
+        flex: 1 1 100%;
+    }
+
+    .btn {
+        align-self: center;
+        background-color: var(--color-acento, #d28a6d);
+        color: white;
+        border: none;
+        font-weight: 600;
+        border-radius: 8px;
+        padding: 0.8rem 2rem;
+        margin-top: 1rem;
+        transition: background 0.3s ease;
+    }
+
+    .btn:hover {
+        background-color: #c06f50;
+    }
+
+    .area-list-container {
+        max-height: 250px;
+        overflow-y: auto;
+        padding: 0.5rem;
+        border-radius: 10px;
+        background: #fffaf8;
+    }
 }
