@@ -2,23 +2,15 @@ body {
   font-family: "Cerebri Sans", Arial, sans-serif;
   background-color: #faf0eb;
   display: flex;
-  flex-direction: column;  /* elementos en vertical */
+  flex-direction: column;
   min-height: 100vh;
   margin: 0;
 }
 
-
-
-
-
-
-/* Tarjetas */
-
-#productos{
-    background-color: #faf0eb;
+/* Sección Productos */
+#productos {
+  background-color: #faf0eb;
 }
-
-
 
 /* ===== Sección Productos ===== */
 .productos-section {
@@ -54,9 +46,10 @@ body {
 }
 
 /* ===== Catálogo ===== */
+/* Móvil: 1 columna */
 .productos-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* 2 columnas en móvil */
+  grid-template-columns: 1fr; /* 1 columna en móvil */
   gap: 20px;
 }
 
@@ -107,7 +100,7 @@ body {
   background: #8c5f41;
 }
 
-/* ===== Desktop ===== */
+/* ===== Desktop / Tablet ===== */
 @media (min-width: 768px) {
   .productos-header {
     flex-direction: row;
@@ -124,11 +117,45 @@ body {
     padding-left: 30px;
   }
 
+  /* Tablet: 1 columna (opcional), se ve más limpio en pantallas intermedias */
   .productos-grid {
-    grid-template-columns: repeat(3, 1fr); /* 3 columnas en escritorio */
+    grid-template-columns: 1fr;
+    gap: 25px;
   }
 
   .productos-titulos .titulo-principal {
     font-size: 2.5rem;
+  }
+}
+
+/* ===== Desktop / Web grande ===== */
+@media (min-width: 1024px) {
+  /* Contenedor general tipo servicios */
+  .productos-section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 60px 20px;
+  }
+
+  /* Grid de productos: 2 columnas solo en web */
+  .productos-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+  }
+
+  /* Tarjeta de producto */
+  .producto-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* botón siempre al fondo */
+    min-height: 220px; /* altura fija para que sea más ancho que alto */
+  }
+
+  /* Imagen del producto */
+  .producto-card img {
+    width: 100%;
+    height: 150px; /* ajusta para que sea más ancho que alto */
+    object-fit: contain;
+    margin-bottom: 15px;
   }
 }
