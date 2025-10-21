@@ -56,6 +56,25 @@ app.use(cors({
     credentials: true
 }));
 
+// Este middleware verifica el token en CUALQUIER ruta que lo use
+const verificarToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    // El token viene como "Bearer [token]"
+    const token = authHeader && authHeader.split(' ')[1]; 
+    
+    if (token == null) {
+        return res.status(401).json({ message: 'No se proporcionó token.' }); // No hay token
+    }
+
+    jwt.verify(token, JWT_SECRET, (err, user) => {
+        if (err) {
+            return res.status(403).json({ message: 'Token inválido o expirado.' }); // Token no es válido
+        }
+        // Si el token es válido, guardamos los datos del usuario (del token) en req.user
+        req.user = user; 
+        next(); // Continúa a la siguiente función (la ruta real)
+    });
+};
 
 
 app.use(express.json()); 
@@ -307,8 +326,15 @@ app.post('/api/login', async (req, res) => {
                 JWT_SECRET, // Clave secreta
                 { expiresIn: '1h' } // El token expira en 1 hora
             );
-            // 2. Enviar el token al frontend
-            res.status(200).json({ success: true, message: 'Inicio de sesión exitoso.', token: token });
+            
+            // 2. Enviar el token Y EL ID_AREA al frontend
+            res.status(200).json({ 
+                success: true, 
+                message: 'Inicio de sesión exitoso.', 
+                token: token,
+                id_area: usuario.id_area // <-- AQUÍ ESTÁ LA CORRECCIÓN
+            });
+
         } else {
             res.status(401).json({ success: false, message: 'Credenciales incorrectas.' });
         }
@@ -317,7 +343,6 @@ app.post('/api/login', async (req, res) => {
         res.status(500).json({ success: false, message: 'Error interno del servidor.' });
     }
 });
-
 
 
 
@@ -792,6 +817,91 @@ app.put('/api/trabajadores/:id', async (req, res) => {
             return res.status(409).json({ message: 'Error: El nombre de usuario o el correo ya existen.' });
         }
         console.error('🔥 Error al actualizar trabajador:', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+
+
+// ===============================================================
+// --- RUTAS DEL PORTAL DEL TRABAJADOR (¡NUEVAS!) ---
+// ===============================================================
+
+// --- RUTA GET: Para OBTENER EL PERFIL del trabajador logueado ---
+// Usamos el middleware 'verificarToken' para protegerla
+app.get('/api/trabajador/perfil', verificarToken, async (req, res) => {
+    try {
+        // req.user.userId fue guardado por el middleware verificarToken (viene del token)
+        const userId = req.user.userId; 
+
+        // Hacemos un JOIN para obtener el nombre del área, no solo el ID
+        const textoSQL = `
+            SELECT 
+                u.id, 
+                u.nombre_completo, 
+                u.username, 
+                u."Correo", 
+                u.id_area,
+                a.nombre_area
+            FROM usuarios u
+            LEFT JOIN areas_trabajo a ON u.id_area = a.id_area
+            WHERE u.id = $1;
+        `;
+        
+        const resultado = await pool.query(textoSQL, [userId]);
+        
+        if (resultado.rowCount === 0) {
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
+        }
+        
+        res.status(200).json(resultado.rows[0]);
+
+    } catch (error) {
+        console.error('🔥 Error en GET /api/trabajador/perfil:', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+// --- RUTA PUT: Para CAMBIAR LA CONTRASEÑA del trabajador logueado ---
+// También protegida por 'verificarToken'
+app.put('/api/trabajador/cambiar-contrasena', verificarToken, async (req, res) => {
+    const userId = req.user.userId; // Obtenemos el ID del token
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+        return res.status(400).json({ message: 'Se requiere la contraseña actual y la nueva.' });
+    }
+
+    try {
+        // 1. Obtener el hash actual del usuario
+        const sqlSelect = 'SELECT password_hash FROM usuarios WHERE id = $1';
+        const resultado = await pool.query(sqlSelect, [userId]);
+        
+        if (resultado.rowCount === 0) {
+            return res.status(404).json({ message: 'Usuario no encontrado.' });
+        }
+        
+        const usuario = resultado.rows[0];
+        
+        // 2. Comparar la contraseña actual enviada con el hash de la BD
+        const esValida = await bcrypt.compare(currentPassword, usuario.password_hash);
+        
+        if (!esValida) {
+            return res.status(403).json({ message: 'La contraseña actual es incorrecta.' });
+        }
+        
+        // 3. Hashear la nueva contraseña
+        const saltRounds = 10;
+        const newPasswordHash = await bcrypt.hash(newPassword, saltRounds);
+        
+        // 4. Actualizar la contraseña en la BD
+        const sqlUpdate = 'UPDATE usuarios SET password_hash = $1 WHERE id = $2';
+        await pool.query(sqlUpdate, [newPasswordHash, userId]);
+        
+        res.status(200).json({ message: 'Contraseña actualizada con éxito.' });
+
+    } catch (error) {
+        console.error('🔥 Error en PUT /api/trabajador/cambiar-contrasena:', error);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });

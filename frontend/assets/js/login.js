@@ -31,33 +31,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const resultado = await respuesta.json();
 
-                // ¡REVISA LA CONSOLA! Esto te dirá la estructura real de la respuesta
-                console.log('Respuesta del backend:', resultado); 
+                // 1. Muestra en la consola (F12) la respuesta COMPLETA del backend
+                console.log('Respuesta COMPLETA del backend:', resultado); 
 
-                // --- INICIO DE LA CORRECCIÓN ---
                 if (resultado.success) {
                     // Si el servidor nos dice que todo salió bien...
                     alert(resultado.message); 
 
-                    // 1. Guardamos el token (como ya hacías)
+                    // 2. Guardamos el token
                     localStorage.setItem('authToken', resultado.token);
                     
-                    // 2. ¡CORREGIDO! Leemos 'id_area' desde la raíz de 'resultado'
-                    //    (Porque resultado.user era undefined)
-                    localStorage.setItem('userArea', resultado.id_area);
 
-                    // 3. ¡CORREGIDO! Comparamos 'id_area' desde la raíz de 'resultado'
-                    // Comparamos el id_area (el 7 es el admin según tu tabla)
-                    if (resultado.id_area === 7) {
-                        // Es Admin, va a la página de admin
+                    // --- INICIO DE LA CORRECCIÓN ---
+                    // CAMBIA 'resultado.id_area' POR EL NOMBRE CORRECTO QUE VISTE EN LA CONSOLA
+                    
+                    const areaDelUsuario = resultado.id_area; // <--- CAMBIA ESTO (Ej: resultado.rol_id)
+                    
+                    // 3. Guardamos el área del usuario en localStorage
+                    localStorage.setItem('userArea', areaDelUsuario);
+                    
+                    // 4. Mostramos un alert para verificar
+                    alert('El id_area de este usuario es: ' + areaDelUsuario);
+
+                    // 5. Comparamos la variable
+                    if (areaDelUsuario == 7) { 
+                        alert('Rol detectado: ADMIN (7). Redirigiendo a panel de admin...');
                         window.location.href = 'admin_reservas.html';
                     } else {
-                        // Es otro trabajador (Área 3, 5, etc.)
+                        alert('Rol detectado: TRABAJADOR (Valor: ' + areaDelUsuario + '). Redirigiendo a panel de trabajador...');
                         window.location.href = 'trabajador_reserva.html'; 
                     }
+                    // --- FIN DE LA CORRECCIÓN ---
                 
-                // --- FIN DE LA CORRECCIÓN ---
-
                 } else {
                     // Si el servidor nos dice que hubo un error, mostramos el mensaje que nos envió.
                     alert(resultado.message);
