@@ -86,8 +86,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         productos.forEach(producto => {
-            // La URL de la imagen se construye usando la URL base de la API
-            const imageUrl = producto.imagen_url ? `${API_BASE_URL}/${producto.imagen_url}` : 'https://placehold.co/300x180/eee/aaa?text=Sin+Imagen';
+            
+            // --- CORRECCIÓN 1 AQUÍ ---
+            // Esta lógica decide si usar la URL de Cloudinary directamente o construir la URL antigua.
+            let imageUrl;
+            if (producto.imagen_url && producto.imagen_url.startsWith('http')) {
+                // Es una URL absoluta (de Cloudinary)
+                imageUrl = producto.imagen_url;
+            } else if (producto.imagen_url) {
+                // Es una URL relativa antigua (ej: 'assets/img/...')
+                imageUrl = `${API_BASE_URL}/${producto.imagen_url}`;
+            } else {
+                // No hay imagen
+                imageUrl = 'https://placehold.co/300x180/eee/aaa?text=Sin+Imagen';
+            }
             
             const productoHTML = `
                 <div class="product-card" data-producto='${JSON.stringify(producto).replace(/'/g, "&apos;")}'>
@@ -150,7 +162,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('edit-stock').value = producto.stock;
                 
                 const preview = document.getElementById('edit-image-preview');
-                const imageUrl = producto.imagen_url ? `${API_BASE_URL}/${producto.imagen_url}` : '';
+                
+                // --- CORRECCIÓN 2 AQUÍ ---
+                // Esta lógica decide qué URL mostrar en la vista previa de edición.
+                let imageUrl = '';
+                if (producto.imagen_url && producto.imagen_url.startsWith('http')) {
+                    // Es una URL absoluta (de Cloudinary)
+                    imageUrl = producto.imagen_url;
+                } else if (producto.imagen_url) {
+                    // Es una URL relativa antigua (ej: 'assets/img/...')
+                    imageUrl = `${API_BASE_URL}/${producto.imagen_url}`;
+                }
+
                 preview.src = imageUrl;
                 preview.style.display = imageUrl ? 'block' : 'none';
                 
@@ -192,7 +215,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!id) return;
 
             const formData = new FormData(editForm);
-            // El FormData ya toma los valores de los inputs, no es necesario agregarlos manualmente.
 
             try {
                 const respuesta = await fetch(`${API_BASE_URL}/api/productos/${id}`, {
@@ -218,4 +240,3 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- CARGA INICIAL ---
     cargarProductos();
 });
-

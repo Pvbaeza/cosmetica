@@ -1,7 +1,7 @@
 // --- LÓGICA DE ENTORNO AUTOMÁTICO ---
 // Detecta si estamos en localhost o en el servidor de Render
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-const API_BASE_URL = isLocal 
+const API_BASE_URL = isLocal
     ? 'http://localhost:3000' // URL para desarrollo local
     : 'https://cosmeticabackend-dqxh.onrender.com'; // URL para producción
 
@@ -69,9 +69,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const serviceCard = document.createElement('div');
             serviceCard.className = 'service-card';
             serviceCard.dataset.service = JSON.stringify(service);
-            const imageUrl = service.imagen_url 
-                ? `${API_BASE_URL}/${service.imagen_url}`
-                : 'https://placehold.co/150x150/EFEFEF/AAAAAA&text=Sin+Imagen';
+
+            // --- ¡CORRECCIÓN 1 AQUÍ! ---
+            // Lógica para decidir qué URL de imagen usar (Cloudinary o local antigua)
+            let imageUrl;
+            if (service.imagen_url && service.imagen_url.startsWith('http')) {
+                // Es una URL absoluta (de Cloudinary)
+                imageUrl = service.imagen_url;
+            } else if (service.imagen_url) {
+                // Es una URL relativa antigua (ej: 'assets/img/...')
+                imageUrl = `${API_BASE_URL}/${service.imagen_url}`;
+            } else {
+                // No hay imagen
+                imageUrl = 'https://placehold.co/150x150/EFEFEF/AAAAAA&text=Sin+Imagen';
+            }
 
             serviceCard.innerHTML = `
                 <img class="service-image" src="${imageUrl}" alt="Imagen de ${service.titulo}">
@@ -176,9 +187,22 @@ document.addEventListener('DOMContentLoaded', () => {
             priceInput.value = service.valor;
             staffSelect.value = service.tipo_trabajador || '';
 
+            // --- ¡CORRECCIÓN 2 AQUÍ! ---
+            // Lógica para mostrar la imagen correcta en la vista previa de edición
             if (service.imagen_url) {
-                imagePreview.src = `${API_BASE_URL}/${service.imagen_url}`;
+                let imageUrl;
+                if (service.imagen_url.startsWith('http')) {
+                    // Es una URL absoluta (de Cloudinary)
+                    imageUrl = service.imagen_url;
+                } else {
+                    // Es una URL relativa antigua
+                    imageUrl = `${API_BASE_URL}/${service.imagen_url}`;
+                }
+                imagePreview.src = imageUrl;
                 imagePreview.style.display = 'block';
+            } else {
+                imagePreview.src = '';
+                imagePreview.style.display = 'none';
             }
             openModal();
         }
@@ -206,4 +230,3 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchServices();
     loadAreasIntoSelect();
 });
-

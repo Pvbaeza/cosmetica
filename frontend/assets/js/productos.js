@@ -1,6 +1,7 @@
 // --- LÓGICA DE ENTORNO AUTOMÁTICO ---
 // Detecta si estamos en localhost o en el servidor de Render
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+// (Espacio falso corregido en la línea de abajo)
 const API_BASE_URL = isLocal 
     ? 'http://localhost:3000' // URL para desarrollo local
     : 'https://cosmeticabackend-dqxh.onrender.com'; // URL para producción
@@ -43,8 +44,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 currency: 'CLP'
             });
 
-            // Usamos API_BASE_URL para construir la URL completa de la imagen
-            const imageUrl = producto.imagen_url ? `${API_BASE_URL}/${producto.imagen_url}` : 'https://placehold.co/300x200/EFEFEF/AAAAAA?text=Sin+Imagen';
+            // --- ¡CORRECCIÓN DE URL DE CLOUDINARY APLICADA! ---
+            let imageUrl;
+            if (producto.imagen_url && producto.imagen_url.startsWith('http')) {
+                // Es una URL absoluta (de Cloudinary)
+                imageUrl = producto.imagen_url;
+            } else if (producto.imagen_url) {
+                // Es una URL relativa antigua (ej: 'assets/img/...')
+                imageUrl = `${API_BASE_URL}/${producto.imagen_url}`;
+            } else {
+                // No hay imagen
+                imageUrl = 'https://placehold.co/300x200/EFEFEF/AAAAAA?text=Sin+Imagen';
+            }
 
             const productoCardHTML = `
                 <div class="producto-card">
@@ -62,4 +73,3 @@ document.addEventListener('DOMContentLoaded', () => {
     // Iniciar la carga de productos cuando la página esté lista
     cargarProductos();
 });
-

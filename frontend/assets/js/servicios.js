@@ -1,11 +1,12 @@
-// Archivo: assets/js/servicios.js
+// --- LÓGICA DE ENTORNO AUTOMÁTICO ---
+// Detecta si estamos en localhost o en el servidor de Render
+const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+// (Espacio falso corregido en la línea de abajo)
+const API_BASE_URL = isLocal
+    ? 'http://localhost:3000' // URL local
+    : 'https://cosmeticabackend-dqxh.onrender.com'; // URL producción
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- LÓGICA DE ENTORNO AUTOMÁTICO ---
-    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    const API_BASE_URL = isLocal
-        ? 'http://localhost:3000' // URL local
-        : 'https://cosmeticabackend-dqxh.onrender.com'; // URL producción
 
     // --- ELEMENTOS DEL DOM ---
     const servicesContainer = document.getElementById('servicios');
@@ -33,15 +34,23 @@ document.addEventListener('DOMContentLoaded', () => {
             const serviceCard = document.createElement('div');
             serviceCard.classList.add('servicio-card');
 
-            const imageUrl = service.imagen_url
-                ? `${API_BASE_URL}/${service.imagen_url}`
-                : 'https://via.placeholder.com/400x225?text=Servicio'; // Placeholder
-
+            // --- ¡CORRECCIÓN DE URL DE CLOUDINARY APLICADA! ---
+            let imageUrl;
+            if (service.imagen_url && service.imagen_url.startsWith('http')) {
+                // Es una URL absoluta (de Cloudinary)
+                imageUrl = service.imagen_url;
+            } else if (service.imagen_url) {
+                // Es una URL relativa antigua (ej: 'assets/img/...')
+                imageUrl = `${API_BASE_URL}/${service.imagen_url}`;
+            } else {
+                // No hay imagen
+                imageUrl = 'https://via.placeholder.com/400x225?text=Servicio'; // Placeholder
+            }
+            
             // Formatear precio a CLP
             const valorNumerico = Number(service.valor || 0);
             const precioFormateado = valorNumerico.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' });
 
-            // *** ¡CAMBIO AQUÍ! Añadir parámetro 'servicio' a la URL ***
             // Usamos encodeURIComponent por si el título tiene espacios o caracteres especiales
             const reservaUrl = `reserva.html?servicio=${encodeURIComponent(service.titulo || '')}`;
 

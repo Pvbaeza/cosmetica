@@ -31,9 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const resultado = await respuesta.json();
 
-                // 1. Muestra en la consola (F12) la respuesta COMPLETA del backend
-                console.log('Respuesta COMPLETA del backend:', resultado); 
-
                 if (resultado.success) {
                     // Si el servidor nos dice que todo salió bien...
                     alert(resultado.message); 
@@ -49,16 +46,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     
                     // 3. Guardamos el área del usuario en localStorage
                     localStorage.setItem('userArea', areaDelUsuario);
-                    
-                    // 4. Mostramos un alert para verificar
-                    alert('El id_area de este usuario es: ' + areaDelUsuario);
 
                     // 5. Comparamos la variable
                     if (areaDelUsuario == 7) { 
-                        alert('Rol detectado: ADMIN (7). Redirigiendo a panel de admin...');
                         window.location.href = 'admin_reservas.html';
                     } else {
-                        alert('Rol detectado: TRABAJADOR (Valor: ' + areaDelUsuario + '). Redirigiendo a panel de trabajador...');
                         window.location.href = 'trabajador_reserva.html'; 
                     }
                     // --- FIN DE LA CORRECCIÓN ---
