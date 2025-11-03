@@ -1,4 +1,4 @@
-// Archivo: server.js
+// Archivo: server.js (MODIFICADO PARA NUEVA BD)
 
 // 1. Importaciones necesarias
 const express = require('express');
@@ -9,41 +9,40 @@ const pool = require('./conexion.js'); // Tu archivo de conexión a la BD
 const path = require('path');
 const multer = require('multer');
 
-// --- ¡NUEVO! Cargar variables de entorno del archivo .env ---
-require('dotenv').config(); 
+// --- Cargar variables de entorno del archivo .env ---
+require('dotenv').config();
 
-// --- ¡NUEVAS IMPORTACIONES PARA CLOUDINARY! ---
+// --- IMPORTACIONES PARA CLOUDINARY! ---
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 // ---------------------------------------------
 
 
-// --- ¡NUEVA CONFIGURACIÓN DE CLOUDINARY! ---
-// Lee las claves desde el archivo .env (process.env)
-cloudinary.config({ 
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME, 
-  api_key: process.env.CLOUDINARY_API_KEY, 
-  api_secret: process.env.CLOUDINARY_API_SECRET 
+// --- CONFIGURACIÓN DE CLOUDINARY! ---
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
-// NUEVA Configuración de Multer para PRODUCTOS (apuntando a Cloudinary)
+// Configuración de Multer para PRODUCTOS (apuntando a Cloudinary)
 const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: 'cosmetica/productos', // Carpeta en Cloudinary
-    format: async (req, file) => 'jpg', 
-    public_id: (req, file) => Date.now() + '-' + path.parse(file.originalname).name,
-  },
+    cloudinary: cloudinary,
+    params: {
+        folder: 'cosmetica/productos', // Carpeta en Cloudinary
+        format: async (req, file) => 'jpg',
+        public_id: (req, file) => Date.now() + '-' + path.parse(file.originalname).name,
+    },
 });
 
-// NUEVA Configuración de Multer para SERVICIOS (apuntando a Cloudinary)
+// Configuración de Multer para SERVICIOS (apuntando a Cloudinary)
 const serviceStorage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: 'cosmetica/servicios', // Carpeta en Cloudinary
-    format: async (req, file) => 'jpg',
-    public_id: (req, file) => 'servicio-' + Date.now() + '-' + path.parse(file.originalname).name,
-  },
+    cloudinary: cloudinary,
+    params: {
+        folder: 'cosmetica/servicios', // Carpeta en Cloudinary
+        format: async (req, file) => 'jpg',
+        public_id: (req, file) => 'servicio-' + Date.now() + '-' + path.parse(file.originalname).name,
+    },
 });
 // --------------------------------------------------
 
@@ -56,39 +55,38 @@ const uploadServicio = multer({ storage: serviceStorage }); // Uploader de servi
 const app = express();
 const PORT = 3000;
 
-// ¡NUEVO! Lee la clave secreta desde el archivo .env
-const JWT_SECRET = process.env.JWT_SECRET; 
+// Lee la clave secreta desde el archivo .env
+const JWT_SECRET = process.env.JWT_SECRET;
 
 // 3. Middlewares
 app.use(cors({
     origin: ['https://cosmetica-cvsi.onrender.com', 'http://localhost:5500'],
-    methods: ['GET','POST','PUT','PATCH','DELETE'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
     credentials: true
 }));
 
 // Este middleware verifica el token
 const verificarToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; 
-    
+    const token = authHeader && authHeader.split(' ')[1];
+
     if (token == null) {
-        return res.status(401).json({ message: 'No se proporcionó token.' }); 
+        return res.status(401).json({ message: 'No se proporcionó token.' });
     }
 
     jwt.verify(token, JWT_SECRET, (err, user) => {
         if (err) {
             return res.status(403).json({ message: 'Token inválido o expirado.' });
         }
-        req.user = user; 
-        next(); 
+        req.user = user;
+        next();
     });
 };
 
 
-app.use(express.json()); 
+app.use(express.json());
 
-// TERCERO: Sirve los archivos estáticos (CSS, JS, logos del frontend)
-// Esta línea ya NO sirve las imágenes de productos/servicios.
+// Sirve los archivos estáticos (CSS, JS, logos del frontend)
 app.use('/assets', express.static(path.join(__dirname, '../frontend/assets')));
 
 
@@ -96,10 +94,17 @@ app.use('/assets', express.static(path.join(__dirname, '../frontend/assets')));
 // --- RUTAS PARA LA GESTIÓN DE SERVICIOS ---
 // ===============================================================
 
-// --- RUTA GET (Sigue igual) ---
+// --- RUTA GET (Modificada para incluir nombre del área) ---
 app.get('/api/servicios', async (req, res) => {
     try {
-        const textoSQL = 'SELECT * FROM servicios ORDER BY id_servicio ASC';
+        // --- ¡CAMBIO (BD MIGRADA)! --- 
+        // Hacemos JOIN para obtener el nombre del área
+        const textoSQL = `
+            SELECT s.*, a.nombre_area 
+            FROM servicios s
+            LEFT JOIN areas_trabajo a ON s.id_area = a.id_area
+            ORDER BY s.id_servicio ASC
+        `;
         const resultado = await pool.query(textoSQL);
         res.status(200).json(resultado.rows);
     } catch (error) {
@@ -109,23 +114,24 @@ app.get('/api/servicios', async (req, res) => {
 });
 
 
-// --- RUTA POST: Para CREAR un nuevo servicio --- (LIMPIO)
+// --- RUTA POST: Para CREAR un nuevo servicio ---
 app.post('/api/servicios', uploadServicio.single('imagen'), async (req, res) => {
-    const { titulo, subtitulo, descripcion, valor, tipo_trabajador } = req.body;
-    
-    // ¡CAMBIO CLAVE! req.file.path ahora es la URL de Cloudinary
-    const imagen_url = req.file ? req.file.path : null; 
+    // --- ¡CAMBIO (BD MIGRADA)! --- 
+    // Se recibe id_area (número) en lugar de tipo_trabajador (texto)
+    const { titulo, subtitulo, descripcion, valor, id_area } = req.body;
 
-    if (!titulo || !valor || !tipo_trabajador) {
-        return res.status(400).json({ message: 'Título, valor y tipo de profesional son obligatorios.' });
+    const imagen_url = req.file ? req.file.path : null;
+
+    // --- ¡CAMBIO (BD MIGRADA)! --- 
+    if (!titulo || !valor || !id_area) {
+        return res.status(400).json({ message: 'Título, valor y ID de área son obligatorios.' });
     }
 
     try {
-        const textoSQL = `
-            INSERT INTO servicios(titulo, subtitulo, descripcion, valor, imagen_url, tipo_trabajador)
-            VALUES($1, $2, $3, $4, $5, $6) RETURNING *
-        `;
-        const valores = [titulo, subtitulo, descripcion, valor, imagen_url, tipo_trabajador];
+        // --- ¡CAMBIO (BD MIGRADA)! --- 
+        const textoSQL = `INSERT INTO servicios(titulo, subtitulo, descripcion, valor, imagen_url, id_area) VALUES($1, $2, $3, $4, $5, $6) RETURNING * `;
+        // --- ¡CAMBIO (BD MIGRADA)! --- 
+        const valores = [titulo, subtitulo, descripcion, valor, imagen_url, id_area];
         const resultado = await pool.query(textoSQL, valores);
         res.status(201).json(resultado.rows[0]);
     } catch (error) {
@@ -134,15 +140,18 @@ app.post('/api/servicios', uploadServicio.single('imagen'), async (req, res) => 
     }
 });
 
-// --- RUTA PUT: Para ACTUALIZAR un servicio --- (LIMPIO)
+// --- RUTA PUT: Para ACTUALIZAR un servicio ---
 app.put('/api/servicios/:id', uploadServicio.single('imagen'), async (req, res) => {
     const { id } = req.params;
-    const { titulo, subtitulo, descripcion, valor, tipo_trabajador } = req.body;
+    // --- ¡CAMBIO (BD MIGRADA)! --- 
+    // Se recibe id_area (número) en lugar de tipo_trabajador (texto)
+    const { titulo, subtitulo, descripcion, valor, id_area } = req.body;
 
-    if (!titulo || !valor || !tipo_trabajador) {
-        return res.status(400).json({ message: 'Título, valor y tipo de profesional son obligatorios.' });
+    // --- ¡CAMBIO (BD MIGRADA)! --- 
+    if (!titulo || !valor || !id_area) {
+        return res.status(400).json({ message: 'Título, valor y ID de área son obligatorios.' });
     }
-    
+
     try {
         const result = await pool.query('SELECT imagen_url FROM servicios WHERE id_servicio = $1', [id]);
         if (result.rowCount === 0) {
@@ -151,16 +160,13 @@ app.put('/api/servicios/:id', uploadServicio.single('imagen'), async (req, res) 
         let imagen_url = result.rows[0]?.imagen_url;
 
         if (req.file) {
-            // ¡CAMBIO CLAVE! Si se sube un nuevo archivo, usamos la URL de Cloudinary
             imagen_url = req.file.path;
         }
 
-        const textoSQL = `
-            UPDATE servicios
-            SET titulo = $1, subtitulo = $2, descripcion = $3, valor = $4, imagen_url = $5, tipo_trabajador = $6
-            WHERE id_servicio = $7 RETURNING *
-        `;
-        const valores = [titulo, subtitulo, descripcion, valor, imagen_url, tipo_trabajador, id];
+        // --- ¡CAMBIO (BD MIGRADA)! --- 
+        const textoSQL = `UPDATE servicios SET titulo = $1, subtitulo = $2, descripcion = $3, valor = $4, imagen_url = $5, id_area = $6 WHERE id_servicio = $7 RETURNING * `;
+        // --- ¡CAMBIO (BD MIGRADA)! --- 
+        const valores = [titulo, subtitulo, descripcion, valor, imagen_url, id_area, id];
         const resultado = await pool.query(textoSQL, valores);
 
         if (resultado.rowCount === 0) {
@@ -177,7 +183,6 @@ app.put('/api/servicios/:id', uploadServicio.single('imagen'), async (req, res) 
 app.delete('/api/servicios/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        // Opcional: Aquí podrías borrar la imagen de Cloudinary antes de la BD
         const textoSQL = 'DELETE FROM servicios WHERE id_servicio = $1';
         const resultado = await pool.query(textoSQL, [id]);
         if (resultado.rowCount === 0) {
@@ -195,22 +200,18 @@ app.delete('/api/servicios/:id', async (req, res) => {
 // --- RUTAS PARA LA GESTIÓN DE PRODUCTOS ---
 // ===============================================================
 
-// --- RUTA POST: Para CREAR un nuevo producto --- (LIMPIO)
+// --- RUTA POST: Para CREAR un nuevo producto --- (Sigue igual)
 app.post('/api/productos', upload.single('imagen'), async (req, res) => {
     const { nombre, descripcion, valor, stock } = req.body;
-    
+
     if (!req.file) {
         return res.status(400).json({ message: 'La imagen es obligatoria.' });
     }
-    
-    // ¡CAMBIO CLAVE! req.file.path ahora es la URL de Cloudinary
+
     const imagen_url = req.file.path;
 
     try {
-        const textoSQL = `
-            INSERT INTO productos(nombre, descripcion, valor, stock, imagen_url)
-            VALUES($1, $2, $3, $4, $5) RETURNING *
-        `;
+        const textoSQL = `INSERT INTO productos(nombre, descripcion, valor, stock, imagen_url) VALUES($1, $2, $3, $4, $5) RETURNING * `;
         const valores = [nombre, descripcion, valor, stock, imagen_url];
         const resultado = await pool.query(textoSQL, valores);
 
@@ -225,7 +226,7 @@ app.post('/api/productos', upload.single('imagen'), async (req, res) => {
     }
 });
 
-// --- RUTA PUT: Para ACTUALIZAR un producto --- (LIMPIO)
+// --- RUTA PUT: Para ACTUALIZAR un producto --- (Sigue igual)
 app.put('/api/productos/:id', upload.single('imagen'), async (req, res) => {
     const { id } = req.params;
     const { nombre, descripcion, valor, stock } = req.body;
@@ -238,15 +239,10 @@ app.put('/api/productos/:id', upload.single('imagen'), async (req, res) => {
         let imagen_url = result.rows[0].imagen_url;
 
         if (req.file) {
-            // ¡CAMBIO CLAVE! Si se sube un nuevo archivo, usamos la URL de Cloudinary
             imagen_url = req.file.path;
         }
 
-        const textoSQL = `
-            UPDATE productos
-            SET nombre = $1, descripcion = $2, valor = $3, stock = $4, imagen_url = $5
-            WHERE id_producto = $6 RETURNING *
-        `;
+        const textoSQL = `UPDATE productos SET nombre = $1, descripcion = $2, valor = $3, stock = $4, imagen_url = $5 WHERE id_producto = $6 RETURNING *`;
         const valores = [nombre, descripcion, valor, stock, imagen_url, id];
         const resultado = await pool.query(textoSQL, valores);
 
@@ -264,7 +260,6 @@ app.put('/api/productos/:id', upload.single('imagen'), async (req, res) => {
 app.delete('/api/productos/:id', async (req, res) => {
     const { id } = req.params;
     try {
-        // Opcional: Aquí podrías borrar la imagen de Cloudinary antes de la BD
         const textoSQL = 'DELETE FROM productos WHERE id_producto = $1';
         const resultado = await pool.query(textoSQL, [id]);
         if (resultado.rowCount === 0) {
@@ -291,10 +286,10 @@ app.get('/api/productos', async (req, res) => {
 
 
 // ===============================================================
-// --- RUTAS DE LOGIN, RESERVAS, RESEÑAS, ETC. (LIMPIAS) ---
+// --- RUTAS DE LOGIN, RESERVAS, RESEÑAS, ETC. ---
 // ===============================================================
 
-// --- RUTA POST para INICIAR SESIÓN ---
+// --- RUTA POST para INICIAR SESIÓN --- (Sigue igual, 'id_area' es correcto)
 app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
     if (!username || !password) {
@@ -311,16 +306,16 @@ app.post('/api/login', async (req, res) => {
 
         if (esValida) {
             const token = jwt.sign(
-                { userId: usuario.id, username: usuario.username }, 
-                JWT_SECRET, // Lee la clave del .env
-                { expiresIn: '1h' } 
+                { userId: usuario.id, username: usuario.username },
+                JWT_SECRET,
+                { expiresIn: '1h' }
             );
-            
-            res.status(200).json({ 
-                success: true, 
-                message: 'Inicio de sesión exitoso.', 
+
+            res.status(200).json({
+                success: true,
+                message: 'Inicio de sesión exitoso.',
                 token: token,
-                id_area: usuario.id_area
+                id_area: usuario.id_area // 'id_area' existe en la nueva tabla 'usuarios'
             });
 
         } else {
@@ -334,20 +329,23 @@ app.post('/api/login', async (req, res) => {
 
 // --- RUTA POST PARA CREAR RESERVAS (PÚBLICA) ---
 app.post('/api/reservas', async (req, res) => {
-    const { nombre, rut, telefono, servicio, fecha, hora, area_servicio } = req.body;
+    // --- ¡CAMBIO (BD MIGRADA)! --- 
+    // Se recibe id_servicio e id_area (números)
+    const { nombre, rut, telefono, id_servicio, fecha, hora, id_area } = req.body;
     console.log('Recibiendo nueva reserva pública:', req.body);
 
-    if (!nombre || !servicio || !fecha || !hora) {
-        return res.status(400).json({ success: false, message: 'Nombre, servicio, fecha y hora son obligatorios.' });
+    // --- ¡CAMBIO (BD MIGRADA)! --- 
+    if (!nombre || !id_servicio || !fecha || !hora || !rut || !id_area) {
+        return res.status(400).json({ success: false, message: 'Nombre, RUT, servicio, fecha, hora y área son obligatorios.' });
     }
 
     try {
-        const textoSQL = `
-            INSERT INTO reservas(nombre_cliente, rut_cliente, telefono_cliente, servicio, fecha_reserva, hora_reserva, area_servicio)
-            VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *
-        `;
-        const valores = [nombre, rut, telefono, servicio, fecha, hora, area_servicio];
-        
+        // --- ¡CAMBIO (BD MIGRADA)! --- 
+        // Se insertan los IDs. 'rut_cliente' ya existía.
+        const textoSQL = `INSERT INTO reservas(nombre_cliente, rut_cliente, telefono_cliente, id_servicio, fecha_reserva, hora_reserva, id_area) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING * `;
+        // --- ¡CAMBIO (BD MIGRADA)! --- 
+        const valores = [nombre, rut, telefono, id_servicio, fecha, hora, id_area];
+
         const resultado = await pool.query(textoSQL, valores);
 
         res.status(201).json({
@@ -362,20 +360,34 @@ app.post('/api/reservas', async (req, res) => {
 });
 
 // --- RUTAS DE RESEÑAS ---
+// REEMPLAZA ESTA RUTA COMPLETA (alrededor de la línea 369)
+
 app.post('/api/resenas', async (req, res) => {
-    const { nombre, comentario } = req.body;
-    if (!nombre || !comentario) {
-        return res.status(400).json({ message: 'El nombre y el comentario son obligatorios.' });
+    // 1. Recibe la calificación
+    const { nombre, comentario, calificacion } = req.body;
+
+    // 2. Valida la calificación
+    if (!nombre || !comentario || !calificacion) {
+        return res.status(400).json({ message: 'El nombre, el comentario y la calificación son obligatorios.' });
     }
+
     try {
-        const fecha = new Date();
         const estado = false;
-        const textoSQL = 'INSERT INTO resenas(nombre, "Comentario", "Fecha", "estado_aprobacion") VALUES($1, $2, $3, $4) RETURNING *';
-        const valores = [nombre, comentario, fecha, estado];
+
+        // --- ¡CORRECCIÓN! ---
+        const fecha = new Date(); // 1. Añade la fecha
+
+        // 2. Añade 'fecha_creacion' y '$5'
+        const textoSQL = 'INSERT INTO resenas(nombre, comentario, estado_aprobacion, calificacion, fecha_creacion) VALUES($1, $2, $3, $4, $5) RETURNING *';
+
+        // 3. Añade 'fecha' al array de valores
+        const valores = [nombre, comentario, estado, calificacion, fecha];
+        // --- FIN DE LA CORRECCIÓN ---
+
         const resultado = await pool.query(textoSQL, valores);
         res.status(201).json({
-                message: '¡Gracias por tu reseña! Ha sido enviada con éxito.',
-                data: resultado.rows[0]
+            message: '¡Gracias por tu reseña! Ha sido enviada con éxito.',
+            data: resultado.rows[0]
         });
     } catch (error) {
         console.error('🔥 Error al realizar la inserción:', error);
@@ -385,7 +397,9 @@ app.post('/api/resenas', async (req, res) => {
 
 app.get('/api/resenas', async (req, res) => {
     try {
-        const textoSQL = 'SELECT nombre, "Comentario" FROM resenas WHERE estado_aprobacion = true ORDER BY "Fecha" DESC';
+        // --- ¡CAMBIO (BD MIGRADA)! --- 
+        // Se actualizan nombres de columnas ("Comentario" -> comentario, "Fecha" -> fecha_creacion)
+        const textoSQL = 'SELECT nombre, comentario, calificacion FROM resenas WHERE estado_aprobacion = true ORDER BY fecha_creacion DESC';
         const resultado = await pool.query(textoSQL);
         res.status(200).json(resultado.rows);
     } catch (error) {
@@ -397,7 +411,9 @@ app.get('/api/resenas', async (req, res) => {
 // --- RUTAS ADMIN DE RESEÑAS ---
 app.get('/api/admin/resenas', async (req, res) => {
     try {
-        const textoSQL = 'SELECT id_resena, nombre, "Comentario", estado_aprobacion FROM resenas ORDER BY "Fecha" DESC';
+        // --- ¡CAMBIO (BD MIGRADA)! --- 
+        // Se actualizan nombres de columnas ("Comentario" -> comentario, "Fecha" -> fecha_creacion)
+        const textoSQL = 'SELECT id_resena, nombre, comentario, calificacion, estado_aprobacion FROM resenas ORDER BY fecha_creacion DESC';
         const resultado = await pool.query(textoSQL);
         res.status(200).json(resultado.rows);
     } catch (error) {
@@ -410,6 +426,8 @@ app.patch('/api/admin/resenas/:id', async (req, res) => {
     const { id } = req.params;
     const { estado } = req.body;
     try {
+        // --- ¡CAMBIO (BD MIGRADA)! --- 
+        // (Nombre de columna 'estado_aprobacion' era correcto)
         const textoSQL = 'UPDATE resenas SET estado_aprobacion = $1 WHERE id_resena = $2 RETURNING *';
         const resultado = await pool.query(textoSQL, [estado, id]);
         if (resultado.rowCount === 0) {
@@ -439,14 +457,18 @@ app.delete('/api/admin/resenas/:id', async (req, res) => {
 
 // --- RUTA HORARIOS OCUPADOS ---
 app.get('/api/horarios-ocupados', async (req, res) => {
-    const { fecha, area } = req.query;
-    if (!fecha || !area || area === 'undefined' || area === 'null') {
-        return res.status(400).json({ message: 'La fecha y el área son obligatorias para verificar la disponibilidad.' });
+    // --- ¡CAMBIO (BD MIGRADA)! --- 
+    // Se recibe id_area (número) en lugar de area (texto)
+    const { fecha, id_area } = req.query;
+    if (!fecha || !id_area || id_area === 'undefined' || id_area === 'null') {
+        return res.status(400).json({ message: 'La fecha y el ID de área son obligatorias para verificar la disponibilidad.' });
     }
     try {
-        const textoSQL = 'SELECT hora_reserva FROM reservas WHERE fecha_reserva = $1 AND area_servicio = $2';
-        const resultado = await pool.query(textoSQL, [fecha, area]);
-        const horariosOcupados = resultado.rows.map(fila => fila.hora_reserva);
+        // --- ¡CAMBIO (BD MIGRADA)! --- 
+        // Se consulta por id_area en lugar de area_servicio
+        const textoSQL = 'SELECT hora_reserva FROM reservas WHERE fecha_reserva = $1 AND id_area = $2';
+        const resultado = await pool.query(textoSQL, [fecha, id_area]);
+        const horariosOcupados = resultado.rows.map(fila => fila.hora_reserva.trim());
         res.status(200).json(horariosOcupados);
     } catch (error) {
         console.error('🔥 Error CRÍTICO al consultar horarios ocupados:', error);
@@ -457,14 +479,27 @@ app.get('/api/horarios-ocupados', async (req, res) => {
 
 // --- RUTAS ADMIN DE RESERVAS ---
 app.get('/api/admin/reservas', async (req, res) => {
-    const { area } = req.query;
-    let textoSQL = 'SELECT * FROM reservas';
+    // --- ¡CAMBIO (BD MIGRADA)! --- 
+    // El filtro ahora es por id_area
+    const { id_area } = req.query;
+
+    // --- ¡CAMBIO (BD MIGRADA)! --- 
+    // Hacemos JOIN para obtener los nombres de servicios y áreas
+    let textoSQL = `
+        SELECT 
+            r.*, 
+            s.titulo AS servicio_titulo, 
+            a.nombre_area 
+        FROM reservas r
+        LEFT JOIN servicios s ON r.id_servicio = s.id_servicio
+        LEFT JOIN areas_trabajo a ON r.id_area = a.id_area
+    `;
     const values = [];
-    if (area && area !== 'todos') {
-        textoSQL += ' WHERE area_servicio = $1';
-        values.push(area);
+    if (id_area && id_area !== 'todos') {
+        textoSQL += ' WHERE r.id_area = $1'; // Se filtra por id_area
+        values.push(id_area);
     }
-    textoSQL += ' ORDER BY fecha_reserva ASC, hora_reserva ASC';
+    textoSQL += ' ORDER BY r.fecha_reserva ASC, r.hora_reserva ASC';
     try {
         const resultado = await pool.query(textoSQL, values);
         res.status(200).json(resultado.rows);
@@ -475,22 +510,33 @@ app.get('/api/admin/reservas', async (req, res) => {
 });
 
 app.post('/api/admin/reservas', async (req, res) => {
-    const { nombre_cliente, rut_cliente, telefono_cliente, servicio, fecha_reserva, hora_reserva, area_servicio } = req.body;
-    if (!nombre_cliente || !telefono_cliente || !servicio || !fecha_reserva || !hora_reserva || !area_servicio) {
+    // --- ¡CAMBIO (BD MIGRADA)! --- 
+    // Se reciben IDs (id_servicio, id_area)
+    const { nombre_cliente, rut_cliente, telefono_cliente, id_servicio, fecha_reserva, hora_reserva, id_area } = req.body;
+    if (!nombre_cliente || !telefono_cliente || !id_servicio || !fecha_reserva || !hora_reserva || !id_area) {
         return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
     }
     try {
-        const checkSQL = 'SELECT id FROM reservas WHERE fecha_reserva = $1 AND hora_reserva = $2 AND area_servicio = $3';
-        const checkResult = await pool.query(checkSQL, [fecha_reserva, hora_reserva, area_servicio]);
+        // --- ¡CAMBIO (BD MIGRADA)! --- 
+        // El checkSQL ahora usa id_area
+        const checkSQL = 'SELECT id FROM reservas WHERE fecha_reserva = $1 AND hora_reserva = $2 AND id_area = $3';
+        const checkResult = await pool.query(checkSQL, [fecha_reserva, hora_reserva, id_area]);
         if (checkResult.rowCount > 0) {
-            return res.status(409).json({ message: `Este bloque horario ya está reservado para el área de ${area_servicio}.` });
+            return res.status(409).json({ message: `Este bloque horario ya está reservado para el área seleccionada.` });
         }
-        const textoSQL = `
-            INSERT INTO reservas(nombre_cliente, rut_cliente, telefono_cliente, servicio, fecha_reserva, hora_reserva, area_servicio)
-            VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *
-        `;
-        const valores = [nombre_cliente, rut_cliente, telefono_cliente, servicio, fecha_reserva, hora_reserva, area_servicio];
+
+        // --- ¡CORRECCIÓN FINAL! ---
+        // Se reescribió la consulta en una sola línea para eliminar 100%
+        // cualquier carácter de espacio corrupto (U+00A0) que causaba el error.
+        const textoSQL = `INSERT INTO reservas(nombre_cliente, rut_cliente, telefono_cliente, id_servicio, fecha_reserva, hora_reserva, id_area) VALUES($1, $2, $3, $4, $5, $6, $7) RETURNING *`;
+        // --- FIN DE LA CORRECCIÓN ---
+
+        // --- ¡CAMBIO (BD MIGRADA)! --- 
+        const valores = [nombre_cliente, rut_cliente, telefono_cliente, id_servicio, fecha_reserva, hora_reserva, id_area];
+
+        // Esta es la línea que fallaba (aprox 540)
         const resultado = await pool.query(textoSQL, valores);
+
         res.status(201).json(resultado.rows[0]);
     } catch (error) {
         console.error('🔥 Error al crear la reserva:', error);
@@ -500,27 +546,38 @@ app.post('/api/admin/reservas', async (req, res) => {
 
 app.put('/api/admin/reservas/:id', async (req, res) => {
     const { id } = req.params;
-    const { nombre_cliente, rut_cliente, telefono_cliente, servicio, fecha_reserva, hora_reserva, area_servicio } = req.body;
-    if (!nombre_cliente || !telefono_cliente || !servicio || !fecha_reserva || !hora_reserva || !area_servicio) {
+    const { nombre_cliente, rut_cliente, telefono_cliente, id_servicio, fecha_reserva, hora_reserva, id_area } = req.body;
+
+    if (!nombre_cliente || !telefono_cliente || !id_servicio || !fecha_reserva || !hora_reserva || !id_area) {
         return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
     }
+
     try {
-        const checkSQL = 'SELECT id FROM reservas WHERE fecha_reserva = $1 AND hora_reserva = $2 AND area_servicio = $3 AND id != $4';
-        const checkResult = await pool.query(checkSQL, [fecha_reserva, hora_reserva, area_servicio, id]);
+        // Primero, revisa si hay conflictos
+        const checkSQL = 'SELECT id FROM reservas WHERE fecha_reserva = $1 AND hora_reserva = $2 AND id_area = $3 AND id != $4';
+        const checkResult = await pool.query(checkSQL, [fecha_reserva, hora_reserva, id_area, id]);
+
         if (checkResult.rowCount > 0) {
-            return res.status(409).json({ message: `Este bloque horario ya está ocupado por otra reserva en el área de ${area_servicio}.` });
+            return res.status(409).json({ message: `Este bloque horario ya está ocupado por otra reserva en el área seleccionada.` });
         }
-        const textoSQL = `
-            UPDATE reservas
-            SET nombre_cliente = $1, rut_cliente = $2, telefono_cliente = $3, servicio = $4, fecha_reserva = $5, hora_reserva = $6, area_servicio = $7
-            WHERE id = $8 RETURNING *
-        `;
-        const valores = [nombre_cliente, rut_cliente, telefono_cliente, servicio, fecha_reserva, hora_reserva, area_servicio, id];
+
+        // --- CORRECCIÓN FINAL ---
+        // Se reescribió la consulta en una sola línea para eliminar 100%
+        // cualquier carácter de espacio corrupto (U+00A0) que causaba el error.
+        const textoSQL = `UPDATE reservas SET nombre_cliente = $1, rut_cliente = $2, telefono_cliente = $3, id_servicio = $4, fecha_reserva = $5, hora_reserva = $6, id_area = $7 WHERE id = $8 RETURNING *`;
+        // --- FIN DE LA CORRECCIÓN ---
+
+        const valores = [nombre_cliente, rut_cliente, telefono_cliente, id_servicio, fecha_reserva, hora_reserva, id_area, id];
+
+        // Esta es la línea que fallaba (ahora 576)
         const resultado = await pool.query(textoSQL, valores);
+
         if (resultado.rowCount === 0) {
             return res.status(404).json({ message: 'Reserva no encontrada.' });
         }
+
         res.status(200).json(resultado.rows[0]);
+
     } catch (error) {
         console.error(`🔥 Error al actualizar la reserva ${id}:`, error);
         res.status(500).json({ message: 'Error interno del servidor.' });
@@ -542,7 +599,7 @@ app.delete('/api/admin/reservas/:id', async (req, res) => {
     }
 });
 
-// --- RUTAS DE ÁREAS ---
+// --- RUTAS DE ÁREAS --- (Sin cambios, el schema es compatible)
 app.get('/api/areas', async (req, res) => {
     try {
         const textoSQL = 'SELECT * FROM areas_trabajo ORDER BY nombre_area ASC';
@@ -562,9 +619,9 @@ app.post('/api/areas', async (req, res) => {
     try {
         const textoSQL = 'INSERT INTO areas_trabajo(nombre_area) VALUES($1) RETURNING *';
         const resultado = await pool.query(textoSQL, [nombre]);
-        res.status(201).json({ 
-            message: 'Área creada con éxito', 
-            data: resultado.rows[0] 
+        res.status(201).json({
+            message: 'Área creada con éxito',
+            data: resultado.rows[0]
         });
     } catch (error) {
         if (error.code === '23505') {
@@ -583,13 +640,13 @@ app.delete('/api/areas/:id', async (req, res) => {
         if (resultado.rowCount === 0) {
             return res.status(404).json({ message: 'Área no encontrada.' });
         }
-        res.status(200).json({ 
-            message: 'Área eliminada con éxito', 
-            data: resultado.rows[0] 
+        res.status(200).json({
+            message: 'Área eliminada con éxito',
+            data: resultado.rows[0]
         });
     } catch (error) {
-        if (error.code === '23503') { 
-            return res.status(409).json({ message: 'Error: No se puede eliminar el área porque está asignada a uno o más trabajadores.' });
+        if (error.code === '23503') {
+            return res.status(409).json({ message: 'Error: No se puede eliminar el área porque está asignada a uno o más trabajadores o servicios.' });
         }
         console.error('🔥 Error al eliminar área:', error);
         res.status(500).json({ message: 'Error interno del servidor.' });
@@ -605,14 +662,12 @@ app.post('/api/trabajadores', async (req, res) => {
     try {
         const saltRounds = 10;
         const passwordHash = await bcrypt.hash(password, saltRounds);
-        const insertSQL = `
-            INSERT INTO usuarios(nombre_completo, username, password_hash, "Correo", id_area)
-            VALUES($1, $2, $3, $4, $5)
-            RETURNING id, username, nombre_completo;
-        `;
+        // --- ¡CAMBIO (BD MIGRADA)! --- 
+        // Se actualiza nombre de columna ("Correo" -> correo)
+        const insertSQL = `INSERT INTO usuarios(nombre_completo, username, password_hash, correo, id_area) VALUES($1, $2, $3, $4, $5) RETURNING id, username, nombre_completo; `;
         const values = [nombre, username, passwordHash, email, id_area];
         const result = await pool.query(insertSQL, values);
-        res.status(201).json({ 
+        res.status(201).json({
             message: 'Trabajador añadido con éxito.',
             data: result.rows[0]
         });
@@ -627,16 +682,10 @@ app.post('/api/trabajadores', async (req, res) => {
 
 app.get('/api/trabajadores', async (req, res) => {
     try {
-        const textoSQL = `
-            SELECT 
-                u.id, 
-                u.nombre_completo, 
-                u.username, 
-                u."Correo" as email, 
-                u.id_area
-            FROM usuarios u
-            ORDER BY u.nombre_completo ASC;
-        `;
+        // --- ¡CAMBIO (BD MIGRADA)! --- 
+        // Se actualiza nombre de columna ("Correo" -> correo)
+        // Se añade JOIN para obtener el nombre del área
+        const textoSQL = `SELECT u.id, u.nombre_completo, u.username, u.correo as email, u.id_area,a.nombre_area FROM usuarios u LEFT JOIN areas_trabajo a ON u.id_area = a.id_area ORDER BY u.nombre_completo ASC;`;
         const resultado = await pool.query(textoSQL);
         res.status(200).json(resultado.rows);
     } catch (error) {
@@ -654,7 +703,7 @@ app.put('/api/trabajadores/:id', async (req, res) => {
     }
     try {
         let passwordHash;
-        if (password) { // Solo actualiza la contraseña si se provee una nueva
+        if (password) {
             const saltRounds = 10;
             passwordHash = await bcrypt.hash(password, saltRounds);
         }
@@ -663,18 +712,12 @@ app.put('/api/trabajadores/:id', async (req, res) => {
         let values;
 
         if (passwordHash) {
-            updateSQL = `
-                UPDATE usuarios 
-                SET nombre_completo = $1, username = $2, "Correo" = $3, id_area = $4, password_hash = $5
-                WHERE id = $6 RETURNING id, username, nombre_completo;
-            `;
+            // --- ¡CAMBIO (BD MIGRADA)! --- 
+            updateSQL = `UPDATE usuarios SET nombre_completo = $1, username = $2, correo = $3, id_area = $4, password_hash = $5 WHERE id = $6 RETURNING id, username, nombre_completo; `;
             values = [nombre, username, email, id_area, passwordHash, id];
         } else {
-            updateSQL = `
-                UPDATE usuarios 
-                SET nombre_completo = $1, username = $2, "Correo" = $3, id_area = $4
-                WHERE id = $5 RETURNING id, username, nombre_completo;
-            `;
+            // --- ¡CAMBIO (BD MIGRADA)! --- 
+            updateSQL = `UPDATE usuarios SET nombre_completo = $1, username = $2, correo = $3, id_area = $4 WHERE id = $5 RETURNING id, username, nombre_completo;`;
             values = [nombre, username, email, id_area, id];
         }
 
@@ -682,7 +725,7 @@ app.put('/api/trabajadores/:id', async (req, res) => {
         if (result.rowCount === 0) {
             return res.status(404).json({ message: 'Trabajador no encontrado.' });
         }
-        res.status(200).json({ 
+        res.status(200).json({
             message: 'Trabajador actualizado con éxito.',
             data: result.rows[0]
         });
@@ -700,36 +743,38 @@ app.put('/api/trabajadores/:id', async (req, res) => {
 // ===============================================================
 
 app.get('/api/trabajador/perfil', verificarToken, async (req, res) => {
-    try {
-        const userId = req.user.userId; 
-        const textoSQL = `
-            SELECT 
-                u.id, 
-                u.nombre_completo, 
-                u.username, 
-                u."Correo", 
-                u.id_area,
-                a.nombre_area
-            FROM usuarios u
-            LEFT JOIN areas_trabajo a ON u.id_area = a.id_area
-            WHERE u.id = $1;
-        `;
-        
-        const resultado = await pool.query(textoSQL, [userId]);
-        
-        if (resultado.rowCount === 0) {
-            return res.status(404).json({ message: 'Usuario no encontrado.' });
-        }
-        
-        res.status(200).json(resultado.rows[0]);
-    } catch (error) {
-        console.error('🔥 Error en GET /api/trabajador/perfil:', error);
-        res.status(500).json({ message: 'Error interno del servidor.' });
+  try {
+    const userId = req.user.userId;
+
+    const sql = `
+      SELECT
+        u.id,
+        u.nombre_completo,
+        u.username,
+        u.correo,
+        u.id_area,
+        a.nombre_area
+      FROM usuarios AS u
+      LEFT JOIN areas_trabajo AS a ON a.id_area = u.id_area
+      WHERE u.id = $1
+      LIMIT 1
+    `;
+
+    const { rows } = await pool.query(sql, [userId]);
+
+    if (rows.length === 0) {
+      return res.status(404).json({ message: 'Usuario no encontrado.' });
     }
+
+    return res.status(200).json(rows[0]);
+  } catch (error) {
+    console.error('🔥 Error en GET /api/trabajador/perfil:', error);
+    return res.status(500).json({ message: 'Error interno del servidor.' });
+  }
 });
 
 app.put('/api/trabajador/cambiar-contrasena', verificarToken, async (req, res) => {
-    const userId = req.user.userId; 
+    const userId = req.user.userId;
     const { currentPassword, newPassword } = req.body;
     if (!currentPassword || !newPassword) {
         return res.status(400).json({ message: 'Se requiere la contraseña actual y la nueva.' });
@@ -737,31 +782,188 @@ app.put('/api/trabajador/cambiar-contrasena', verificarToken, async (req, res) =
     try {
         const sqlSelect = 'SELECT password_hash FROM usuarios WHERE id = $1';
         const resultado = await pool.query(sqlSelect, [userId]);
-        
+
         if (resultado.rowCount === 0) {
             return res.status(404).json({ message: 'Usuario no encontrado.' });
         }
-        
+
         const usuario = resultado.rows[0];
-        
+
         const esValida = await bcrypt.compare(currentPassword, usuario.password_hash);
-        
+
         if (!esValida) {
             return res.status(403).json({ message: 'La contraseña actual es incorrecta.' });
         }
-        
+
         const saltRounds = 10;
         const newPasswordHash = await bcrypt.hash(newPassword, saltRounds);
-        
+
         const sqlUpdate = 'UPDATE usuarios SET password_hash = $1 WHERE id = $2';
         await pool.query(sqlUpdate, [newPasswordHash, userId]);
-        
+
         res.status(200).json({ message: 'Contraseña actualizada con éxito.' });
     } catch (error) {
         console.error('🔥 Error en PUT /api/trabajador/cambiar-contrasena:', error);
         res.status(500).json({ message: 'Error interno del servidor.' });
     }
 });
+
+
+// --- RUTA NUEVA: OBTENER UNA SOLA RESERVA POR ID ---
+// (Necesaria para la página de 'registrar_pago.js')
+app.get('/api/admin/reservas/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        // --- SQL LIMPIO ---
+        const textoSQL = `SELECT 
+            r.*, 
+            s.titulo AS servicio_titulo, 
+            a.nombre_area 
+        FROM reservas r
+        LEFT JOIN servicios s ON r.id_servicio = s.id_servicio
+        LEFT JOIN areas_trabajo a ON r.id_area = a.id_area
+        WHERE r.id = $1`;
+
+        const resultado = await pool.query(textoSQL, [id]);
+
+        if (resultado.rowCount === 0) {
+            return res.status(404).json({ message: 'Reserva no encontrada.' });
+        }
+        res.status(200).json(resultado.rows[0]); // Devuelve solo un objeto
+    } catch (error) {
+        console.error(`🔥 Error al consultar la reserva ${id}:`, error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+}); // <-- El error 'ReferenceError: s' estaba aquí
+
+
+// --- RUTA GET: OBTENER TODOS LOS PAGOS (PARA EL DASHBOARD) ---
+app.get('/api/pagos', async (req, res) => {
+    try {
+        // Esta consulta trae todos los pagos
+        // El script dashboards.js se encargará de cruzar esta info
+        // con la de /api/admin/reservas y /api/areas
+        const textoSQL = `SELECT * FROM pagos ORDER BY fecha_pago DESC`;
+        const resultado = await pool.query(textoSQL);
+        res.status(200).json(resultado.rows);
+    } catch (error) {
+        console.error('🔥 Error en GET /api/pagos:', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+
+// --- RUTA NUEVA: REGISTRAR UN PAGO ---
+app.post('/api/pagos', async (req, res) => {
+    const {
+        id_reserva,
+        tipo_pago,
+        monto_pagado,
+        metodo_pago,
+        fecha_pago,
+        nombre_cliente,
+        tipo_servicio,
+        registrado_por
+    } = req.body;
+
+    if (!id_reserva || !monto_pagado || !metodo_pago || !fecha_pago) {
+        return res.status(400).json({ message: 'Faltan campos obligatorios para el pago.' });
+    }
+
+    try {
+        // --- SQL LIMPIO ---
+        const textoSQL = `INSERT INTO pagos (id_reserva, tipo_pago, monto_pagado, metodo_pago, fecha_pago, nombre_cliente, tipo_servicio, registrado_por)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        RETURNING id_pago`;
+
+        const valores = [id_reserva, tipo_pago, monto_pagado, metodo_pago, fecha_pago, nombre_cliente, tipo_servicio, registrado_por];
+
+        await pool.query(textoSQL, valores);
+        res.status(201).json({ message: 'Pago registrado con éxito.' });
+
+    } catch (error) {
+        console.error('🔥 Error al registrar el pago:', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
+});
+
+
+// ===============================================================
+// --- RUTAS FICHAS CLÍNICAS (GET + POST) ---
+//    GET  /api/fichas?id_reserva=123  -> 200 con objeto | 404 si no existe
+//    POST /api/fichas                 -> 201 crea registro
+// ===============================================================
+// server.js — GET /api/fichas (incluye registrado_por y fecha_creacion; 204 si no hay)
+// Opción 2: si NO quieres agregar la columna ahora, quita `fecha_creacion` del SELECT
+// server.js — reemplaza la ruta GET /api/fichas por esta versión SIN fecha_creacion
+
+app.get('/api/fichas', async (req, res) => {
+  const id_reserva = Number(req.query.id_reserva);
+  if (!Number.isInteger(id_reserva) || id_reserva <= 0) {
+    return res.status(400).json({ message: 'Parámetro id_reserva es requerido' });
+  }
+
+  try {
+    const { rows } = await pool.query(
+      `SELECT id_ficha, id_reserva, detalle, registrado_por
+       FROM public.fichas_clinicas
+       WHERE id_reserva = $1
+       ORDER BY id_ficha DESC
+       LIMIT 1`,
+      [id_reserva]
+    );
+
+    if (rows.length === 0) return res.status(204).send();
+    return res.status(200).json(rows[0]);
+  } catch (err) {
+    console.error('GET /api/fichas error:', err);
+    return res.status(500).json({ message: 'Error al obtener ficha' });
+  }
+});
+
+
+
+// Si también quitaste fecha_creacion, ajusta el POST para no devolverla:
+// server.js — POST /api/fichas SIN fecha_creacion en el RETURNING
+// server.js — POST /api/fichas (inserta `registrado_por` si viene en el body)
+app.post('/api/fichas', async (req, res) => {
+  try {
+    const id_reserva = Number(req.body?.id_reserva);
+    const detalle_raw = req.body?.detalle ?? req.body?.detalles_sesion ?? '';
+    const detalle = typeof detalle_raw === 'string' ? detalle_raw.trim() : String(detalle_raw).trim();
+    const registrado_por = (req.body?.registrado_por ?? null) || null;
+
+    if (!Number.isInteger(id_reserva) || id_reserva <= 0 || !detalle) {
+      return res.status(400).json({ message: 'id_reserva y detalle son obligatorios' });
+    }
+
+    await pool.query('BEGIN');
+
+    const dup = await pool.query(
+      'SELECT 1 FROM public.fichas_clinicas WHERE id_reserva = $1 LIMIT 1',
+      [id_reserva]
+    );
+    if (dup.rowCount > 0) {
+      await pool.query('ROLLBACK');
+      return res.status(409).json({ message: 'Ya existe una ficha para esta reserva' });
+    }
+
+    const insert = await pool.query(
+      `INSERT INTO public.fichas_clinicas (id_reserva, detalle, registrado_por)
+       VALUES ($1, $2, $3)
+       RETURNING id_ficha, id_reserva, detalle, registrado_por`,
+      [id_reserva, detalle, registrado_por]
+    );
+
+    await pool.query('COMMIT');
+    return res.status(201).json({ message: 'Ficha guardada correctamente', ficha: insert.rows[0] });
+  } catch (err) {
+    try { await pool.query('ROLLBACK'); } catch {}
+    console.error('POST /api/fichas error:', err);
+    return res.status(500).json({ message: 'Error al guardar la ficha' });
+  }
+});
+
 
 // 5. Iniciar el servidor
 app.listen(PORT, () => {

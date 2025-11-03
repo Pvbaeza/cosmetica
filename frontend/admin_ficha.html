@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ficha Clínica de Reserva</title>
+  <link rel="stylesheet" href="assets/css/header.css"/>
+  <link rel="stylesheet" href="assets/css/footer.css"/>
+  <link rel="stylesheet" href="assets/css/admin_ficha.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+</head>
+
+<body>
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <span>Cosmetología Morín</span>
+      <img src="assets/img/Logo_header.png" alt="Logo Cosmetología Morín"/>
+    </div>
+    <nav>
+      <button id="menu-toggle"><span></span><span></span><span></span></button>
+      <ul id="menu">
+        <li class="menu-normal"><a href="index.html">Inicio</a></li>
+        <li class="menu-normal"><a href="servicios.html">Servicios</a></li>
+        <li class="menu-normal"><a href="productos.html">Productos</a></li>
+
+        <!-- Opciones solo visibles si hay sesión iniciada -->
+        <li class="menu-admin hidden"><a href="admin_reservas.html"><strong>Reservas</strong></a></li>
+        <li class="menu-admin hidden"><a href="admin_productos.html"><strong>Productos</strong></a></li>
+        <li class="menu-admin hidden"><a href="admin_servicios.html"><strong>Servicios</strong></a></li>
+        <li class="menu-admin hidden"><a href="admin_resenas.html"><strong>Reseñas</strong></a></li>
+        <li class="menu-admin hidden"><a href="admin_ajustes.html"><strong>Ajustes</strong></a></li>
+        <li class="menu-admin hidden"><a href="#" id="logout"><strong>Cerrar Sesión</strong></a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- CONTENIDO -->
+  <main>
+    <h1 class="title-page">Ficha Clínica de Sesión</h1>
+
+    <div class="contenedor-ficha">
+      <!-- Resumen reserva -->
+      <article class="tarjeta-resumen" id="reserva-summary">
+        <h2 class="subtitulo-seccion">Detalles de la Reserva</h2>
+
+        <div id="ficha-loading" class="bloque-cargando">
+          <i class="fas fa-spinner fa-spin fa-2x"></i>
+          <p>Cargando datos de la reserva...</p>
+        </div>
+
+        <div id="ficha-details" class="cuerpo-resumen" style="display: none;">
+          <p><strong>Cliente:</strong> <span id="ficha-cliente-nombre">...</span></p>
+          <p><strong>Servicio:</strong> <span id="ficha-servicio-nombre">...</span></p>
+          <p><strong>Fecha:</strong> <span id="ficha-fecha-reserva">...</span></p>
+          <p><strong>Área:</strong> <span id="ficha-area-servicio">...</span></p>
+        </div>
+      </article>
+
+      <!-- Ficha -->
+      <article class="tarjeta-ficha" id="ficha-content">
+        <h2 class="subtitulo-seccion">Registro de la Sesión</h2>
+
+        <!-- Form crear/editar -->
+        <form id="ficha-form-crear" class="form-ajustes" style="display: none;">
+          <p class="mensaje-info">
+            Completa o actualiza los detalles de la sesión. Al guardar por primera vez se marcará como <strong>Realizada</strong>.
+          </p>
+
+          <div class="grupo-campo">
+            <label for="ficha-detalles" class="etiqueta-campo">
+              Detalles de la sesión (qué se realizó, productos usados, observaciones, etc.)
+            </label>
+            <textarea id="ficha-detalles" class="campo-texto" rows="8" required></textarea>
+          </div>
+
+          <div class="grupo-botones-ficha">
+            <button type="submit" id="btn-guardar-ficha" class="btn btn-primario">
+              <i class="fas fa-save"></i> Guardar Ficha y Marcar como Realizada
+            </button>
+            <button type="button" id="btn-cancelar-edicion" class="btn btn-secundario" style="display:none;">
+              Cancelar
+            </button>
+          </div>
+        </form>
+
+        <!-- Vista solo lectura -->
+        <div id="ficha-display-ver" class="contenedor-ficha-guardada" style="display: none;">
+          <p class="mensaje-info">Esta reserva ya fue marcada como <strong>Realizada</strong>.</p>
+
+          <div id="ficha-texto-guardado" class="texto-guardado"></div>
+
+          <div class="grupo-botones-ficha">
+            <button type="button" id="btn-editar-ficha" class="btn btn-secundario">
+              Editar ficha
+            </button>
+          </div>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-socials-container">
+      <div class="footer-social">
+        <a href="#" aria-label="Tiktok"><img src="assets/img/Logos/tik-tok.png" alt="Tiktok"></a>
+        <span class="social-text">Tiktok</span>
+      </div>
+      <div class="footer-social">
+        <a href="#" aria-label="Instagram"><img src="assets/img/Logos/instagram.png" alt="Instagram"></a>
+        <span class="social-text">Instagram</span>
+      </div>
+      <div class="footer-social">
+        <a href="#" aria-label="WhatsApp"><img src="assets/img/Logos/whatsapp.png" alt="WhatsApp"></a>
+        <span class="social-text">WhatsApp</span>
+      </div>
+      <div class="footer-social">
+        <a href="#" aria-label="Correo"><img src="assets/img/Logos/gmail.png" alt="Correo"></a>
+        <span class="social-text">Correo</span>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Cosmetología Morín. Todos los derechos reservados MindMatrix.</p>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="assets/js/admin-guard.js"></script>
+  <script src="assets/js/menuhamburguesa.js"></script>
+  <script src="assets/js/admin_ficha.js"></script>
+</body>
+</html>

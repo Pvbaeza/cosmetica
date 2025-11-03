@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +12,7 @@
 </head>
 
 <body>
-    <main>
+
     <header>
         <div class="logo">
             <span>Cosmetología Morín</span>
@@ -20,29 +21,44 @@
         <nav>
             <button id="menu-toggle"><span></span><span></span><span></span></button>
             <ul id="menu">
-                 <li class="menu-normal"><a href="index.html">Inicio</a></li>
-                 <li class="menu-normal"><a href="servicios.html">Servicios</a></li>
-                 <li class="menu-normal"><a href="productos.html">Productos</a></li>
-                 <li class="menu-admin hidden"><a href="admin_reservas.html"><strong>Reservas</strong></a></li>
-                 <li class="menu-admin hidden"><a href="admin_productos.html"><strong>Productos</strong></a></li>
-                 <li class="menu-admin hidden"><a href="admin_servicios.html"><strong>Servicios</strong></a></li>
-                 <li class="menu-admin hidden"><a href="admin_resenas.html"><strong>Reseñas</strong></a></li>
-                 <li class="menu-admin hidden"><a href="admin_ajustes.html"><strong>Ajustes</strong></a></li>
-                 <li class="menu-admin hidden"><a href="#" id="logout"><strong>Cerrar Sesión</strong></a></li>
+                <li class="menu-normal"><a href="index.html">Inicio</a></li>
+                <li class="menu-normal"><a href="servicios.html">Servicios</a></li>
+                <li class="menu-normal"><a href="productos.html">Productos</a></li>
+                <li class="menu-admin hidden"><a href="admin_reservas.html"><strong>Reservas</strong></a></li>
+                <li class="menu-admin hidden"><a href="admin_productos.html"><strong>Productos</strong></a></li>
+                <li class="menu-admin hidden"><a href="admin_servicios.html"><strong>Servicios</strong></a></li>
+                <li class="menu-admin hidden"><a href="admin_resenas.html"><strong>Reseñas</strong></a></li>
+                <li class="menu-admin hidden"><a href="admin_ajustes.html"><strong>Ajustes</strong></a></li>
+                <li class="menu-admin hidden"><a href="#" id="logout"><strong>Cerrar Sesión</strong></a></li>
             </ul>
         </nav>
     </header>
 
-    <h1 class="title-page">Administración de Servicios</h1>
-
     <main class="container">
+        <h1 class="title-page">Administración de Servicios</h1>
+
         <div class="actions">
             <button class="btn btn-primary">
                 <i class="fas fa-plus"></i> Añadir Nuevo Servicio
             </button>
         </div>
 
-        <!-- La lista de servicios se llenará dinámicamente -->
+        <section class="seccion-filtros" aria-label="Filtros de servicios">
+  <div class="contenedor-filtros">
+    <label for="filtro-area" class="etiqueta-filtro">
+      <i class="fas fa-filter" aria-hidden="true"></i> Área:
+    </label>
+    <select id="filtro-area" class="select-filtro">
+      <option value="todas">Mostrar Todas</option>
+    </select>
+
+    <label for="buscador-servicios" class="etiqueta-filtro etiqueta-buscar">
+      <i class="fas fa-search" aria-hidden="true"></i> Buscar:
+    </label>
+    <input type="search" id="buscador-servicios" class="input-buscar" placeholder="Título, descripción…">
+  </div>
+</section>
+
         <section class="services-list">
             <h2>Servicios Existentes</h2>
             <p>Cargando servicios...</p>
@@ -53,47 +69,47 @@
         <div class="modal-content">
             <button class="modal-close" title="Cerrar"><i class="fas fa-times"></i></button>
             <h2>Añadir/Editar Servicio</h2>
+            
             <form class="service-form">
                 <div class="form-group">
                     <label for="service-title-input">Título del Servicio</label>
-                    <input type="text" id="service-title-input" placeholder="Ej: Pedicure Completa" required>
+                    <input type="text" id="service-title-input" name="titulo" placeholder="Ej: Pedicure Completa" required>
                 </div>
+                
                 <div class="form-group">
                     <label for="service-subtitle-input">Subtítulo</label>
-                    <input type="text" id="service-subtitle-input" placeholder="Ej: Relajación y cuidado para tus pies">
+                    <input type="text" id="service-subtitle-input" name="subtitulo" placeholder="Ej: Relajación y cuidado para tus pies">
                 </div>
 
-                <!-- CAMBIO: De input de texto a select -->
                 <div class="form-group">
                     <label for="service-staff-input">Área</label>
-                    <select id="service-staff-input" required>
+                    <select id="service-staff-input" name="id_area" required>
                         <option value="" disabled selected>Selecciona un área...</option>
-                        <!-- Opciones se cargarán desde la BD -->
-                    </select>
+                        </select>
                 </div>
 
                 <div class="form-group">
                     <label for="service-description-input">Descripción</label>
-                    <textarea id="service-description-input" rows="4" placeholder="Describe los detalles del servicio..."></textarea>
+                    <textarea id="service-description-input" name="descripcion" rows="4" placeholder="Describe los detalles del servicio..."></textarea>
                 </div>
+                
                 <div class="form-group">
                     <label for="service-price-input">Valor (CLP)</label>
-                    <input type="number" id="service-price-input" placeholder="Ej: 18000" required>
+                    <input type="number" id="service-price-input" name="valor" placeholder="Ej: 18000" required>
                 </div>
+                
                 <div class="form-group">
                     <label for="service-image-input">Imagen del Servicio</label>
-                    <input type="file" id="service-image-input" accept="image/png, image/jpeg">
+                    <input type="file" id="service-image-input" name="imagen" accept="image/png, image/jpeg">
                     <img id="image-preview" src="" alt="Previsualización de imagen">
                 </div>
+                
                 <button type="submit" class="btn btn-primary">Guardar Cambios</button>
             </form>
         </div>
     </div>
 
-    </main>
-</body>
-
-<footer class="site-footer">
+    <footer class="site-footer">
         <div class="footer-socials-container">
             <div class="footer-social">
                 <a href="#" aria-label="Tiktok"><img src="assets/img/Logos/tik-tok.png" alt="Tiktok"></a>
@@ -123,4 +139,7 @@
     <script src="assets/js/admin-guard.js"></script>
     <script src="assets/js/menuhamburguesa.js"></script>
     <script src="assets/js/admin_servicios.js"></script>
+    <script src="assets/js/filtro_servicios.js"></script>
+
+</body>
 </html>

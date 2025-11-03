@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Cosmética</title>
+    <link rel="stylesheet" href="assets/css/dashboard.css">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0/dist/chartjs-plugin-datalabels.min.js"></script>
+</head>
+<body>
+
+    <header>
+        <h1>📊 Dashboard de Negocios (Cosmética)</h1>
+    </header>
+
+    <main>
+        <section class="kpi-grid">
+            <div class="card">
+                <h3>Ingresos Totales (Mes)</h3>
+                <p id="kpi-ingresos"></p>
+                <small></small>
+            </div>
+            <div class="card">
+                <h3>Reservas Totales (Mes)</h3>
+                <p id="kpi-reservas"></p>
+                <small></small>
+            </div>
+            <div class="card">
+                <h3>Calificación Promedio</h3>
+                <p id="kpi-calificacion"></p>
+                <small></small>
+            </div>
+            <div class="card">
+                <h3>Tasa de Cancelación</h3>
+                <p id="kpi-cancelacion"></p>
+                <small></small>
+            </div>
+        </section>
+
+        <section class="chart-grid">
+            
+            <div class="chart-container">
+                <h2>Ingresos por Área de Trabajo en %</h2>
+                <canvas id="ingresosTipoChart"></canvas>
+            </div>
+            
+            <div class="chart-container">
+                <h2>Top 5 Servicios Más Solicitados</h2>
+                <canvas id="topServiciosChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h2>Top 5 Áreas de Trabajo Más Solicitadas</h2>
+                <canvas id="ingresosAreaChart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h2>Ingresos del Mes (Últimos 30 días)</h2>
+                <canvas id="ingresosMesChart"></canvas>
+            </div>
+
+        </section>
+    </main>
+
+    <script src="assets/js/dashboards.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Pago de Reserva</title>
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/footer.css">
+    <link rel="stylesheet" href="assets/css/pagos.css"> 
+    <link rel="stylesheet" href="assets/css/registrar_pago.css"> <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<header>
+        <div class="logo">
+            <span>Cosmetología Morín</span>
+            <img src="assets/img/Logo_header.png" alt="Logo Cosmetología Morín">
+        </div>
+        <nav>
+            <button id="menu-toggle"><span></span><span></span><span></span></button>
+            <ul id="menu">
+                 <li class="menu-normal"><a href="index.html">Inicio</a></li>
+                 <li class="menu-normal"><a href="servicios.html">Servicios</a></li>
+                 <li class="menu-normal"><a href="productos.html">Productos</a></li>
+                 <li class="menu-admin hidden"><a href="admin_reservas.html"><strong>Reservas</strong></a></li>
+                 <li class="menu-admin hidden"><a href="admin_productos.html"><strong>Productos</strong></a></li>
+                 <li class="menu-admin hidden"><a href="admin_servicios.html"><strong>Servicios</strong></a></li>
+                 <li class="menu-admin hidden"><a href="admin_resenas.html"><strong>Reseñas</strong></a></li>
+                 <li class="menu-admin hidden"><a href="admin_ajustes.html"><strong>Ajustes</strong></a></li>
+                 <li class="menu-admin hidden"><a href="#" id="logout"><strong>Cerrar Sesión</strong></a></li>
+            </ul>
+        </nav>
+    </header>
+
+
+<body>
+
+    <main>
+        <section class="admin-section">
+            <h1 class="section-title">Registrar Pago</h1>
+
+            <article class="settings-card" id="reserva-summary">
+                <h2 class="subsection-title">Detalles de la Reserva</h2>
+                <div id="pago-loading" style="text-align: center; padding: 1rem;">
+                    <i class="fas fa-spinner fa-spin"></i> Cargando datos de la reserva...
+                </div>
+                <div id="pago-details" style="display: none;">
+                    <p><strong>Cliente:</strong> <span id="pago-cliente-nombre">...</span></p>
+                    <p><strong>Servicio:</strong> <span id="pago-servicio-nombre">...</span></p>
+                    <p><strong>Fecha:</strong> <span id="pago-fecha-reserva">...</span></p>
+                    <p><strong>Área:</strong> <span id="pago-area-servicio">...</span></p>
+                    <p><strong>ID Reserva:</strong> <span id="pago-id-reserva">...</span></p>
+                </div>
+            </article>
+
+            <article class="settings-card" id="payment-options">
+                <h2 class="subsection-title">Selecciona una Opción</h2>
+                <div class="payment-buttons">
+                    <button id="btn-registrar-abono" class="btn btn-secondary">
+                        <i class="fas fa-hand-holding-usd"></i> Registrar Abono ($10.000)
+                    </button>
+                    <button id="btn-mostrar-pago-final" class="btn btn-primary">
+                        <i class="fas fa-money-check-alt"></i> Registrar Pago Final
+                    </button>
+                </div>
+            </article>
+
+            <article class="settings-card" id="pago-final-form-container" style="display: none;">
+                <h2 class="subsection-title">Detalles del Pago Final</h2>
+                <form id="pago-final-form" class="settings-form">
+                    
+                    <div class="form-group">
+                        <label for="pago-final-monto" class="form-label">Monto Final Pagado (CLP)</label>
+                        <input type="number" id="pago-final-monto" class="form-input" placeholder="Ej: 25000" required>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="pago-final-metodo" class="form-label">Método de Pago</label>
+                            <select id="pago-final-metodo" class="form-select" required>
+                                <option value="Transferencia">Transferencia</option>
+                                <option value="Efectivo">Efectivo</option>
+                                <option value="Tarjeta">Tarjeta</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="pago-final-fecha" class="form-label">Fecha del Pago</label>
+                            <input type="date" id="pago-final-fecha" class="form-input" required>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Guardar Pago Final
+                    </button>
+                </form>
+            </article>
+
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-socials-container">
+            <div class="footer-social">
+                <a href="#" aria-label="Tiktok"><img src="assets/img/Logos/tik-tok.png" alt="Tiktok"></a>
+                <span class="social-text">Tiktok</span>
+            </div>
+            <div class="footer-social">
+                <a href="#" aria-label="Instagram"><img src="assets/img/Logos/instagram.png" alt="Instagram"></a>
+                <span class="social-text">Instagram</span>
+            </div>
+            <div class="footer-social">
+                <a href="#" aria-label="WhatsApp"><img src="assets/img/Logos/whatsapp.png" alt="WhatsApp"></a>
+                <span class="social-text">WhatsApp</span>
+            </div>
+            <div class="footer-social">
+                <a href="#" aria-label="Correo"><img src="assets/img/Logos/gmail.png" alt="Correo"></a>
+                <span class="social-text">Correo</span>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Cosmetología Morín. Todos los derechos reservados MindMatrix.</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/menuhamburguesa.js"></script>
+    <script src="assets/js/pagos.js"></script> </body>
+</html>

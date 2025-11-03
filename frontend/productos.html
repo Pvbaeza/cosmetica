@@ -1,101 +1,121 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF--8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Productos</title>
-    <link rel="stylesheet" href="assets/css/header.css">
-    <link rel="stylesheet" href="assets/css/productos.css">
-    <link rel="stylesheet" href="assets/css/footer.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Productos | Cosmetología Morín</title>
+
+  <!-- Tipografías -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="assets/css/header.css">
+  <link rel="stylesheet" href="assets/css/productos.css">
+  <link rel="stylesheet" href="assets/css/footer.css">
 </head>
-<header>
+
+<body>
+  <!-- HEADER (idéntico al index) -->
+  <header>
     <div class="logo">
-  <span>Cosmetología Morín</span>
-  <a href="index.html">
-    <img src="assets/img/Logo_header.png" alt="Logo Cosmetología Morín">
-  </a>
-</div>
+      <span>Cosmetología Morín</span>
+      <a href="index.html">
+        <img src="assets/img/Logo_header.png" alt="Logo Cosmetología Morín">
+      </a>
+    </div>
 
     <nav>
-        <button id="menu-toggle">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
+      <!-- Botón hamburguesa -->
+      <button id="menu-toggle" aria-label="Abrir menú">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
 
-        <ul id="menu">
-            <li><a href="index.html"><strong>Inicio</strong></a></li>
-            <li><a href="servicios.html"><strong>Servicios</strong></a></li>
-            <li><a href="productos.html"><strong>Productos</strong></a></li>
-        </ul>
+      <!-- Menú -->
+      <ul id="menu">
+        <li><a href="index.html"><strong>Inicio</strong></a></li>
+        <li><a href="servicios.html"><strong>Servicios</strong></a></li>
+        <li><a href="productos.html"><strong>Productos</strong></a></li>
+      </ul>
     </nav>
-</header>
-<body>
-    <main>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main>
     <section id="productos" class="productos-section">
-        <div class="productos-header">
-            <div class="productos-titulos">
-                <h4 class="subtitulo">Tienda Online</h4>
-                <h2 class="titulo-principal">Descubre nuestros productos</h2>
-            </div>
-            <div class="productos-descripcion">
-                <p>
-                    En Cosmetología Morín, creemos que el cuidado facial no es un lujo, es un ritual de amor propio. 
-                    Por eso, cada uno de nuestros productos —desde sérums concentrados hasta bálsamos labiales nutritivos— 
-                    está formulado con ingredientes de alta calidad, respaldados por ciencia y pensados para realzar tu belleza natural.
-                </p>
-            </div>
+      <div class="productos-header">
+        <div class="productos-titulos">
+          <h4 class="subtitulo">Tienda Online</h4>
+          <h2 class="titulo-principal">Descubre nuestros productos</h2>
         </div>
+        <div class="productos-descripcion">
+          <p>
+            En Cosmetología Morín, creemos que el cuidado facial no es un lujo, es un ritual de amor propio. 
+            Por eso, cada uno de nuestros productos —desde sérums concentrados hasta bálsamos labiales nutritivos— 
+            está formulado con ingredientes de alta calidad, respaldados por ciencia y pensados para realzar tu belleza natural.
+          </p>
+        </div>
+      </div>
 
-        <div id="catalogo-productos" class="productos-grid">
-            </div>
+      <!-- Catálogo dinámico -->
+      <div id="catalogo-productos" class="productos-grid">
+        <!-- Se cargan los productos por JS -->
+      </div>
     </section>
-    </main>
-</body>
+  </main>
 
-
-
-
-
-<footer class="site-footer">
+  <!-- FOOTER -->
+  <footer class="site-footer">
     <div class="footer-socials-container">
-        <div class="footer-social">
-            <a href="#" aria-label="Tiktok">
-                <img src="assets/img/Logos/tik-tok.png" alt="Tiktok">
-            </a>
-            <span class="social-text">Tiktok</span>
-        </div>
-        <div class="footer-social">
-            <a href="#" aria-label="Instagram">
-                <img src="assets/img/Logos/instagram.png" alt="Instagram">
-            </a>
-            <span class="social-text">Instagram</span>
-        </div>
-        <div class="footer-social">
-            <a href="#" aria-label="WhatsApp">
-                <img src="assets/img/Logos/whatsapp.png" alt="WhatsApp">
-            </a>
-            <span class="social-text">WhatsApp</span>
-        </div>
-        <div class="footer-social">
-            <a href="#" aria-label="Correo">
-                <img src="assets/img/Logos/gmail.png" alt="Correo">
-            </a>
-            <span class="social-text">Correo</span>
-        </div>
+      <div class="footer-social">
+        <a href="#" aria-label="Tiktok">
+          <img src="assets/img/Logos/tik-tok.png" alt="Tiktok">
+        </a>
+        <span class="social-text">Tiktok</span>
+      </div>
+      <div class="footer-social">
+        <a href="#" aria-label="Instagram">
+          <img src="assets/img/Logos/instagram.png" alt="Instagram">
+        </a>
+        <span class="social-text">Instagram</span>
+      </div>
+      <div class="footer-social">
+        <a href="#" aria-label="WhatsApp">
+          <img src="assets/img/Logos/whatsapp.png" alt="WhatsApp">
+        </a>
+        <span class="social-text">WhatsApp</span>
+      </div>
+      <div class="footer-social">
+        <a href="#" aria-label="Correo">
+          <img src="assets/img/Logos/gmail.png" alt="Correo">
+        </a>
+        <span class="social-text">Correo</span>
+      </div>
     </div>
 
     <div class="footer-bottom">
-        <p>&copy; 2025 Cosmetología Morín. Todos los derechos reservados MindMatrix.</p>
+      <p>&copy; 2025 Cosmetología Morín. Todos los derechos reservados MindMatrix.</p>
     </div>
 
     <div class="footer-social">
       <a href="login.html" aria-label="Administración">
-        <p>Administracion</p>
+        <p>Administración</p>
       </a>
     </div>
-</footer>
+  </footer>
 
+  <!-- JS -->
+  <script src="assets/js/menuhamburguesa.js"></script>
+  <script src="assets/js/productos.js"></script>
 
-    <script src="assets/js/menuhamburguesa.js"></script>
-    <script src="assets/js/productos.js"></script> </html>
+  <!-- Efecto scroll header -->
+  <script>
+    window.addEventListener('scroll', () => {
+      document.body.classList.toggle('scrolled', window.scrollY > 10);
+    });
+  </script>
+</body>
+</html>

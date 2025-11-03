@@ -1,200 +1,189 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cosmetología Morín</title>
-    <link rel="stylesheet" href="assets/css/header.css">
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/footer.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cosmetología Morín</title>
+
+  <!-- Tipografías -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <!-- CSS del sitio -->
+  <link rel="stylesheet" href="assets/css/header.css" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/footer.css" />
 </head>
-<header>
+
+<body>
+  <header>
     <div class="logo">
-  <span>Cosmetología Morín</span>
-  <a href="index.html">
-    <img src="assets/img/Logo_header.png" alt="Logo Cosmetología Morín">
-  </a>
-</div>
+      <span>Cosmetología Morín</span>
+      <a href="index.html">
+        <img src="assets/img/Logo_header.png" alt="Logo Cosmetología Morín" loading="eager" decoding="async" fetchpriority="high">
+      </a>
+    </div>
 
     <nav>
-        <!-- Botón hamburguesa -->
-        <button id="menu-toggle">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
+      <!-- Botón hamburguesa (responsive) -->
+      <button id="menu-toggle" aria-label="Abrir menú">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
 
-        <!-- Menú desplegable -->
-        <ul id="menu">
-            <li><a href="index.html"><strong>Inicio</strong></a></li>
-            <li><a href="servicios.html"><strong>Servicios</strong></a></li>
-            <li><a href="productos.html"><strong>Productos</strong></a></li>
-        </ul>
+      <!-- Menú -->
+      <ul id="menu">
+        <li><a href="index.html"><strong>Inicio</strong></a></li>
+        <li><a href="servicios.html"><strong>Servicios</strong></a></li>
+        <li><a href="productos.html"><strong>Productos</strong></a></li>
+      </ul>
     </nav>
-</header>
-<body>
-  <section class="container-body">
-    <section id="inicio">
-  <!-- Logo centrado arriba -->
-  <div class="inicio-logo">
-    <img src="assets/img/logo-morin.png" alt="Logo Morín">
-  </div>
+  </header>
 
-  <!-- Texto abajo del logo -->
-  <div class="primer-text">
-    <p>
-  Soy <strong>Morín Salazar</strong>, Cosmiatra y Cosmetóloga.  
-  Hace 5 años me dedico a cuidar la piel y realzar la belleza natural con tratamientos faciales y corporales.  
-</p>
-<p>
-  Mi compromiso es que cada sesión sea una experiencia de renovación, con profesionalismo y cariño.  
-</p>
-  </div>
-</section>
-
-
-    <!-- Seccion de Servicios -->
-<section class="services-section" aria-labelledby="services-title">
-  <h2 id="services-title" class="services-title">Nuestros Servicios</h2>
-
-  <!-- Servicio 1  -->
-  <article class="service service-left">
-    <div class="service-image">
-      <img src="assets/img/imagen-servicio2.png" alt="Tratamiento facial" loading="lazy">
+  <!-- Parte nueva sección inicio Morin -->
+  <section class="card-simple" aria-labelledby="hero-title">
+    <div class="image">
+      <!-- Contenedor .image + img redonda (evita óvalo) -->
+      <img src="assets/img/logo-morin.png" alt="Morín Salazar" width="160" height="160" loading="eager" decoding="async">
     </div>
-    <div class="service-content">
-      <h3 class="service-title">Tratamiento Facial</h3>
-      <h4 class="service-subtitle">Renueva tu piel</h4>
-      <p class="service-description">
-        Disfruta de un tratamiento diseñado para limpiar, hidratar y revitalizar tu piel. 
-        Usamos técnicas avanzadas y productos especializados para resaltar tu belleza natural.
-      </p>
-      <a href="servicios.html" class="btn-service">Más información</a>
+
+    <div class="text">
+      <h2 id="hero-title"><span>Bienvenida a</span> Cosmetología Morín</h2>
+      <p>Soy Morín Salazar, Cosmiatra y Cosmetóloga. Cuidar tu piel y realzar tu belleza natural es mi pasión desde hace 5 años.</p>
+      <p class="compromiso">Cada sesión es pensada para que vivas una experiencia de renovación — con profesionalismo y cariño.</p>
     </div>
-  </article>
+  </section>
+  <!-- FIN Parte nueva sección inicio Morin-->
 
-  <!-- Servicio 2  -->
-  <article class="service service-right">
-    <div class="service-image">
-      <img src="assets/img/imagen-servicio1.png" alt="Masajes corporales" loading="lazy">
+  <!-- Sección de Servicios -->
+  <section class="services-section" aria-labelledby="services-title">
+    <h2 id="services-title" class="services-title">Nuestros Servicios</h2>
+
+    <!-- Servicio 1  -->
+    <article class="service service-left">
+      <div class="service-image">
+        <img src="assets/img/imagen-servicio2.png" alt="Tratamiento facial" loading="lazy" decoding="async">
+      </div>
+      <div class="service-content">
+        <h3 class="service-title">Tratamiento Facial</h3>
+        <h4 class="service-subtitle">Renueva tu piel</h4>
+        <p class="service-description">
+          Disfruta de un tratamiento diseñado para limpiar, hidratar y revitalizar tu piel. 
+          Usamos técnicas avanzadas y productos especializados para resaltar tu belleza natural.
+        </p>
+        <a href="servicios.html" class="btn-service">Más información</a>
+      </div>
+    </article>
+
+    <!-- Servicio 2  -->
+    <article class="service service-right">
+      <div class="service-image">
+        <img src="assets/img/imagen-servicio1.png" alt="Masajes corporales" loading="lazy" decoding="async">
+      </div>
+      <div class="service-content">
+        <h3 class="service-title">Masajes Corporales</h3>
+        <h4 class="service-subtitle">Relaja cuerpo y mente</h4>
+        <p class="service-description">
+          Sesiones de masajes relajantes y terapéuticos que ayudan a liberar tensiones, 
+          mejorar la circulación y brindar una sensación de bienestar integral.
+        </p>
+        <a href="servicios.html" class="btn-service">Más información</a>
+      </div>
+    </article>
+  </section>
+
+  <!-- Sección de Reseñas -->
+  <section class="reviews-section" aria-labelledby="reviews-title">
+    <h2 id="reviews-title" class="reviews-title">Reseñas de Clientes</h2>
+
+    <!-- Formulario para dejar la reseña -->
+    <form id="review-form" class="review-form" aria-label="Formulario para dejar reseña">
+      <div class="form-row">
+          <label for="review-name" class="visually-hidden">Nombre</label>
+          <input id="review-name" name="name" type="text" placeholder="Tu nombre" class="form-input" required>
+      </div>
+
+      <div class="form-row">
+          <label for="review-comment" class="visually-hidden">Comentario</label>
+          <textarea id="review-comment" name="review" placeholder="Escribe tu reseña..." class="form-textarea" required></textarea>
+      </div>
+
+      <div class="form-row">
+          <label for="review-rating" class="visually-hidden">Calificación</label>
+          <input id="review-rating" name="rating" type="number" min="1" max="5" placeholder="Pon tu calificación (1-5)" class="form-input" required>
+      </div>
+
+      <div class="form-row form-actions">
+          <button type="submit" class="btn-submit">Enviar reseña</button>
+      </div>
+    </form>
+
+    <!-- Lista de reseñas -->
+    <div id="reviews-list" class="reviews-grid" aria-live="polite">
+      <!-- Reseña 1 -->
+      <article class="review-card">
+        <p class="review-content">"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus et erat sit amet neque efficitur gravida."</p>
+        <h3 class="review-author">- Ana Pérez</h3>
+      </article>
+
+      <!-- Reseña 2 -->
+      <article class="review-card">
+        <p class="review-content">"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium."</p>
+        <h3 class="review-author">- Carla Gómez</h3>
+      </article>
+
+      <!-- Reseña 3 -->
+      <article class="review-card">
+        <p class="review-content">"Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam."</p>
+        <h3 class="review-author">- Sofía Martínez</h3>
+      </article>
     </div>
-    <div class="service-content">
-      <h3 class="service-title">Masajes Corporales</h3>
-      <h4 class="service-subtitle">Relaja cuerpo y mente</h4>
-      <p class="service-description">
-        Sesiones de masajes relajantes y terapéuticos que ayudan a liberar tensiones, 
-        mejorar la circulación y brindar una sensación de bienestar integral.
-      </p>
-      <a href="servicios.html" class="btn-service">Más información</a>
-    </div>
-  </article>
-</section>
+  </section>
 
-
-    <!-- <section id="productos">
-        <h1>Productos</h1>
-        <p>Aquí mostraremos los productos disponibles bla bla bla bla</p>
-
-        <a class="btn-movil" href="/productos" role="button" aria-label="Ir a Productos">
-            Ver Productos
-            <span class="btn-arrow" aria-hidden="true">→</span>
+  <footer class="site-footer">
+    <div class="footer-socials-container">
+      <div class="footer-social">
+        <a href="#" aria-label="Tiktok">
+          <img src="assets/img/Logos/tik-tok.png" alt="Tiktok" loading="lazy" decoding="async">
         </a>
-    </section> -->
-
-
-
-<!-- Seccion de Reseñas -->
-<section class="reviews-section" aria-labelledby="reviews-title">
-  <h2 id="reviews-title" class="reviews-title">Reseñas de Clientes</h2>
-
-  <!-- Formulario para dejar la reseña -->
-  <form id="review-form" class="review-form" aria-label="Formulario para dejar reseña">
-    <div class="form-row">
-        <label for="review-name" class="visually-hidden">Nombre</label>
-        <input id="review-name" name="name" type="text" placeholder="Tu nombre" class="form-input" required>
+        <span class="social-text">Tiktok</span>
+      </div>
+      <div class="footer-social">
+        <a href="#" aria-label="Instagram">
+          <img src="assets/img/Logos/instagram.png" alt="Instagram" loading="lazy" decoding="async">
+        </a>
+        <span class="social-text">Instagram</span>
+      </div>
+      <div class="footer-social">
+        <a href="#" aria-label="WhatsApp">
+          <img src="assets/img/Logos/whatsapp.png" alt="WhatsApp" loading="lazy" decoding="async">
+        </a>
+        <span class="social-text">WhatsApp</span>
+      </div>
+      <div class="footer-social">
+        <a href="#" aria-label="Correo">
+          <img src="assets/img/Logos/gmail.png" alt="Correo" loading="lazy" decoding="async">
+        </a>
+        <span class="social-text">Correo</span>
+      </div>
     </div>
 
-    <div class="form-row">
-        <label for="review-comment" class="visually-hidden">Comentario</label>
-        <textarea id="review-comment" name="review" placeholder="Escribe tu reseña..." class="form-textarea" required></textarea>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Cosmetología Morín. Todos los derechos reservados MindMatrix.</p>
     </div>
 
-    <div class="form-row">
-        <label for="review-rating" class="visually-hidden">Calificación</label>
-        <input id="review-rating" name="rating" type="number" min="1" max="5" placeholder="Pon tu calificación (1-5)" class="form-input" required>
-    </div>
-
-    <div class="form-row form-actions">
-        <button type="submit" class="btn-submit">Enviar reseña</button>
-    </div>
-</form>
-
-  <!-- Lista de reseñas -->
-  <div id="reviews-list" class="reviews-grid" aria-live="polite">
-    <!-- Reseña 1 -->
-    <article class="review-card">
-      <p class="review-content">"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus et erat sit amet neque efficitur gravida."</p>
-      <h3 class="review-author">- Ana Pérez</h3>
-    </article>
-
-    <!-- Reseña 2 -->
-    <article class="review-card">
-      <p class="review-content">"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium."</p>
-      <h3 class="review-author">- Carla Gómez</h3>
-    </article>
-
-    <!-- Reseña 3 -->
-    <article class="review-card">
-      <p class="review-content">"Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam."</p>
-      <h3 class="review-author">- Sofía Martínez</h3>
-    </article>
-  </div>
-</section>
-</section>
-</body>
-
-<footer class="site-footer">
-
-  <div class="footer-socials-container">
     <div class="footer-social">
-      <a href="#" aria-label="Tiktok">
-        <img src="assets/img/Logos/tik-tok.png" alt="Tiktok">
-      </a>
-      <span class="social-text">Tiktok</span>
-    </div>
-    <div class="footer-social">
-      <a href="#" aria-label="Instagram">
-        <img src="assets/img/Logos/instagram.png" alt="Instagram">
-      </a>
-      <span class="social-text">Instagram</span>
-    </div>
-    <div class="footer-social">
-      <a href="#" aria-label="WhatsApp">
-        <img src="assets/img/Logos/whatsapp.png" alt="WhatsApp">
-      </a>
-      <span class="social-text">WhatsApp</span>
-    </div>
-    <div class="footer-social">
-      <a href="#" aria-label="WhatsApp">
-        <img src="assets/img/Logos/gmail.png" alt="Correo">
-      </a>
-      <span class="social-text">Correo</span>
-    </div>
-
-  </div>
-
-  <div class="footer-bottom">
-    <p>&copy; 2025 Cosmetología Morín. Todos los derechos reservados MindMatrix.</p>
-  </div>
-
-  <div class="footer-social">
       <a href="login.html" aria-label="Administración">
-        <p>Administracion</p>
+        <p>Administración</p>
       </a>
     </div>
-</footer>
+  </footer>
 
+  <!-- JS -->
   <script src="assets/js/menuhamburguesa.js"></script>
   <script src="assets/js/resenas.js"></script>
-  
+</body>
 </html>
+

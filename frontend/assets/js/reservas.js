@@ -1,5 +1,3 @@
-// Archivo: assets/js/reservas.js
-
 // --- LÓGICA DE ENTORNO AUTOMÁTICO ---
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 const API_BASE_URL = isLocal
@@ -21,17 +19,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const horarioBotones = document.querySelectorAll('.horario-btn');
 
     const serviceSelect = document.getElementById('servicio');
-    // <<< OBTENER EL BOTÓN CONTINUAR (Asegúrate que existe en tu HTML con este ID) >>>
     const btnContinuarFecha = document.getElementById('btn-continuar-fecha');
 
-    let datosReserva = {};
+    let datosReserva = {}; // Objeto para guardar los datos
 
     // --- FUNCIÓN PARA CARGAR SERVICIOS ---
     const loadServices = async () => {
-        // Verificar que el select existe
         if (!serviceSelect) {
-             console.error("Elemento select con id 'servicio' no encontrado.");
-             return;
+            console.error("Elemento select con id 'servicio' no encontrado.");
+            return;
         }
         try {
             const response = await fetch(`${API_BASE_URL}/api/servicios`);
@@ -41,17 +37,24 @@ document.addEventListener('DOMContentLoaded', () => {
             serviceSelect.innerHTML = '<option value="" disabled selected>Selecciona un servicio</option>';
 
             services.forEach(service => {
-                // Filtrar servicios 'Admin' si existen en los datos
-                if (service.tipo_trabajador?.toLowerCase() === 'admin') return;
+
+                // --- ¡CORRECCIÓN #1! ---
+                // Usamos 'nombre_area' (del JOIN) en lugar de 'tipo_trabajador'
+                if (service.nombre_area?.toLowerCase() === 'admin') return;
 
                 const option = document.createElement('option');
-                option.value = service.titulo;
+
+                // --- ¡CORRECCIÓN #2! ---
+                // El 'value' debe ser el ID del servicio (id_servicio)
+                option.value = service.id_servicio;
                 option.textContent = `${service.titulo} ($${Number(service.valor || 0).toLocaleString('es-CL')})`;
-                option.dataset.area = service.tipo_trabajador;
+
+                // Guardamos el ID del área y el Título en el dataset
+                option.dataset.areaId = service.id_area;
+                option.dataset.titulo = service.titulo; // Para el resumen
                 serviceSelect.appendChild(option);
             });
 
-            // Llamar a preseleccionar DESPUÉS de llenar el select
             preselectServiceFromUrl();
 
         } catch (error) {
@@ -60,48 +63,49 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- FUNCIÓN PARA PRESELECCIONAR SERVICIO DESDE URL --- (MODIFICADA)
+    // --- FUNCIÓN PARA PRESELECCIONAR SERVICIO DESDE URL ---
     const preselectServiceFromUrl = () => {
-        if (!serviceSelect) return; // Salir si el select no existe
+        if (!serviceSelect) return;
 
         const urlParams = new URLSearchParams(window.location.search);
-        const servicioParam = urlParams.get('servicio'); // Obtiene ?servicio=VALOR
+        const servicioParam = urlParams.get('servicio');
 
         if (servicioParam) {
-            console.log("Intentando preseleccionar servicio:", servicioParam); // Log
-            // Busca la opción cuyo VALOR coincide con el parámetro
-            const optionToSelect = Array.from(serviceSelect.options).find(opt => opt.value === servicioParam);
+            console.log("Intentando preseleccionar servicio:", servicioParam);
+
+            // --- ¡CORRECCIÓN #3! ---
+            // Buscamos la opción por 'dataset.titulo', no por 'value'
+            const optionToSelect = Array.from(serviceSelect.options).find(opt => opt.dataset.titulo === servicioParam);
 
             if (optionToSelect) {
-                optionToSelect.selected = true; // Selecciona la opción
-                console.log("Opción encontrada y seleccionada."); // Log
+                optionToSelect.selected = true;
+                console.log("Opción encontrada y seleccionada.");
 
-                // <<< YA NO DISPARAMOS EL EVENTO 'change' >>>
-                // const event = new Event('change', { bubbles: true });
-                // serviceSelect.dispatchEvent(event);
+                // Guardamos los datos correctos (IDs y el nombre para el resumen)
+                datosReserva.id_servicio = optionToSelect.value;
+                datosReserva.id_area = optionToSelect.dataset.areaId;
+                datosReserva.nombre_servicio = optionToSelect.dataset.titulo; // Guardamos el nombre
 
-                // <<< GUARDAR DATOS DIRECTAMENTE AL PRESELECCIONAR >>>
-                datosReserva.servicio = optionToSelect.value;
-                datosReserva.area_servicio = optionToSelect.dataset.area;
-                if (servicioSeleccionadoSpan) servicioSeleccionadoSpan.textContent = datosReserva.servicio;
+                if (servicioSeleccionadoSpan) servicioSeleccionadoSpan.textContent = datosReserva.nombre_servicio;
                 console.log("Datos de reserva actualizados por preselección:", datosReserva);
 
             } else {
-                console.warn(`Servicio "${servicioParam}" de la URL no encontrado en las opciones.`); // Log si no se encuentra
+                console.warn(`Servicio "${servicioParam}" de la URL no encontrado en las opciones.`);
             }
         } else {
-            console.log("No hay parámetro 'servicio' en la URL para preseleccionar."); // Log si no hay parámetro
+            console.log("No hay parámetro 'servicio' en la URL para preseleccionar.");
         }
     };
 
-    // --- FUNCIÓN PARA VERIFICAR DISPONIBILIDAD --- (Sin cambios)
-    async function consultarYActualizarHorarios(fechaSeleccionada, areaServicio) {
-        if (!fechaSeleccionada || !areaServicio) {
-            console.warn("Falta fecha o área para consultar horarios.");
+    // --- FUNCIÓN PARA VERIFICAR DISPONIBILIDAD ---
+    async function consultarYActualizarHorarios(fechaSeleccionada, areaId) {
+        // ¡Ahora 'areaId' es el ID numérico!
+        if (!fechaSeleccionada || !areaId) {
+            console.warn("Falta fecha o ID de área para consultar horarios.");
             horarioBotones.forEach(btn => { btn.disabled = true; btn.textContent = "Error"; });
             return;
         }
-        // Deshabilitar botones mientras carga
+
         horarioBotones.forEach(btn => {
             btn.disabled = true;
             btn.textContent = 'Cargando...';
@@ -109,18 +113,20 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         try {
-            const respuesta = await fetch(`${API_BASE_URL}/api/horarios-ocupados?fecha=${fechaSeleccionada}&area=${areaServicio}`);
+            // --- ¡CORRECCIÓN #4! ---
+            // El backend espera 'id_area', no 'area'
+            const respuesta = await fetch(`${API_BASE_URL}/api/horarios-ocupados?fecha=${fechaSeleccionada}&id_area=${areaId}`);
             if (!respuesta.ok) throw new Error('Error al obtener horarios.');
             const horariosOcupados = await respuesta.json();
 
             horarioBotones.forEach(btn => {
                 const horaDelBoton = btn.dataset.hora;
-                btn.textContent = horaDelBoton; // Restaurar texto original
-                // Marcar como ocupado si está en la lista
+                btn.textContent = horaDelBoton;
+
                 if (horariosOcupados.includes(horaDelBoton)) {
                     btn.disabled = true;
                     btn.classList.add('ocupado');
-                    btn.textContent = 'Reservado'; // Opcional: Cambiar texto
+                    btn.textContent = 'Reservado';
                 } else {
                     btn.disabled = false;
                     btn.classList.remove('ocupado');
@@ -129,53 +135,47 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error("Error al verificar horarios:", error);
             alert("No se pudo verificar la disponibilidad horaria.");
-            // Restaurar texto y mantener deshabilitado en caso de error
             horarioBotones.forEach(btn => { btn.disabled = true; btn.textContent = "Error"; });
         }
     }
 
-
     // --- LÓGICA DE LA INTERFAZ DE PASOS (UI) ---
 
-    // Paso 1: Seleccionar Servicio (MODIFICADO: Solo guarda datos)
+    // Paso 1: Seleccionar Servicio
     if (serviceSelect) {
         serviceSelect.addEventListener('change', () => {
             const selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
-            // Verificar si la opción seleccionada es válida (no la de "Selecciona...")
             if (!selectedOption || !selectedOption.value) {
-                 datosReserva.servicio = undefined; // Limpiar datos si se deselecciona
-                 datosReserva.area_servicio = undefined;
-                 if (servicioSeleccionadoSpan) servicioSeleccionadoSpan.textContent = '';
-                 console.log("Selección de servicio inválida o reseteada.");
-                 return; // No hacer nada más
+                // Limpiar datos
+                datosReserva.id_servicio = undefined;
+                datosReserva.id_area = undefined;
+                datosReserva.nombre_servicio = undefined;
+                if (servicioSeleccionadoSpan) servicioSeleccionadoSpan.textContent = '';
+                console.log("Selección de servicio inválida o reseteada.");
+                return;
             }
 
             // Guardar los datos del servicio seleccionado
-            datosReserva.servicio = selectedOption.value;
-            datosReserva.area_servicio = selectedOption.dataset.area;
-            if (servicioSeleccionadoSpan) servicioSeleccionadoSpan.textContent = datosReserva.servicio; // Actualizar resumen en formulario
+            datosReserva.id_servicio = selectedOption.value; // ID del servicio
+            datosReserva.id_area = selectedOption.dataset.areaId; // ID del área
+            datosReserva.nombre_servicio = selectedOption.dataset.titulo; // Nombre para el resumen
 
-            console.log("Servicio seleccionado manualmente:", datosReserva.servicio, "Área:", datosReserva.area_servicio);
-
-            // <<< YA NO SE AVANZA AUTOMÁTICAMENTE >>>
-            // if (stepServicio) stepServicio.style.display = 'none';
-            // if (stepFecha) stepFecha.style.display = 'block';
+            if (servicioSeleccionadoSpan) servicioSeleccionadoSpan.textContent = datosReserva.nombre_servicio;
+            console.log("Servicio seleccionado manualmente:", datosReserva);
         });
     } else {
-         console.error("Elemento select 'servicio' no encontrado.");
+        console.error("Elemento select 'servicio' no encontrado.");
     }
 
-    // --- ¡NUEVO LISTENER PARA EL BOTÓN CONTINUAR A FECHA! ---
+    // --- LISTENER PARA EL BOTÓN CONTINUAR A FECHA ---
     if (btnContinuarFecha) {
         btnContinuarFecha.addEventListener('click', () => {
-            // Verificar si se ha seleccionado un servicio válido
-            if (!datosReserva.servicio || !serviceSelect.value) {
+            // Verificar si se ha seleccionado un servicio válido (ahora chequea id_servicio)
+            if (!datosReserva.id_servicio || !serviceSelect.value) {
                 alert("Por favor, selecciona un servicio antes de continuar.");
-                if (serviceSelect) serviceSelect.focus(); // Poner foco en el select
-                return; // Detener si no hay servicio
+                if (serviceSelect) serviceSelect.focus();
+                return;
             }
-
-            // Si hay un servicio seleccionado, avanzar al paso de fecha
             console.log("Continuando a selección de fecha...");
             if (stepServicio) stepServicio.style.display = 'none';
             if (stepFecha) stepFecha.style.display = 'block';
@@ -188,16 +188,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // Paso 2: Seleccionar Fecha (Inicializa Flatpickr)
     if (document.getElementById('calendario-inline') && typeof flatpickr === 'function') {
         flatpickr("#calendario-inline", {
-             inline: true, dateFormat: "Y-m-d", minDate: "today", locale: "es",
-             onChange: function(selectedDates, dateStr) {
-                 datosReserva.fecha = dateStr;
-                 if (fechaSeleccionadaSpan) fechaSeleccionadaSpan.textContent = dateStr;
-                 // Avanzar al paso de horarios
-                 if (stepFecha) stepFecha.style.display = 'none';
-                 if (stepHorarios) stepHorarios.style.display = 'block';
-                 // Consultar horarios para la fecha y área seleccionadas
-                 consultarYActualizarHorarios(datosReserva.fecha, datosReserva.area_servicio);
-             }
+            inline: true, dateFormat: "Y-m-d", minDate: "today", locale: "es",
+            onChange: function (selectedDates, dateStr) {
+                datosReserva.fecha = dateStr;
+                if (fechaSeleccionadaSpan) fechaSeleccionadaSpan.textContent = dateStr;
+
+                if (stepFecha) stepFecha.style.display = 'none';
+                if (stepHorarios) stepHorarios.style.display = 'block';
+                // Consultar horarios para la fecha y el ID del área
+                consultarYActualizarHorarios(datosReserva.fecha, datosReserva.id_area);
+            }
         });
     } else { console.error("'calendario-inline' o Flatpickr no encontrados."); }
 
@@ -206,39 +206,38 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.addEventListener('click', () => {
             datosReserva.hora = btn.dataset.hora;
             if (horarioSeleccionadoSpan) horarioSeleccionadoSpan.textContent = datosReserva.hora;
-            // Avanzar al formulario
+
             if (stepHorarios) stepHorarios.style.display = 'none';
             if (stepFormulario) stepFormulario.style.display = 'block';
         });
     });
 
-    // --- Botones "Volver" --- (Asegurarse que los botones existen)
+    // --- Botones "Volver" ---
     const btnBackServicio = document.getElementById('back-servicio');
     const btnBackFecha = document.getElementById('back-fecha');
     const btnBackHorario = document.getElementById('back-horario');
     const btnBackFormulario = document.getElementById('back-formulario');
 
-    if(btnBackServicio) btnBackServicio.addEventListener('click', () => {
+    if (btnBackServicio) btnBackServicio.addEventListener('click', () => {
         if (stepFecha) stepFecha.style.display = 'none';
         if (stepServicio) stepServicio.style.display = 'block';
     });
-    if(btnBackFecha) btnBackFecha.addEventListener('click', () => {
+    if (btnBackFecha) btnBackFecha.addEventListener('click', () => {
         if (stepHorarios) stepHorarios.style.display = 'none';
         if (stepFecha) stepFecha.style.display = 'block';
     });
-    if(btnBackHorario) btnBackHorario.addEventListener('click', () => {
+    if (btnBackHorario) btnBackHorario.addEventListener('click', () => {
         if (stepFormulario) stepFormulario.style.display = 'none';
         if (stepHorarios) stepHorarios.style.display = 'block';
     });
-    if(btnBackFormulario) btnBackFormulario.addEventListener('click', () => {
+    if (btnBackFormulario) btnBackFormulario.addEventListener('click', () => {
         if (stepAdvertencia) stepAdvertencia.style.display = 'none';
         if (stepFormulario) stepFormulario.style.display = 'block';
     });
 
     // Paso 4: Enviar Formulario (Submit lleva a advertencia)
-    if(stepFormulario) stepFormulario.addEventListener('submit', (e) => {
+    if (stepFormulario) stepFormulario.addEventListener('submit', (e) => {
         e.preventDefault();
-        // Validar que los campos existan antes de leerlos
         const nombreInput = document.getElementById('nombre');
         const rutInput = document.getElementById('rut');
         const telefonoInput = document.getElementById('telefono');
@@ -256,31 +255,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnConfirmar = document.getElementById('confirmar-reserva');
     if (btnConfirmar) {
         btnConfirmar.addEventListener('click', async () => {
-            // Revalidar datos esenciales antes de enviar
-            if (!datosReserva.nombre || !datosReserva.servicio || !datosReserva.fecha || !datosReserva.hora || !datosReserva.area_servicio) {
+
+            // --- ¡CORRECCIÓN #5! ---
+            // Revalidar que los IDs existan, no los nombres
+            if (!datosReserva.nombre || !datosReserva.id_servicio || !datosReserva.fecha || !datosReserva.hora || !datosReserva.id_area) {
                 alert('Faltan datos esenciales en la reserva. Revisa los pasos anteriores.');
-                // Volver al formulario si faltan datos
                 if (stepAdvertencia) stepAdvertencia.style.display = 'none';
                 if (stepFormulario) stepFormulario.style.display = 'block';
                 return;
             }
 
-            console.log("Enviando reserva:", datosReserva); // Log
+            // Creamos el objeto de datos FINAL que espera el backend
+            const datosParaEnviar = {
+                nombre: datosReserva.nombre,
+                rut: datosReserva.rut,
+                telefono: datosReserva.telefono,
+                id_servicio: datosReserva.id_servicio, // ID numérico
+                fecha: datosReserva.fecha,
+                hora: datosReserva.hora,
+                id_area: datosReserva.id_area // ID numérico
+            };
+
+            console.log("Enviando reserva:", datosParaEnviar);
 
             try {
                 const respuesta = await fetch(`${API_BASE_URL}/api/reservas`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(datosReserva),
+                    body: JSON.stringify(datosParaEnviar), // ¡Enviamos el objeto limpio!
                 });
-                const resultado = await respuesta.json().catch(async () => ({ message: await respuesta.text() || `Error ${respuesta.status}`}));
+                const resultado = await respuesta.json().catch(async () => ({ message: await respuesta.text() || `Error ${respuesta.status}` }));
 
-                if (respuesta.ok && resultado.success) { // Asume backend envía { success: true, ... }
+                if (respuesta.ok && resultado.success) {
                     if (stepAdvertencia) stepAdvertencia.style.display = 'none';
                     if (stepExito) stepExito.style.display = 'block';
-                    // Llenar mensaje de éxito si es necesario
-                    // const exitoMsg = stepExito.querySelector('p'); // Asumiendo que hay un <p>
-                    // if (exitoMsg) exitoMsg.textContent = `¡Gracias por tu reserva, ${datosReserva.nombre}! Serás redirigido...`;
 
                     setTimeout(() => { window.location.href = 'servicios.html'; }, 3000);
                 } else {

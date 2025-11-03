@@ -1,0 +1,168 @@
+/* =========================================================
+   FICHA CLÍNICA — Mobile First
+   ========================================================= */
+
+/* Base */
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #faf0eb;
+  font-family: "Cerebri Sans", Arial, sans-serif;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Título principal */
+.title-page{
+  text-align: center;
+  font-size: 1.8rem;
+  color: #8c5f41;
+  font-weight: 700;
+  margin: 2rem auto 1.25rem;
+  max-width: 22ch;
+}
+.title-page::after{
+  content:"";
+  display:block;
+  width: 100px;
+  height: 3px;
+  background-color: #8c5f41;
+  margin: 0.75rem auto 0;
+  border-radius: 2px;
+}
+
+/* Contenedor */
+.contenedor-ficha{
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 40px;
+  padding: 0 16px;
+}
+
+/* Tarjetas */
+.tarjeta-resumen,
+.tarjeta-ficha{
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  overflow: hidden;
+  margin-bottom: 24px;
+  border: 1px solid #f0e6ea;
+}
+
+.subtitulo-seccion{
+  margin: 0;
+  padding: 1rem 1.25rem;
+  font-size: 1.15rem;
+  color: #5a3d3d;
+  border-bottom: 1px solid #f0f0f0;
+  background: #fff6f3;
+}
+
+/* Cuerpos */
+.bloque-cargando{
+  text-align: center;
+  padding: 2rem 1.25rem;
+  color: #8c5f41;
+}
+
+.cuerpo-resumen{
+  padding: 1rem 1.25rem;
+}
+.cuerpo-resumen p{ margin: 0.25rem 0; }
+
+/* Formulario crear/editar */
+.form-ajustes{
+  padding: 1rem 1.25rem 1.25rem;
+}
+.mensaje-info{
+  background: #fff6f3;
+  color: #6a1b4d;
+  border: 1px solid #f5d9e2;
+  border-radius: 10px;
+  padding: 0.75rem 0.9rem;
+  margin: 0 0 0.9rem 0;
+}
+
+.grupo-campo{
+  margin-bottom: 0.9rem;
+}
+.etiqueta-campo{
+  display: block;
+  font-weight: 700;
+  color: #5a3d3d;
+  margin-bottom: 0.4rem;
+}
+.campo-texto{
+  width: 100%;
+  min-height: 160px;
+  border: 1px solid #e0d8e0;
+  border-radius: 10px;
+  padding: 0.8rem 0.9rem;
+  font-size: 1rem;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.campo-texto:focus{
+  border-color: #8c5f41;
+  box-shadow: 0 0 0 3px rgba(140,95,65,0.12);
+}
+
+/* Botones */
+.btn{
+  appearance: none;
+  border: 1px solid #ccc;
+  background: #e9e9e9;
+  color: #333;
+  font-weight: 600;
+  padding: 0.7rem 1rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+.btn:hover{ background: #dcdcdc; }
+.btn:active{ transform: translateY(1px); }
+
+.btn-primario{
+  background: #8c5f41;
+  border-color: #8c5f41;
+  color: #fff;
+}
+.btn-primario:hover{ background: #704932; border-color: #704932; }
+
+.btn-secundario{
+  background: #f1ecea;
+  border-color: #dfd7d1;
+  color: #513c31;
+}
+.btn-secundario:hover{ background: #e6ded7; }
+
+/* Botonera de la ficha */
+.grupo-botones-ficha{
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+/* Vista guardada */
+.contenedor-ficha-guardada{
+  padding: 1rem 1.25rem 1.25rem;
+}
+.texto-guardado{
+  white-space: pre-wrap;  /* respeta saltos de línea */
+  border: 1px solid #f0e6ea;
+  background: #fff;
+  border-radius: 10px;
+  padding: 0.9rem 1rem;
+  color: #333;
+}
+
+/* Responsive */
+@media (min-width: 768px){
+  .title-page{ font-size: 2rem; }
+  .form-ajustes{ padding: 1.25rem 1.5rem 1.5rem; }
+  .contenedor-ficha{ padding: 0 24px; }
+}

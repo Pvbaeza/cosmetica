@@ -1,87 +1,97 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="assets/css/header.css">
-    <link rel="stylesheet" href="assets/css/reserva.css">
-    <link rel="stylesheet" href="assets/css/footer.css">
-    <!-- libreria para calendario -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reservas | Cosmetología Morín</title>
 
+  <!-- Tipografías -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="assets/css/header.css">
+  <link rel="stylesheet" href="assets/css/reserva.css">
+  <link rel="stylesheet" href="assets/css/footer.css">
+  <link rel="stylesheet" href="assets/css/hero-reserva.css">
+
+  <!-- Librería Flatpickr -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/material_blue.css">
 </head>
 
-
-<header>
-        <div class="logo">
-  <span>Cosmetología Morín</span>
-  <a href="index.html">
-    <img src="assets/img/Logo_header.png" alt="Logo Cosmetología Morín">
-  </a>
-</div>
-        <nav>
-        <!-- Botón hamburguesa -->
-        <button id="menu-toggle">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-
-        <!-- Menú desplegable -->
-        <ul id="menu">
-            <li><a href="index.html"><strong>Inicio</strong></a></li>
-            <li><a href="servicios.html"><strong>Servicios</strong></a></li>
-            <li><a href="productos.html"><strong>Productos</strong></a></li>
-        </ul>
-    </nav>
-</header>
-
-
-
-
-
-
 <body>
-<!-- Reservar -->
-<section class="reserva-container">
-    <h1>Reserva tu servicio</h1>
-    <p>Sigue los pasos para encontrar tu hora perfecta.</p>
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <span>Cosmetología Morín</span>
+      <a href="index.html">
+        <img src="assets/img/Logo_header.png" alt="Logo Cosmetología Morín">
+      </a>
+    </div>
 
-    <div id="step-servicio" class="reserva-step">
+    <nav>
+      <button id="menu-toggle" aria-label="Abrir menú">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <ul id="menu">
+        <li><a href="index.html"><strong>Inicio</strong></a></li>
+        <li><a href="servicios.html"><strong>Servicios</strong></a></li>
+        <li><a href="productos.html"><strong>Productos</strong></a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero-reserva">
+    <div class="hero-content">
+      <h1>Reserva tu cita con confianza</h1>
+      <p>Elige tu servicio favorito y asegura tu hora con solo unos clics.</p>
+    </div>
+  </section>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main>
+    <section class="reserva-container">
+      <h1>Reserva tu servicio</h1>
+      <p>Sigue los pasos para encontrar tu hora perfecta.</p>
+
+      <div id="step-servicio" class="reserva-step">
         <h2>Paso 1: Elige tu servicio</h2>
         <label for="servicio">Tipo de servicio:</label>
         <select id="servicio" name="servicio" required>
-            <option value="" disabled selected>Cargando servicios...</option>
-            </select>
+          <option value="" disabled selected>Cargando servicios...</option>
+        </select>
 
-            <button id="btn-continuar-fecha" class="btn-enviar" style="margin-top: 1rem;">
-                Continuar<i class="fas fa-arrow-right" style="margin-left: 0.5em;"></i>
-            </button>
-        </div>
+        <button id="btn-continuar-fecha" class="btn-enviar" style="margin-top: 1rem;">
+          Continuar <i class="fas fa-arrow-right" style="margin-left: 0.5em;"></i>
+        </button>
+      </div>
 
-    <div id="step-fecha" class="reserva-step" style="display:none;">
+      <div id="step-fecha" class="reserva-step" style="display:none;">
         <h2>Paso 2: Elige el día</h2>
         <div id="calendario-inline"></div>
         <button id="back-servicio" class="btn-back">← Cambiar servicio</button>
-    </div>
+      </div>
 
-    <div id="step-horarios" class="reserva-step" style="display:none;">
+      <div id="step-horarios" class="reserva-step" style="display:none;">
         <h2>Paso 3: Elige un horario</h2>
         <div class="horarios-lista">
-            <button class="horario-btn" data-hora="09:00 - 11:00">09:00 - 11:00</button>
-            <button class="horario-btn" data-hora="11:00 - 13:00">11:00 - 13:00</button>
-            <button class="horario-btn" data-hora="13:00 - 15:00">13:00 - 15:00</button>
-            <button class="horario-btn" data-hora="15:00 - 17:00">15:00 - 17:00</button>
-            <button class="horario-btn" data-hora="17:00 - 19:00">17:00 - 19:00</button>
+          <button class="horario-btn" data-hora="09:00 - 11:00">09:00 - 11:00</button>
+          <button class="horario-btn" data-hora="11:00 - 13:00">11:00 - 13:00</button>
+          <button class="horario-btn" data-hora="13:00 - 15:00">13:00 - 15:00</button>
+          <button class="horario-btn" data-hora="15:00 - 17:00">15:00 - 17:00</button>
+          <button class="horario-btn" data-hora="17:00 - 19:00">17:00 - 19:00</button>
         </div>
         <button id="back-fecha" class="btn-back">← Cambiar día</button>
-    </div>
+      </div>
 
-    <form id="step-formulario" class="reserva-step" style="display:none;">
+      <form id="step-formulario" class="reserva-step" style="display:none;">
         <h2>Paso 4: Completa tus datos</h2>
-        
+
         <p><strong>Servicio:</strong> <span id="servicio-seleccionado"></span></p>
         <p><strong>Fecha:</strong> <span id="fecha-seleccionada"></span></p>
         <p><strong>Horario:</strong> <span id="horario-seleccionado"></span></p>
@@ -98,89 +108,56 @@
 
         <button id="back-horario" class="btn-back">← Cambiar horario</button>
         <button type="submit" class="btn-enviar">Continuar al aviso</button>
-    </form>
+      </form>
 
-    <div id="step-advertencia" class="reserva-step" style="display:none;">
+      <div id="step-advertencia" class="reserva-step" style="display:none;">
         <h2>⚠️ Aviso importante</h2>
-        
+
         <p>Para garantizar una atención personalizada y respetuosa con tu tiempo y el de otros clientes, hemos establecido las siguientes condiciones:</p>
         <ul>
-            <li>💳 <strong>Reserva anticipada:</strong> Se solicita un abono de $10.000 para confirmar tu hora. Este monto no es reembolsable en caso de cancelación o inasistencia.</li>
-            <li>⏰ <strong>Tolerancia de llegada:</strong> Se esperará un máximo de 10 minutos por atraso. Pasado ese tiempo, la sesión se considerará perdida y deberá reagendarse con nuevo abono.</li>
+          <li>💳 <strong>Reserva anticipada:</strong> Se solicita un abono de $10.000 para confirmar tu hora.</li>
+          <li>⏰ <strong>Tolerancia de llegada:</strong> Se esperará un máximo de 10 minutos por atraso.</li>
         </ul>
         <p>Tu compromiso nos permite ofrecerte un servicio de calidad, organizado y justo para todos. Gracias por tu comprensión y confianza.</p>
+
         <div class="reserva-buttons">
-            <button id="back-formulario" class="btn-back">← Volver al formulario</button>
-            <button id="confirmar-reserva" class="btn-enviar">Confirmar reserva</button>
+          <button id="back-formulario" class="btn-back">← Volver al formulario</button>
+          <button id="confirmar-reserva" class="btn-enviar">Confirmar reserva</button>
         </div>
+      </div>
+
+      <div id="step-exito" class="reserva-step" style="display:none;"></div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-socials-container">
+      <div class="footer-social"><a href="#"><img src="assets/img/Logos/tik-tok.png" alt="Tiktok"></a><span class="social-text">Tiktok</span></div>
+      <div class="footer-social"><a href="#"><img src="assets/img/Logos/instagram.png" alt="Instagram"></a><span class="social-text">Instagram</span></div>
+      <div class="footer-social"><a href="#"><img src="assets/img/Logos/whatsapp.png" alt="WhatsApp"></a><span class="social-text">WhatsApp</span></div>
+      <div class="footer-social"><a href="#"><img src="assets/img/Logos/gmail.png" alt="Correo"></a><span class="social-text">Correo</span></div>
     </div>
 
-    <div id="step-exito" class="reserva-step" style="display:none;">
-        </div>
-</section>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Cosmetología Morín. Todos los derechos reservados MindMatrix.</p>
+    </div>
 
+    <div class="footer-social">
+      <a href="login.html" aria-label="Administración"><p>Administración</p></a>
+    </div>
+  </footer>
 
-
-
-
-<!-- NO TOCAAAAAAAAAAAAAAR -->
-<!-- Libreria para calendario -->
-<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
-<!-- Script para calendario -->
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/es.js"></script>
+  <script src="assets/js/menuhamburguesa.js"></script>
+  <script src="assets/js/reservas.js"></script>
+  <script>
+    window.addEventListener('scroll', () => {
+      document.body.classList.toggle('scrolled', window.scrollY > 10);
+    });
+  </script>
 </body>
-
-
-
-
-
-
-<!-- Foooooteeeer -->
-<footer class="site-footer">
-
-  <!-- Redes sociales centradas con texto bajo cada icono -->
-  <div class="footer-socials-container">
-    <div class="footer-social">
-      <a href="#" aria-label="Tiktok">
-        <img src="assets/img/Logos/tik-tok.png" alt="Tiktok">
-      </a>
-      <span class="social-text">Tiktok</span>
-    </div>
-    <div class="footer-social">
-      <a href="#" aria-label="Instagram">
-        <img src="assets/img/Logos/instagram.png" alt="Instagram">
-      </a>
-      <span class="social-text">Instagram</span>
-    </div>
-    <div class="footer-social">
-      <a href="#" aria-label="WhatsApp">
-        <img src="assets/img/Logos/whatsapp.png" alt="WhatsApp">
-      </a>
-      <span class="social-text">WhatsApp</span>
-    </div>
-    <div class="footer-social">
-      <a href="#" aria-label="WhatsApp">
-        <img src="assets/img/Logos/gmail.png" alt="Correo">
-      </a>
-      <span class="social-text">Correo</span>
-    </div>
-
-  </div>
-  <div class="footer-bottom">
-    <p>&copy; 2025 Cosmetología Morín. Todos los derechos reservados MindMatrix.</p>
-  </div>
-
-  <div class="footer-social">
-      <a href="login.html" aria-label="Administración">
-        <p>Administracion</p>
-      </a>
-    </div>
-</footer>
-
-
-
-
-<script src="assets/js/menuhamburguesa.js"></script>
-<script src="assets/js/reservas.js"></script>
-
 </html>
+

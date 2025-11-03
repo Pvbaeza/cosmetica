@@ -1,7 +1,7 @@
 // --- LÓGICA DE ENTORNO AUTOMÁTICO ---
 // Detecta si estamos en localhost o en el servidor de Render
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-const API_BASE_URL = isLocal 
+const API_BASE_URL = isLocal
     ? 'http://localhost:3000' // URL para desarrollo local
     : 'https://cosmeticabackend-dqxh.onrender.com'; // URL para producción
 
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (publishedCount === 0) {
                 publishedList.innerHTML = '<p>No hay reseñas publicadas.</p>';
             }
-            
+
             resenas.forEach(resena => {
                 const reviewCard = crearTarjetaResena(resena);
                 if (resena.estado_aprobacion) {
@@ -56,20 +56,35 @@ document.addEventListener('DOMContentLoaded', () => {
         const botonPublicarTexto = resena.estado_aprobacion ? 'Ocultar' : 'Aprobar';
         const nuevoEstado = !resena.estado_aprobacion;
 
+        // --- ¡NUEVO! LÓGICA PARA MOSTRAR ESTRELLAS ---
+        let estrellasHTML = '';
+        if (resena.calificacion && resena.calificacion > 0) {
+            // Añadí un poco de estilo para que se vean bien las estrellas
+            estrellasHTML = '<div class="review-rating" style="color: #f0c14b; font-size: 1.1em; margin-bottom: 5px;">';
+            for (let i = 1; i <= 5; i++) {
+                estrellasHTML += (i <= resena.calificacion) ? '★' : '☆';
+            }
+            estrellasHTML += ` (${resena.calificacion}/5)</div>`;
+        } else {
+            estrellasHTML = '<div class="review-rating" style="color: #aaa; margin-bottom: 5px;">(Sin calificación)</div>';
+        }
+        // --- FIN DE LÓGICA DE ESTRELLAS ---
+
         div.innerHTML = `
-            <p><strong>${resena.nombre}:</strong> ${resena.Comentario}</p>
-            <div class="review-actions">
-                <button class="btn-publicar" data-nuevo-estado="${nuevoEstado}">${botonPublicarTexto}</button>
-                <button class="btn-eliminar">Eliminar</button>
-            </div>
-        `;
+            ${estrellasHTML} 
+            <p><strong>${resena.nombre}:</strong> ${resena.comentario}</p>
+            <div class="review-actions">
+                <button class="btn-publicar" data-nuevo-estado="${nuevoEstado}">${botonPublicarTexto}</button>
+                <button class="btn-eliminar">Eliminar</button>
+            </div>
+        `;
 
         const btnPublicar = div.querySelector('.btn-publicar');
         btnPublicar.addEventListener('click', () => actualizarEstado(resena.id_resena, nuevoEstado));
 
         const btnEliminar = div.querySelector('.btn-eliminar');
         btnEliminar.addEventListener('click', () => eliminarResena(resena.id_resena));
-        
+
         return div;
     }
 
@@ -85,8 +100,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!response.ok) {
                 throw new Error('No se pudo actualizar la reseña.');
             }
-            
-            cargarResenas(); 
+
+            cargarResenas();
 
         } catch (error) {
             console.error('Error al actualizar:', error);
@@ -104,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(`${API_BASE_URL}/api/admin/resenas/${id}`, {
                 method: 'DELETE',
             });
-            
+
             if (!response.ok) {
                 throw new Error('No se pudo eliminar la reseña.');
             }
@@ -120,4 +135,3 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Carga inicial de las reseñas al entrar a la página ---
     cargarResenas();
 });
-

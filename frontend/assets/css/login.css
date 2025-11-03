@@ -1,6 +1,8 @@
+/* ===== Base ===== */
 body {
-  font-family: "Cerebri Sans", Arial, sans-serif;
+  font-family: 'Poppins', sans-serif;           /* actualizado */
   background-color: #faf0eb;
+  color: #5a3d3d;                                /* texto base del sitio */
   display: flex;
   flex-direction: column;  /* elementos en vertical */
   min-height: 100vh;
@@ -15,7 +17,6 @@ main {
   padding: 20px;
 }
 
-
 #login {
   flex: 1; /* ocupa todo el espacio disponible */
   display: flex;
@@ -24,7 +25,7 @@ main {
   padding: 20px; /* aire en móvil */
 }
 
-
+/* ===== Card Login ===== */
 .login-container {
   background: #fff;
   padding: 30px 25px;
@@ -34,80 +35,87 @@ main {
   max-width: 360px;
 }
 
+/* Título */
 .login-title {
-  font-family: "Tropika Script", cursive;
+  font-family: 'Playfair Display', serif;       /* actualizado */
   text-align: center;
-  color: #8c5f41;
+  color: #c26d86;                                /* acento rosado */
   margin-bottom: 20px;
   font-size: 1.8rem;
+  font-weight: 600;
 }
 
-.login-form .form-group {
-  margin-bottom: 18px;
-}
+/* Formulario */
+.login-form .form-group { margin-bottom: 18px; }
 
 .login-form label {
   display: block;
   font-size: 0.9rem;
-  color: #333;
+  color: #5a3d3d;                                /* texto principal */
   margin-bottom: 6px;
+  font-weight: 600;
 }
 
 .login-form input {
   width: 100%;
   padding: 12px;
-  border: 1px solid #ccc;
+  border: 1px solid #d1c6be;                     /* borde suave */
   border-radius: 10px;
   font-size: 1rem;
   outline: none;
-  transition: border 0.3s ease;
+  background: #fff;
+  color: #5a3d3d;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
+
+.login-form input::placeholder { color: #8f7f7f; }
 
 .login-form input:focus {
-  border-color: #8c5f41;
+  border-color: #c26d86;                         /* acento focus */
+  box-shadow: 0 0 0 3px rgba(194,109,134,0.15);  /* anillo accesible */
 }
 
+/* Botón */
 .login-btn {
   width: 100%;
-  padding: 12px;
-  background: #8c5f41;
+  padding: 12px 14px;
+  background: #c26d86;                           /* acento */
   border: none;
   border-radius: 10px;
   color: #fff;
   font-size: 1rem;
-  font-weight: bold;
+  font-weight: 700;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+  box-shadow: 0 4px 12px rgba(194,109,134,0.2);
 }
 
 .login-btn:hover {
-  background: #8c5f41;
+  background: #b45a73;                           /* hover coherente */
+  transform: translateY(-2px);
 }
 
+/* Pie del login */
 .login-footer {
   margin-top: 15px;
   text-align: center;
   font-size: 0.85rem;
-  color: #555;
+  color: #4b3b3b;                                 /* lectura suave */
 }
 
 .login-footer a {
-  color: #6a1b4d;
+  color: #c26d86;                                 /* link acento */
   text-decoration: none;
   font-weight: 600;
 }
 
 .login-footer a:hover {
+  color: #b45a73;                                 /* hover link */
   text-decoration: underline;
 }
 
 /* ===== Desktop ===== */
 @media (min-width: 768px) {
-  .login-container {
-    padding: 40px 35px;
-  }
-
-  .login-title {
-    font-size: 2rem;
-  }
+  .login-container { padding: 40px 35px; }
+  .login-title { font-size: 2rem; }
 }

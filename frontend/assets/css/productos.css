@@ -1,10 +1,15 @@
+/* =================================== */
+/* ===== ESTILOS GENERALES (BASE) ===== */
+/* =================================== */
+
 body {
-  font-family: "Cerebri Sans", Arial, sans-serif;
+  font-family: 'Poppins', sans-serif; /* actualizado */
   background-color: #faf0eb;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   margin: 0;
+  color: #5a3d3d; /* texto base del sitio */
 }
 
 /* Sección Productos */
@@ -16,7 +21,7 @@ body {
 .productos-section {
   padding: 60px 20px;
   background: #fff;
-  font-family: "Cerebri Sans", Arial, sans-serif;
+  font-family: 'Poppins', sans-serif; /* actualizado */
 }
 
 .productos-header {
@@ -27,22 +32,26 @@ body {
 }
 
 .productos-titulos .subtitulo {
-  color: #8c5f41;
+  color: #8a4a4a;              /* secundario del sitio */
   font-size: 1rem;
   text-transform: uppercase;
   margin-bottom: 8px;
+  letter-spacing: .5px;
 }
 
 .productos-titulos .titulo-principal {
+  font-family: 'Playfair Display', serif; /* actualizado */
   font-size: 2rem;
-  font-weight: bold;
-  color: #000000;
+  font-weight: 700;
+  color: #c26d86;             /* acento rosado del sitio */
+  margin: 0;
 }
 
 .productos-descripcion p {
   font-size: 1rem;
   line-height: 1.6;
-  color: #444;
+  color: #4b3b3b;             /* mejor legibilidad */
+  margin: 0;
 }
 
 /* ===== Catálogo ===== */
@@ -59,11 +68,12 @@ body {
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
   text-align: center;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .producto-card:hover {
   transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
 }
 
 .producto-card img {
@@ -74,30 +84,36 @@ body {
 }
 
 .producto-card h3 {
+  font-family: 'Playfair Display', serif; /* actualizado */
   font-size: 1.2rem;
-  color: #8c5f41;
-  margin-bottom: 8px;
+  color: #c26d86; /* acento */
+  margin: 0 0 8px 0;
+  font-weight: 600;
 }
 
 .producto-card p {
-  font-size: 0.9rem;
-  color: #555;
+  font-size: 0.95rem;
+  color: #4b3b3b;
   margin-bottom: 15px;
 }
 
+/* Botón */
 .btn-contactar {
-  background: #8c5f41;
+  background: #c26d86; /* acento del sitio */
   color: #fff;
   padding: 10px 18px;
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  transition: background 0.3s ease;
-  font-weight: bold;
+  transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 10px rgba(194,109,134,0.18);
 }
 
 .btn-contactar:hover {
-  background: #8c5f41;
+  background: #b45a73; /* hover coherente */
+  transform: translateY(-2px);
 }
 
 /* ===== Desktop / Tablet ===== */
@@ -117,14 +133,14 @@ body {
     padding-left: 30px;
   }
 
-  /* Tablet: 1 columna (opcional), se ve más limpio en pantallas intermedias */
+  /* Tablet: 1 columna (limpio en pantallas intermedias) */
   .productos-grid {
     grid-template-columns: 1fr;
     gap: 25px;
   }
 
   .productos-titulos .titulo-principal {
-    font-size: 2.5rem;
+    font-size: 2.4rem;
   }
 }
 
@@ -148,13 +164,13 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between; /* botón siempre al fondo */
-    min-height: 220px; /* altura fija para que sea más ancho que alto */
+    min-height: 220px;
   }
 
   /* Imagen del producto */
   .producto-card img {
     width: 100%;
-    height: 150px; /* ajusta para que sea más ancho que alto */
+    height: 150px;
     object-fit: contain;
     margin-bottom: 15px;
   }

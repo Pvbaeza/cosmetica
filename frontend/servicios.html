@@ -1,120 +1,127 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cosmetología Morín</title>
-    <link rel="stylesheet" href="assets/css/header.css">
-    <link rel="stylesheet" href="assets/css/servicios.css">
-    <link rel="stylesheet" href="assets/css/footer.css">
-</head>
-<body>
-  <main>
-    <!-- HEADER -->
-    <header>
-        <div class="logo">
-  <span>Cosmetología Morín</span>
-  <a href="index.html">
-    <img src="assets/img/Logo_header.png" alt="Logo Cosmetología Morín">
-  </a>
-</div>
-        <nav>
-        <!-- Botón hamburguesa -->
-        <button id="menu-toggle">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cosmetología Morín</title>
 
-        <!-- Menú desplegable -->
-        <ul id="menu">
-            <li><a href="index.html"><strong>Inicio</strong></a></li>
-            <li><a href="servicios.html"><strong>Servicios</strong></a></li>
-            <li><a href="productos.html"><strong>Productos</strong></a></li>
-        </ul>
+  <!-- Tipografías -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="assets/css/header.css">
+  <link rel="stylesheet" href="assets/css/servicios.css">
+  <link rel="stylesheet" href="assets/css/footer.css">
+</head>
+
+<body>
+  <!-- HEADER FIJO (igual al del index) -->
+  <header>
+    <div class="logo">
+      <span>Cosmetología Morín</span>
+      <a href="index.html">
+        <img src="assets/img/Logo_header.png" alt="Logo Cosmetología Morín">
+      </a>
+    </div>
+
+    <nav>
+      <!-- Botón hamburguesa -->
+      <button id="menu-toggle" aria-label="Abrir menú">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <!-- Menú -->
+      <ul id="menu">
+        <li><a href="index.html"><strong>Inicio</strong></a></li>
+        <li><a href="servicios.html"><strong>Servicios</strong></a></li>
+        <li><a href="productos.html"><strong>Productos</strong></a></li>
+      </ul>
     </nav>
-    </header>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <main>
     <section class="servicios-header">
       <h1>Catálogo de Servicios</h1>
       <p>Explora nuestros servicios personalizados pensados para ofrecerte la mejor experiencia. Reserva fácilmente el que más se adapte a tus necesidades.</p>
     </section>
 
+    <!-- Filtros -->
     <section class="filter-section">
-            <!-- Filtro -->
-            <div class="filter-container">
-                <label for="area-filter" class="filter-label">
-                    <i class="fas fa-filter"></i> Área:
-                </label>
-                <select id="area-filter" class="filter-select">
-                    <option value="todos">Mostrar Todas</option>
-                    </select>
+      <div class="filter-container">
+        <label for="area-filter" class="filter-label">
+          <i class="fas fa-filter"></i> Área:
+        </label>
+        <select id="area-filter" class="filter-select">
+          <option value="todos">Mostrar Todas</option>
+        </select>
 
-                <!-- Buscador -->
-                <label for="search-input" class="filter-label search-label">
-                    <i class="fas fa-search"></i> Buscar:
-                </label>
-                <input type="search" id="search-input" class="filter-input" placeholder="Nombre del servicio...">
-                
-            </div>
-        </section>
+        <label for="search-input" class="filter-label search-label">
+          <i class="fas fa-search"></i> Buscar:
+        </label>
+        <input type="search" id="search-input" class="filter-input" placeholder="Nombre del servicio...">
+      </div>
+    </section>
 
-
+    <!-- Contenedor de servicios -->
     <section id="servicios" class="servicios-section">
+      <!-- Contenido dinámico cargado por JS -->
+    </section>
+  </main>
 
-    </main>
-</body>
-
-
-
-
-
-
-<footer class="site-footer">
-
-  <!-- Redes sociales centradas con texto bajo cada icono -->
-  <div class="footer-socials-container">
-    <div class="footer-social">
-      <a href="#" aria-label="Tiktok">
-        <img src="assets/img/Logos/tik-tok.png" alt="Tiktok">
-      </a>
-      <span class="social-text">Tiktok</span>
-    </div>
-    <div class="footer-social">
-      <a href="#" aria-label="Instagram">
-        <img src="assets/img/Logos/instagram.png" alt="Instagram">
-      </a>
-      <span class="social-text">Instagram</span>
-    </div>
-    <div class="footer-social">
-      <a href="#" aria-label="WhatsApp">
-        <img src="assets/img/Logos/whatsapp.png" alt="WhatsApp">
-      </a>
-      <span class="social-text">WhatsApp</span>
-    </div>
-    <div class="footer-social">
-      <a href="#" aria-label="WhatsApp">
-        <img src="assets/img/Logos/gmail.png" alt="Correo">
-      </a>
-      <span class="social-text">Correo</span>
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-socials-container">
+      <div class="footer-social">
+        <a href="#" aria-label="Tiktok">
+          <img src="assets/img/Logos/tik-tok.png" alt="Tiktok">
+        </a>
+        <span class="social-text">Tiktok</span>
+      </div>
+      <div class="footer-social">
+        <a href="#" aria-label="Instagram">
+          <img src="assets/img/Logos/instagram.png" alt="Instagram">
+        </a>
+        <span class="social-text">Instagram</span>
+      </div>
+      <div class="footer-social">
+        <a href="#" aria-label="WhatsApp">
+          <img src="assets/img/Logos/whatsapp.png" alt="WhatsApp">
+        </a>
+        <span class="social-text">WhatsApp</span>
+      </div>
+      <div class="footer-social">
+        <a href="#" aria-label="Correo">
+          <img src="assets/img/Logos/gmail.png" alt="Correo">
+        </a>
+        <span class="social-text">Correo</span>
+      </div>
     </div>
 
-  </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Cosmetología Morín. Todos los derechos reservados MindMatrix.</p>
+    </div>
 
-  <!-- Derechos reservados -->
-  <div class="footer-bottom">
-    <p>&copy; 2025 Cosmetología Morín. Todos los derechos reservados MindMatrix.</p>
-  </div>
-
-  <div class="footer-social">
+    <div class="footer-social">
       <a href="login.html" aria-label="Administración">
-        <p>Administracion</p>
+        <p>Administración</p>
       </a>
     </div>
-</footer>
+  </footer>
 
+  <!-- JS -->
+  <script src="assets/js/servicios.js"></script>
+  <script src="assets/js/menuhamburguesa.js"></script>
 
-
-
-    <script src="assets/js/servicios.js"></script>
-    <script src="assets/js/menuhamburguesa.js"></script>
+  <!-- Script del header fijo -->
+  <script>
+    window.addEventListener('scroll', () => {
+      document.body.classList.toggle('scrolled', window.scrollY > 10);
+    });
+  </script>
+</body>
 </html>

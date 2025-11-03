@@ -1,19 +1,26 @@
-
-/* ===== Footer NUEOOOOO ===== */
+/* ===== Footer final con animaciones suaves ===== */
 
 .site-footer {
-  background-color: #8c5f41;
-  color: #fff;
+  background-color: #f8d9d0; /* mismo rosa que el header */
+  color: #5a3d3d;
   padding: 24px 18px;
-  font-family: "Cerebri Sans", Arial, sans-serif;
+  font-family: 'Poppins', sans-serif;
   text-align: center;
+  box-shadow: inset 0 4px 6px rgba(194, 109, 134, 0.15);
+  transition: all 0.3s ease;
 }
 
-/* Logo */
+/* Logo con efecto lift */
 .footer-logo img {
   width: 150px;
   height: auto;
   margin: 0 auto 20px;
+  transition: transform 0.4s ease, filter 0.3s ease;
+}
+
+.footer-logo img:hover {
+  transform: translateY(-6px) scale(1.05); /* pequeño rebote */
+  filter: brightness(1.1);
 }
 
 /* Contenedor de redes sociales */
@@ -35,30 +42,52 @@
   font-size: 14px;
 }
 
-.footer-social a{
-    color: #fff;
+.footer-social a {
+  color: #5a3d3d;
+  text-decoration: none;
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 
+.footer-social a:hover {
+  color: #c26d86;
+  transform: translateY(-3px);
+}
+
+/* Íconos de redes sociales con efecto hover */
 .footer-social img {
   width: 48px;
   height: 48px;
-  transition: transform 0.2s ease;
+  transition: transform 0.3s ease, filter 0.3s ease;
 }
 
 .footer-social img:hover {
-  transform: scale(1.1);
+  transform: scale(1.15);
+  filter: brightness(1.1);
 }
 
 /* Texto bajo el icono */
 .social-text {
   font-size: 0.85rem;
-  color: #fff;
+  color: #5a3d3d;
+  transition: color 0.3s ease;
+}
+
+.footer-social:hover .social-text {
+  color: #c26d86;
 }
 
 /* Derechos reservados */
 .footer-bottom {
-  font-size: 17px;
-  color: rgba(255,255,255,0.7);
+  margin-top: 10px;
+  padding-top: 10px;
+  font-size: 0.95rem;
+  color: rgba(90, 61, 61, 0.85);
+  border-top: 2px solid rgba(194, 109, 134, 0.25);
+  transition: color 0.3s ease;
+}
+
+.footer-bottom:hover {
+  color: #c26d86;
 }
 
 /* ===== Desktop ===== */
@@ -77,9 +106,7 @@
   }
 }
 
-
-/* footer al final del todo */
-
+/* Footer siempre al final */
 html, body {
   height: 100%;
   margin: 0;
@@ -89,9 +116,10 @@ html, body {
 body {
   display: flex;
   flex-direction: column;
-  min-height: 100vh; /* asegura que el body tenga al menos la altura de la ventana */
+  min-height: 100vh;
 }
 
 main, .reserva-container, .reviews-container {
-  flex: 1; /* hace que el contenido principal ocupe todo el espacio disponible */
+  flex: 1;
 }
+

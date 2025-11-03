@@ -1,70 +1,74 @@
+// login.js (versión funcional que guarda datos para `registrado_por`)
+
 // --- LÓGICA DE ENTORNO AUTOMÁTICO ---
-// Detecta si estamos en localhost o en el servidor de Render
-const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-const API_BASE_URL = isLocal 
-    ? 'http://localhost:3000' // URL para desarrollo local
-    : 'https://cosmeticabackend-dqxh.onrender.com'; // URL para producción
+const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+const API_BASE_URL = isLocal ? 'http://localhost:3000' : 'https://cosmeticabackend-dqxh.onrender.com';
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Seleccionamos el formulario por el ID que le pusimos en el HTML
-    const loginForm = document.getElementById('login-form');
+  const loginForm = document.getElementById('login-form');
+  if (!loginForm) return;
 
-    if (loginForm) {
-        // Añadimos un "escuchador" para cuando se intente enviar el formulario
-        loginForm.addEventListener('submit', async (event) => {
-            // Prevenimos que la página se recargue, que es el comportamiento por defecto
-            event.preventDefault();
+  loginForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
 
-            // Obtenemos los valores que el usuario escribió en los campos
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+    const username = document.getElementById('username').value?.trim();
+    const password = document.getElementById('password').value;
 
-            try {
-                // Usamos fetch para enviar los datos a la ruta /api/login de nuestro servidor
-                const respuesta = await fetch(`${API_BASE_URL}/api/login`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ username, password })
-                });
+    try {
+      const respuesta = await fetch(`${API_BASE_URL}/api/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
 
-                const resultado = await respuesta.json();
+      const resultado = await respuesta.json();
 
-                if (resultado.success) {
-                    // Si el servidor nos dice que todo salió bien...
-                    alert(resultado.message); 
+      if (!resultado.success) {
+        alert(resultado.message || 'Credenciales incorrectas.');
+        return;
+      }
 
-                    // 2. Guardamos el token
-                    localStorage.setItem('authToken', resultado.token);
-                    
+      // --- Guarda token con AMBOS nombres para compatibilidad ---
+      localStorage.setItem('authToken', resultado.token);
+      localStorage.setItem('token', resultado.token); // muchos scripts leen "token"
 
-                    // --- INICIO DE LA CORRECCIÓN ---
-                    // CAMBIA 'resultado.id_area' POR EL NOMBRE CORRECTO QUE VISTE EN LA CONSOLA
-                    
-                    const areaDelUsuario = resultado.id_area; // <--- CAMBIA ESTO (Ej: resultado.rol_id)
-                    
-                    // 3. Guardamos el área del usuario en localStorage
-                    localStorage.setItem('userArea', areaDelUsuario);
+      // --- Guarda identificadores para usar como `registrado_por` ---
+      localStorage.setItem('username', username); // al menos el usuario ingresado
 
-                    // 5. Comparamos la variable
-                    if (areaDelUsuario == 7) { 
-                        window.location.href = 'admin_reservas.html';
-                    } else {
-                        window.location.href = 'trabajador_reserva.html'; 
-                    }
-                    // --- FIN DE LA CORRECCIÓN ---
-                
-                } else {
-                    // Si el servidor nos dice que hubo un error, mostramos el mensaje que nos envió.
-                    alert(resultado.message);
-                }
-
-            } catch (error) {
-                // Si hay un error de red (ej: el servidor está apagado), lo capturamos aquí.
-                console.error('Error al intentar iniciar sesión:', error);
-                alert('No se pudo conectar con el servidor. Intenta más tarde.');
-            }
+      // (Opcional) obtener nombre completo desde el perfil protegido
+      try {
+        const me = await fetch(`${API_BASE_URL}/api/trabajador/perfil`, {
+          headers: { Authorization: `Bearer ${resultado.token}` }
         });
+        if (me.ok) {
+          const perfil = await me.json();
+          if (perfil?.nombre_completo) {
+            localStorage.setItem('nombre_completo', perfil.nombre_completo);
+          }
+          if (perfil?.username) {
+            localStorage.setItem('username', perfil.username); // sobreescribe con el oficial
+          }
+        }
+      } catch (_) {
+        // si falla, seguimos con el username básico
+      }
+
+      // Área de usuario (para redirección)
+      const areaDelUsuario = resultado.id_area; // tu backend ya envía id_area
+      localStorage.setItem('userArea', areaDelUsuario);
+
+      alert(resultado.message || 'Inicio de sesión exitoso.');
+
+      // Redirección por área
+      if (String(areaDelUsuario) === '7') {
+        window.location.href = 'admin_reservas.html';
+      } else {
+        window.location.href = 'trabajador_reserva.html';
+      }
+
+    } catch (err) {
+      console.error('Error al intentar iniciar sesión:', err);
+      alert('No se pudo conectar con el servidor. Intenta más tarde.');
     }
+  });
 });

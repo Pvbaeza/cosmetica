@@ -1,0 +1,143 @@
+/* --- Reseteo Básico y Fuente --- */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f4f7f9;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+h1 {
+    color: #2c3e50;
+}
+
+h2 {
+    font-size: 1.1rem;
+    color: #555;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+/* --- CAMBIO AQUÍ: Regla 'h3' actualizada --- */
+/* La hacemos más específica para las tarjetas KPI */
+.kpi-grid .card h3 {
+    font-size: 0.8rem;
+    /* Letra más pequeña para el título */
+    font-weight: 600;
+    color: #6c757d;
+    /* Un color gris neutro */
+    text-transform: uppercase;
+    /* MAYÚSCULAS */
+    letter-spacing: 0.5px;
+    /* Un poco de espacio entre letras */
+    margin: 0;
+    /* Quitar márgenes por defecto */
+}
+
+/* --- Estilo de Tarjetas KPI --- */
+.kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+/* --- CAMBIO AQUÍ: Regla '.card' actualizada --- */
+.card {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s ease;
+
+    /* --- 1. Alineación (La parte más importante) --- */
+    display: flex;
+    flex-direction: column;
+    /* Pone los elementos uno encima del otro */
+    align-items: center;
+    /* ¡Esto los centra horizontalmente! */
+    justify-content: center;
+    /* Esto los centra verticalmente */
+    text-align: center;
+    /* Asegura que el texto dentro esté centrado */
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* --- CAMBIO AQUÍ: Regla '.card p' actualizada --- */
+.card p {
+    font-size: 2.5rem;
+    /* Número bien grande */
+    font-weight: 700;
+    color: #d63384;
+    /* Color corporativo cosmética */
+    margin: 8px 0;
+    /* Espacio vertical (arriba y abajo) */
+}
+
+/* --- CAMBIO AQUÍ: Regla '.card small' actualizada --- */
+.card small {
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin: 0;
+    /* Se quitó el 'color: #5cb85c;' para dejar que el JS (text-success/text-danger) funcione */
+}
+
+/* --- Estilo de Contenedores de Gráficos --- */
+.chart-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 20px;
+}
+
+.chart-container {
+    background-color: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.04);
+
+    /* Para asegurar que el gráfico se ajuste */
+    position: relative;
+    height: 400px;
+    /* Altura fija para el contenedor */
+    width: 100%;
+}
+
+canvas {
+    max-height: 100%;
+    max-width: 100%;
+}
+
+/* --- Responsividad --- */
+@media (max-width: 900px) {
+    .chart-grid {
+        /* Pasa a 1 columna en pantallas más pequeñas */
+        grid-template-columns: 1fr;
+    }
+}
+
+/* --- ESTILOS PARA LOS COLORES DE TEXTO DEL JS --- */
+/* (Los añadí por si no los tenías) */
+.text-success {
+    color: #198754;
+    /* Verde (Bootstrap) */
+}
+
+.text-danger {
+    color: #dc3545;
+    /* Rojo (Bootstrap) */
+}
+
+.text-muted {
+    color: #6c757d;
+    /* Gris (Bootstrap) */
+}

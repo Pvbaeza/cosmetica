@@ -11,20 +11,125 @@ body {
   line-height: 1.6;
 }
 
+/* =================================== */
+/* ======== SECCIÓN INICIO MORÍN ===== */
+/* =================================== */
+
+.card-simple {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  background: #fff;
+  border-radius: 50px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+  padding: 2.5rem 3rem;
+  max-width: 850px;
+  margin: 4rem auto 0 auto;
+  font-family: 'Poppins', sans-serif;
+  color: #5a3d3d;
+}
+
+/* === Imagen circular corregida (sin óvalo ni fondo extendido) === */
+.card-simple img {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;            /* Círculo perfecto */
+  object-fit: cover;
+  display: block;
+  border: 4px solid #fff;        /* Borde blanco limpio */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  background: none;              /* Sin fondo ovalado */
+  margin: 0;
+  padding: 0;
+}
+
+/* === Títulos con tipografía elegante === */
+.card-simple h2 {
+  font-family: 'Playfair Display', serif;
+  color: #c26d86;
+  font-size: 1.9rem;
+  font-weight: 600;
+  margin-top: 2rem;
+  margin-bottom: 0.6rem;
+  line-height: 1.3;
+}
+
+.card-simple h2 span {
+  display: block;
+  font-size: 1.1rem;
+  color: #5a3d3d;
+  font-weight: 400;
+}
+
+/* === Texto descriptivo === */
+.card-simple p {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  line-height: 1.7;
+  margin: 0.4rem 0;
+  color: #4b3b3b;
+}
+
+.compromiso {
+  font-style: italic;
+  color: #8a4a4a;
+}
+
+/* === Botón elegante === */
+.btn {
+  background: #c26d86;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 22px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  font-size: 0.95rem;
+  margin-top: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  background: #b45a73;
+  transform: translateY(-2px);
+}
+
+/* === Responsive (para pantallas pequeñas) === */
+@media (max-width: 768px) {
+  .card-simple {
+    flex-direction: column;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  .card-simple img {
+    width: 140px;
+    height: 140px;
+  }
+
+  .card-simple h2 {
+    font-size: 1.6rem;
+  }
+}
+
+/* =================================== */
+/* ======== RESTO DE SECCIONES ======= */
+/* =================================== */
 
 /* Fondo del container */
 .container-body {
   background-color: #faf0eb;
+  font-family: 'Poppins', sans-serif;
+  color: #5a3d3d;
 }
-
 
 /* ESPACIO ENTRE SECCIONES */
 section {
   padding: 30px 18px;
 }
 
-
-/*Section Inicio*/
+/* Section Inicio */
 #inicio {
   display: flex;
   flex-direction: column;
@@ -34,7 +139,6 @@ section {
   background-color: #faf0eb;
 }
 
-
 /* LOGO */
 .inicio-logo img {
   width: 100%;
@@ -43,32 +147,41 @@ section {
   margin-bottom: 0;
 }
 
-
 /* TEXTO BAJO LOGO */
 .primer-text {
   font-size: 1.1em;
-  color: #333;
+  color: #4b3b3b;
   line-height: 1.6em;
   max-width: 600px;
   margin: 0 10px;
-}
-.primer-text p { 
-  margin-bottom: 1em; 
-}
-.primer-text strong { 
-  color: #8c5f41; 
+  font-family: 'Poppins', sans-serif;
+  text-align: center;
 }
 
+.primer-text p {
+  margin-bottom: 1em;
+  max-width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+}
 
-/*Sectin Servicios*/
-.services-section { background-color: #faf0eb; }
+.primer-text strong {
+  color: #c26d86;
+}
+
+/* Section Servicios */
+.services-section {
+  background-color: #faf0eb;
+}
+
 .services-title {
   text-align: center;
   margin-bottom: 24px;
-  font-family: "Tropika Script", cursive;
+  font-family: 'Playfair Display', serif;
   font-size: 2.2rem;
-  color: #8c5f41;
+  color: #c26d86;
 }
+
 .service {
   display: flex;
   flex-direction: column;
@@ -79,298 +192,252 @@ section {
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
 }
+
 .service-image img {
-  width: 100%; 
-  height: auto; 
-  border-radius: 8px; 
-  display: block; 
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  display: block;
 }
+
+/* Alineación: textos al mismo margen del título */
 .service-content {
-  font-family: "Cerebri Sans", Arial, sans-serif; 
-  text-align: center; 
+  font-family: 'Poppins', sans-serif;
+  text-align: left;
+  max-width: 90%;
+  margin-left: 0;
+  margin-right: 0;
 }
-.service-title { 
-  font-size: 1.3rem; 
-  font-weight: 700; 
-  color: #333; 
-  margin-bottom: 6px; 
+
+.service-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #c26d86;
+  margin-bottom: 6px;
 }
+
 .service-subtitle {
-  font-size: 1rem; 
-  font-weight: 500; 
-  color: #8c5f41; 
-  margin-bottom: 12px; 
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #8a4a4a;
+  margin-bottom: 12px;
 }
-.service-description { 
-  font-size: 0.95rem; 
-  color: #555; 
-  line-height: 1.6; 
-  margin-bottom: 16px; 
+
+.service-description {
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.95rem;
+  color: #4b3b3b;
+  line-height: 1.6;
+  margin-bottom: 16px;
+  text-align: left;
+  max-width: 90%;
+  margin-left: 0;
+  margin-right: 0;
 }
+
+/* Botón servicios */
 .btn-service {
-  display: inline-block; 
-  background-color: #8c5f41; 
-  color: #fff; 
+  display: inline-block;
+  background-color: #c26d86;
+  color: #fff;
   padding: 10px 20px;
-  border-radius: 8px; 
-  font-weight: 600; 
-  font-size: 0.9rem; 
+  border-radius: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  font-size: 0.9rem;
   text-decoration: none;
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
-.btn-service:hover { 
-  background-color: #704932; 
-  transform: translateY(-2px); 
+
+.btn-service:hover {
+  background-color: #b45a73;
+  transform: translateY(-2px);
 }
 
-
-/*Section Reseñas*/
-.reviews-section { 
-  background-color: #faf0eb; 
+/* Section Reseñas */
+.reviews-section {
+  background-color: #faf0eb;
 }
+
 .reviews-title {
-  text-align: center; 
-  margin-bottom: 24px; 
-  font-family: "Tropika Script", cursive;
-  font-size: 2.2rem; 
-  color: #8c5f41;
+  text-align: center;
+  margin-bottom: 24px;
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  color: #c26d86;
 }
-
-
 
 /* Formulario */
 .review-form {
-    display: flex; 
-    flex-direction: column; 
-    gap: 15px; 
-    margin-bottom: 30px;
-    background-color: #fff; 
-    padding: 1.5rem; 
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); 
-    max-width: 600px;
-    margin-left: auto; 
-    margin-right: auto;
-}
-.form-row { 
-  width: 100%; 
-}
-.form-input, .form-textarea {
-    width: 100%; 
-    padding: 12px 15px; 
-    border: 1px solid #e0d8e0; 
-    border-radius: 8px;
-    font-family: "Cerebri Sans", Arial, sans-serif; 
-    font-size: 1rem; outline: none;
-    box-shadow: none; 
-    box-sizing: border-box; 
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-.form-input::placeholder, .form-textarea::placeholder { 
-  color: #aaa; 
-}
-.form-input:focus, .form-textarea:focus { 
-  border-color: #8c5f41; 
-  box-shadow: 0 0 0 3px rgba(140, 95, 65, 0.1);
-}
-.form-textarea { 
-  min-height: 100px; 
-  resize: vertical; 
-  line-height: 1.5; 
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 30px;
+  background-color: #fff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-
-
-/* Boton Submit */
-.form-actions { 
-  display: flex; 
-  justify-content: flex-end; 
+.form-input,
+.form-textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #e0d8e0;
+  border-radius: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
+
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: #aaa;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  border-color: #c26d86;
+  box-shadow: 0 0 0 3px rgba(194, 109, 134, 0.15);
+}
+
+.form-textarea {
+  min-height: 100px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+/* Botón Submit */
 .btn-submit {
-  background-color: #8c5f41; 
-  color: #fff; 
-  border: none; 
+  background-color: #c26d86;
+  color: #fff;
+  border: none;
   padding: 12px 20px;
-  border-radius: 8px; 
-  font-weight: 600; 
-  cursor: pointer; 
-  font-family: "Cerebri Sans", Arial, sans-serif;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
-.btn-submit:hover { 
-  background-color: #704932; 
-  transform: translateY(-2px); 
-}
-.btn-submit:active, .btn-submit:focus { 
-  transform: translateY(0); 
-  outline: none; }
 
-
-  
-/* Grid reseñas */
-.reviews-grid { 
-  display: grid; 
-  grid-template-columns: 1fr; 
-  gap: 15px; 
+.btn-submit:hover {
+  background-color: #b45a73;
+  transform: translateY(-2px);
 }
 
-/* Tarjeta de reseña */
+.btn-submit:active,
+.btn-submit:focus {
+  transform: translateY(0);
+  outline: none;
+}
+
+/* Reseñas */
+.reviews-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+}
+
 .review-card {
-    background: #fff; 
-    border: 1px solid #f0e6ea; 
-    border-radius: 12px;
-    padding: 1rem 1.25rem; 
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    min-height: 180px;
+  background: #fff;
+  border: 1px solid #f0e6ea;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 180px;
 }
-
 
 .review-content {
-  font-family: "Cerebri Sans", Arial, sans-serif; 
-  font-size: 0.95rem; 
-  color: #444;
-  margin-bottom: 12px; 
-  line-height: 1.6; font-style: italic;
+  font-family: 'Poppins', sans-serif;
+  font-size: 0.95rem;
+  color: #4b3b3b;
+  margin-bottom: 12px;
+  line-height: 1.6;
+  font-style: italic;
+  text-align: left;
+  max-width: 90%;
+  margin-left: 0;
+  margin-right: 0;
 }
-.review-content::before { 
-  content: '“'; 
-}
-.review-content::after {
-  content: '”'; 
-}
+
+.review-content::before { content: '“'; }
+.review-content::after { content: '”'; }
+
 .review-author {
-  font-family: "Cerebri Sans", Arial, sans-serif;
-  font-size: 0.9rem; 
-  color: #8c5f41;
-  font-weight: 600; 
-  margin: 0; 
+  font-family: 'Playfair Display', serif;
+  font-size: 0.9rem;
+  color: #c26d86;
+  font-weight: 600;
+  margin: 0;
   text-align: right;
 }
-
-
-
-/* Accesibilidad */
-.visually-hidden {
-  position: absolute !important; 
-  height: 1px; 
-  width: 1px;
-  overflow: hidden; 
-  clip: rect(1px, 1px, 1px, 1px); 
-  white-space: nowrap;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* =============================================== */
 /* ========== ESTILOS WEB / PC Y TABLET ========== */
 /* =============================================== */
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
+  .services-section {
+    max-width: 1180px;
+    margin-inline: auto;
+    padding-inline: 24px;
+  }
 
-    /* --- Contenedor General --- */
-    .container-body {
-        max-width: 1100px;
-        margin: 0 auto;
-    }
+  .service {
+    flex-direction: row;
+    align-items: center;
+    gap: 28px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 28px;
+  }
 
-    /* --- Padding Secciones --- */
-    section {
-        padding: 50px 40px;
-    }
+  .service-right { flex-direction: row-reverse; }
 
-    /* --- Section Inicio --- */
-    #inicio {
-        flex-direction: row;
-        align-items: center;
-        text-align: left;
-        gap: 50px;
-        padding: 60px 40px;
-    }
+  .service-image {
+    flex: 0 0 420px;
+    max-width: 420px;
+  }
 
-    .inicio-logo {
-        flex: 0 0 40%;
-        max-width: 400px;
-    }
+  .service-image img {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+    border-radius: 10px;
+  }
 
-    .inicio-logo img { 
-      max-width: 100%; 
-      margin-bottom: 0; 
-    }
+  .service-content {
+    flex: 1;
+    text-align: left;
+    max-width: 90%;
+    margin-left: 0;
+    margin-right: 0;
+  }
 
-    .primer-text {
-        flex: 1;
-        font-size: 1.15rem;
-        margin: 0; 
-        max-width: none;
-    }
+  .service-description {
+    text-align: left;
+    max-width: 90%;
+    margin-left: 0;
+    margin-right: 0;
+  }
 
-    /* --- Section Servicios --- */
-    .services-title { 
-      font-size: 2.5rem; 
-      margin-bottom: 40px; 
-    }
+  .reviews-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
 
-    .service {
-        flex-direction: row;    
-        align-items: center;
-        gap: 40px;
-        padding: 2rem;
-        margin-bottom: 50px;
-    }
-
-    .service-right { 
-      flex-direction: row-reverse; 
-    }
-
-    .service-image, .service-content {
-        flex: 1;
-        margin: 0;
-        text-align: left;
-    }
-    .service-image { 
-      max-width: 50%; 
-    }
-    .service-image img { border-radius: 10px; }
-
-    .service-title { font-size: 1.7rem; }
-    .service-subtitle { font-size: 1.15rem; }
-    .service-description { font-size: 1rem; margin-bottom: 20px;}
-    .btn-service { padding: 12px 24px; font-size: 1rem;}
-
-    /* --- Section Reseñas --- */
-    .reviews-title { font-size: 2.5rem; margin-bottom: 40px; }
-
-    .review-form { padding: 2rem; margin-bottom: 40px; }
-    .btn-submit { padding: 12px 24px; }
-
-    .reviews-grid {
-        grid-template-columns: repeat(3, 1fr); /* 3 columnas */
-        gap: 25px;
-    }
-
-    .review-card { padding: 1.5rem; }
-    .review-content { font-size: 1rem; }
-    .review-author { font-size: 0.95rem; }
-
-} /*Fin*/
-
-p{
-  text-align: center;
+  .review-content {
+    text-align: left;
+    max-width: 90%;
+    margin-left: 0;
+    margin-right: 0;
+  }
 }

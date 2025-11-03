@@ -1,8 +1,61 @@
-body{
-    background-color: #faf0eb;
+/* ===== Hero / Banner de Reservas ===== */
+
+.hero-reserva {
+  background-color: #f8d9d0;
+  color: #5a3d3d;
+  text-align: center;
+  padding: 70px 20px 60px;
+  margin-top: 80px; /* espacio por el header fijo */
+  box-shadow: 0 4px 8px rgba(194, 109, 134, 0.15);
+}
+
+.hero-reserva h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.3rem;
+  margin-bottom: 12px;
+  color: #b45a73;
+  font-weight: 600;
+}
+
+.hero-reserva p {
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.1rem;
+  max-width: 720px;
+  margin: 0 auto;
+  color: #5a3d3d;
+  line-height: 1.6;
+}
+
+/* Sutil animación de entrada */
+.hero-content {
+  opacity: 0;
+  transform: translateY(15px);
+  animation: fadeInHero 1s ease forwards;
+}
+
+@keyframes fadeInHero {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-reserva { padding: 60px 15px 50px; }
+  .hero-reserva h1 { font-size: 1.8rem; }
+  .hero-reserva p { font-size: 1rem; }
 }
 
 
+/* ===== Base ===== */
+
+body {
+  background-color: #faf0eb;
+  font-family: 'Poppins', sans-serif; /* tipografía del sitio */
+  color: #5a3d3d; /* texto base */
+  margin: 0;
+}
+
+
+/* ===== Contenedor de reservas ===== */
 
 .reserva-container {
   max-width: 800px;
@@ -13,15 +66,20 @@ body{
 }
 
 .reserva-container h1 {
+  font-family: 'Playfair Display', serif;
+  color: #c26d86;             /* acento */
   font-size: 2rem;
   margin-bottom: 1rem;
 }
 
-.reserva-calendario {
-  margin: 1.5rem 0;
-}
+
+/* ===== Calendario / horarios ===== */
+
+.reserva-calendario { margin: 1.5rem 0; }
 
 .reserva-horarios h2 {
+  font-family: 'Playfair Display', serif;
+  color: #c26d86;
   margin-bottom: 1rem;
 }
 
@@ -34,27 +92,32 @@ body{
 
 .horario-btn {
   padding: 0.7rem 1.5rem;
-  border: 1px solid #ccc;
+  border: 1px solid #c26d86;
   border-radius: 8px;
   cursor: pointer;
-  background: #f9f9f9;
-  transition: 0.3s;
+  background: #fff;
+  color: #5a3d3d;
+  transition: background-color 0.25s ease, color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+  box-shadow: 0 3px 10px rgba(194,109,134,0.12);
 }
 
 .horario-btn:hover {
-  background: #faf0eb;
+  background: #c26d86;
   color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(194,109,134,0.25);
 }
 
-.reserva-form {
-  margin-top: 2rem;
-  text-align: left;
-}
+
+/* ===== Formulario y pasos ===== */
+
+.reserva-form { margin-top: 2rem; text-align: left; }
 
 .reserva-form label {
   display: block;
   margin-top: 1rem;
-  font-weight: bold;
+  font-weight: 600;
+  color: #5a3d3d;
 }
 
 .reserva-form input,
@@ -62,95 +125,121 @@ body{
   width: 100%;
   padding: 0.6rem;
   margin-top: 0.3rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  border: 1px solid #d1c6be;
+  border-radius: 8px;
+  background: #fff;
+  color: #5a3d3d;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  box-sizing: border-box;
 }
+
+.reserva-form input:focus,
+.reserva-form select:focus {
+  outline: none;
+  border-color: #c26d86;
+  box-shadow: 0 0 0 3px rgba(194,109,134,0.15);
+}
+
+
+/* Aviso general (fuera del step card clásico) */
 
 .reserva-aviso {
   margin: 2rem 0;
   padding: 1rem;
-  border: 1px solid #f5a623;
+  border: 1px solid rgba(194,109,134,0.4);
   border-radius: 8px;
-  background: #fffaf0;
+  background: #fff;
 }
 
 .reserva-aviso h3 {
   margin-bottom: 0.5rem;
-  color: #d35400;
+  color: #b45a73;
 }
+
+
+/* Botón principal (genérico) */
 
 .btn-enviar {
   display: block;
   margin: 1.5rem auto 0;
   padding: 0.8rem 2rem;
-  background: #ff6600;
+  background: #c26d86;  /* acento */
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 4px 12px rgba(194,109,134,0.2);
+  transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
 }
 
 .btn-enviar:hover {
-  background: #e55b00;
+  background: #b45a73;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(194,109,134,0.28);
 }
 
-/* Responsive */
+
+/* Responsive horarios */
 @media (max-width: 768px) {
-  .horarios-lista {
-    flex-direction: column;
-  }
-
-  .horario-btn {
-    width: 100%;
-  }
+  .horarios-lista { flex-direction: column; }
+  .horario-btn { width: 100%; }
 }
 
 
+/* ===== Botones del paso a paso ===== */
 
-/* botones del paso a paso */
-.reserva-step {
-  margin-top: 20px;
-}
+.reserva-step { margin-top: 20px; }
 
 .btn-back {
   margin-top: 15px;
-  background: #8c5f41;
-  color: white;
-  border: none;
+  background: #f3d7c9;      /* variante suave */
+  color: #b45a73;
+  border: 1px solid #e8bfae;
   padding: 10px 15px;
-  border-radius: 5px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: background-color 0.25s ease, color 0.25s ease, transform 0.2s ease;
+}
+
+.btn-back:hover {
+  background: #c26d86;
+  color: #fff;
+  transform: translateY(-2px);
 }
 
 
-/* Calendfario */
+/* ===== Calendario (Flatpickr) ===== */
 
 /* Contenedor del paso de fecha */
 #step-fecha {
   display: flex;
-  justify-content: center; /* centra horizontalmente */
-  align-items: center;     /* centra verticalmente si hay altura suficiente */
-  flex-direction: column;  /* calendario y label vertical */
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
   margin: 20px auto;
 }
 
-/* Input calendario oculto (Flatpickr inline no lo muestra) */
+/* Input calendario (si se muestra) */
 #fecha {
   width: 100%;
-  max-width: 400px;  /* limita ancho en móviles */
+  max-width: 400px;
   text-align: center;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   padding: 10px;
   margin-bottom: 15px;
   border-radius: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid #d1c6be;
+  color: #5a3d3d;
 }
 
-/* Ajustes del calendario inline de Flatpickr */
+/* Calendario inline */
 .flatpickr-calendar.inline {
-  width: 100% !important;    /* ocupa todo el contenedor */
-  max-width: 400px;          /* ancho máximo */
-  margin: 0 auto;            /* centrado horizontal */
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  width: 100% !important;
+  max-width: 400px;
+  margin: 0 auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.12);
   border-radius: 12px;
 }
 
@@ -164,62 +253,73 @@ body{
 }
 
 
-
-
-/* FORMULARIO */
+/* ===== Tarjeta de cada paso (UI unificada) ===== */
 
 .reserva-step {
-  background-color: #fff;       /* color de fondo tipo tarjeta */
-  border-radius: 12px;          /* bordes redondeados */
-  box-shadow: 0 4px 15px rgba(0,0,0,0.2); /* sombra suave */
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.12);
   padding: 20px;
-  max-width: 400px;             /* ancho máximo */
-  margin: 20px auto;            /* centrado horizontal y espacio arriba/abajo */
+  max-width: 400px;
+  margin: 20px auto;
   display: flex;
   flex-direction: column;
   gap: 15px;
 }
 
 .reserva-step h2 {
-  color: #8c5f41;
+  font-family: 'Playfair Display', serif;
+  color: #c26d86;
   text-align: center;
   font-size: 1.6rem;
   margin-bottom: 10px;
 }
 
-/* Inputs y select */
+/* Inputs y select dentro de la tarjeta */
 .reserva-step input,
 .reserva-step select {
   padding: 10px;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid #d1c6be;
   font-size: 1rem;
   width: 100%;
   box-sizing: border-box;
+  color: #5a3d3d;
 }
 
-/* Botón de enviar */
+.reserva-step input:focus,
+.reserva-step select:focus {
+  outline: none;
+  border-color: #c26d86;
+  box-shadow: 0 0 0 3px rgba(194,109,134,0.15);
+}
+
+/* Botón de enviar dentro del step */
 .reserva-step .btn-enviar {
-  background-color: #8c5f41;
+  background-color: #c26d86;
   color: #fff;
   border: none;
   padding: 12px;
-  border-radius: 8px;
+  border-radius: 10px;
   font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-weight: 600;
+  transition: background-color 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+  box-shadow: 0 4px 12px rgba(194,109,134,0.2);
 }
 
 .reserva-step .btn-enviar:hover {
-  background-color: #a17253;
+  background-color: #b45a73;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(194,109,134,0.28);
 }
 
 /* Aviso dentro del formulario */
 .reserva-aviso {
-  background-color: #f7f7f7;
-  border-left: 4px solid #8c5f41;
+  background-color: #fff;
+  border-left: 4px solid #c26d86;   /* acento */
   padding: 10px 15px;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  color: #333;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  color: #4b3b3b;
 }
