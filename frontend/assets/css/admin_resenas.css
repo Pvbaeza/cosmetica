@@ -3,14 +3,14 @@ body {
   padding: 0;
   background-color: #faf0eb;
   font-family: "Cerebri Sans", Arial, sans-serif;
-  color: #333;
+  color: #5a3d3d;
   line-height: 1.6;
 }
 
 .login-title {
   font-family: "Tropika Script", cursive;
   text-align: center;
-  color: #8c5f41;
+  color: #c26d86;
   margin-bottom: 10px;
   font-size: 1.8rem;
 }
@@ -20,7 +20,7 @@ body {
   display: block;
   width: 100px;
   height: 3px;
-  background-color: #8c5f41;
+  background-color: #c26d86;
   margin: 1rem auto 0;
   border-radius: 2px;
 }
@@ -31,7 +31,7 @@ body {
 
 .reviews-section h2 {
   font-family: "Tropika Script", cursive;
-  color: #8c5f41;
+  color: #c26d86;
   font-size: 1.3rem;
   margin-bottom: 10px;
   text-align: center;
@@ -55,7 +55,7 @@ body {
 .review-card {
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(194, 109, 134, 0.15);
   padding: 15px;
   box-sizing: border-box;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -63,7 +63,7 @@ body {
 
 .review-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+  box-shadow: 0 6px 18px rgba(194, 109, 134, 0.25);
 }
 
 .review-actions {
@@ -82,13 +82,13 @@ body {
 }
 
 .btn-ocultar {
-  background-color: #e9b8cb;
-  color: white;
+  background-color: #f8d9d0;
+  color: #5a3d3d;
 }
 
 .btn-eliminar {
-  background-color: #8c5f41;
-  color: white;
+  background-color: #b45a73;
+  color: #fff;
 }
 
 /* --- Vista Web / Escritorio --- */
@@ -100,32 +100,31 @@ body {
     justify-items: center;
   }
 
-
   .review-card {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-  padding: 15px;
-  box-sizing: border-box;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  
-  /* 🔽 Nuevo: estructura interna */
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%; /* Para igualar altura dentro del grid */
-}
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(194, 109, 134, 0.15);
+    padding: 15px;
+    box-sizing: border-box;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 
-.review-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-}
+    /* 🔽 Nuevo: estructura interna */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
 
-/* 🔽 Mantiene los botones abajo */
-.review-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: auto; /* Empuja los botones hacia el final */
-}
+  .review-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(194, 109, 134, 0.25);
+  }
+
+  /* 🔽 Mantiene los botones abajo */
+  .review-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: auto;
+  }
 }

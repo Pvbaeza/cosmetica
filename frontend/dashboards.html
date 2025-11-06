@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard de Cosmética</title>
     <link rel="stylesheet" href="assets/css/dashboard.css">
+    <link rel="stylesheet" href="assets/css/header.css">
+    <link rel="stylesheet" href="assets/css/footer.css">
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0/dist/chartjs-plugin-datalabels.min.js"></script>
@@ -12,7 +14,26 @@
 <body>
 
     <header>
-        <h1>📊 Dashboard de Negocios (Cosmética)</h1>
+        <div class="logo">
+            <span>Cosmetología Morín</span>
+            <img src="assets/img/Logo_header.png" alt="Logo Cosmetología Morín">
+        </div>
+        <nav>
+            <button id="menu-toggle"><span></span><span></span><span></span></button>
+            <ul id="menu">
+                <li class="menu-normal"><a href="index.html">Inicio</a></li>
+                <li class="menu-normal"><a href="servicios.html">Servicios</a></li>
+                <li class="menu-normal"><a href="productos.html">Productos</a></li>
+                <li class="menu-admin hidden"><a href="admin_reservas.html"><strong>Reservas</strong></a></li>
+                <li class="menu-admin hidden"><a href="admin_productos.html"><strong>Productos</strong></a></li>
+                <li class="menu-admin hidden"><a href="admin_servicios.html"><strong>Servicios</strong></a></li>
+                <li class="menu-admin hidden"><a href="admin_resenas.html"><strong>Reseñas</strong></a></li>
+                <li class="menu-admin hidden"><a href="admin_historial.html"><strong>Historial Pagos</strong></a></li>
+                <li class="menu-admin hidden"><a href="dashboards.html"><strong>Dashboards</strong></a></li>
+                <li class="menu-admin hidden"><a href="admin_ajustes.html"><strong>Ajustes</strong></a></li>
+                <li class="menu-admin hidden"><a href="#" id="logout"><strong>Cerrar Sesión</strong></a></li>
+            </ul>
+        </nav>
     </header>
 
     <main>
@@ -61,10 +82,49 @@
                 <canvas id="ingresosMesChart"></canvas>
             </div>
 
+            <h1></h1>
+            <h1></h1>
+            <h1></h1>
+
+
         </section>
     </main>
 
-    <script src="assets/js/dashboards.js"></script>
+    
 
 </body>
+
+
+
+<footer class="site-footer">
+        <div class="footer-socials-container">
+            <div class="footer-social">
+                <a href="#" aria-label="Tiktok"><img src="assets/img/Logos/tik-tok.png" alt="Tiktok"></a>
+                <span class="social-text">Tiktok</span>
+            </div>
+            <div class="footer-social">
+                <a href="#" aria-label="Instagram"><img src="assets/img/Logos/instagram.png" alt="Instagram"></a>
+                <span class="social-text">Instagram</span>
+            </div>
+            <div class="footer-social">
+                <a href="#" aria-label="WhatsApp"><img src="assets/img/Logos/whatsapp.png" alt="WhatsApp"></a>
+                <span class="social-text">WhatsApp</span>
+            </div>
+            <div class="footer-social">
+                <a href="#" aria-label="Correo"><img src="assets/img/Logos/gmail.png" alt="Correo"></a>
+                <span class="social-text">Correo</span>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Cosmetología Morín. Todos los derechos reservados MindMatrix.</p>
+        </div>
+        <div class="footer-social">
+            <a href="login.html" aria-label="Administración"></a>
+        </div>
+    </footer>
+
+
+    <script src="assets/js/dashboards.js"></script>
+    <script src="assets/js/admin-guard.js"></script>
+    <script src="assets/js/menuhamburguesa.js"></script>
 </html>

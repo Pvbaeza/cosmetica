@@ -187,19 +187,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Paso 2: Seleccionar Fecha (Inicializa Flatpickr)
     if (document.getElementById('calendario-inline') && typeof flatpickr === 'function') {
-        flatpickr("#calendario-inline", {
-            inline: true, dateFormat: "Y-m-d", minDate: "today", locale: "es",
-            onChange: function (selectedDates, dateStr) {
-                datosReserva.fecha = dateStr;
-                if (fechaSeleccionadaSpan) fechaSeleccionadaSpan.textContent = dateStr;
+  flatpickr('#calendario-inline', {
+    inline: true,
+    showMonths: 1,          // Forzamos 1 mes
+    disableMobile: true,    // Mismo look en móvil
+    dateFormat: 'Y-m-d',
+    minDate: 'today',
+    locale: 'es',
+    onChange: function (selectedDates, dateStr) {
+      datosReserva.fecha = dateStr;
+      if (fechaSeleccionadaSpan) fechaSeleccionadaSpan.textContent = dateStr;
 
-                if (stepFecha) stepFecha.style.display = 'none';
-                if (stepHorarios) stepHorarios.style.display = 'block';
-                // Consultar horarios para la fecha y el ID del área
-                consultarYActualizarHorarios(datosReserva.fecha, datosReserva.id_area);
-            }
-        });
-    } else { console.error("'calendario-inline' o Flatpickr no encontrados."); }
+      if (stepFecha) stepFecha.style.display = 'none';
+      if (stepHorarios) stepHorarios.style.display = 'block';
+      consultarYActualizarHorarios(datosReserva.fecha, datosReserva.id_area);
+    }
+  });
+} else {
+  console.error("'calendario-inline' o Flatpickr no encontrados.");
+}
 
     // Paso 3: Seleccionar Horario
     horarioBotones.forEach(btn => {

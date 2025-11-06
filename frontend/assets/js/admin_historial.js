@@ -1,81 +1,114 @@
-// Archivo: assets/js/historial_pagos.js
-
+// Vista: Historial de Clientes (buscador + tarjetas con acciones)
 document.addEventListener('DOMContentLoaded', () => {
-    
-    // --- LÓGICA DE ENTORNO AUTOMÁTICO ---
-    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-    const API_BASE_URL = isLocal 
-        ? 'http://localhost:3000' // URL local
-        : 'https://cosmeticabackend-dqxh.onrender.com'; // URL producción
+  const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
+  const API_BASE_URL = isLocal
+    ? 'http://localhost:3000'
+    : 'https://cosmeticabackend-dqxh.onrender.com';
 
-    // --- ELEMENTOS DEL DOM ---
-    const paymentHistoryList = document.getElementById('historial-lista-body'); // El <tbody> de la tabla
+  const contenedor = document.getElementById('lista-clientes');
+  const inputBuscar = document.getElementById('entrada-buscar');
+  const mensajeVacio = document.getElementById('mensaje-vacio');
 
-    // --- FUNCIÓN: Cargar y Mostrar Historial de Pagos ---
-    const loadPaymentHistory = async () => {
-        if (!paymentHistoryList) {
-            console.error("Elemento 'historial-lista-body' no encontrado.");
-            return;
-        }
-        
-        // Mensaje de carga inicial (ya está en el HTML, pero podemos reforzar)
-        paymentHistoryList.innerHTML = '<tr><td colspan="7" class="loading-message"><i class="fas fa-spinner fa-spin"></i> Cargando historial...</td></tr>';
+  let clientes = [];
 
-        try {
-            // 1. Obtener datos del nuevo endpoint /api/pagos
-            const response = await fetch(`${API_BASE_URL}/api/pagos`);
-            if (!response.ok) {
-                const err = await response.json().catch(() => ({}));
-                throw new Error(err.message || 'No se pudo cargar el historial de pagos.');
-            }
-            const payments = await response.json();
+  const normalizar = (s) => (s || '').toString().toLowerCase().trim();
 
-            // 2. Verificar si hay pagos
-            if (!payments || payments.length === 0) {
-                paymentHistoryList.innerHTML = '<tr><td colspan="7" class="loading-message">No hay pagos registrados.</td></tr>';
-                return;
-            }
+  const inicialesDe = (nombre) => {
+    const n = (nombre || '').trim();
+    if (!n) return 'CM';
+    const partes = n.split(/\s+/).slice(0, 2);
+    return partes.map(p => p[0]?.toUpperCase() || '').join('') || 'CM';
+  };
 
-            paymentHistoryList.innerHTML = ''; // Limpiar la lista (quitar "Cargando...")
-            
-            // 3. Ordenar por fecha (más reciente primero)
-            payments.sort((a, b) => new Date(b.fecha_pago) - new Date(a.fecha_pago));
+  const tarjetaClienteHTML = (c) => {
+    const nombre = c.nombre || c.nombre_completo || c.cliente || 'Cliente sin nombre';
+    const correo = c.correo || c.email || '';
+    const telefono = c.telefono || c.fono || '';
+    const id = c.id || c.id_cliente || c.cliente_id || c._id || '';
 
-            // 4. Renderizar cada pago en la tabla
-            payments.forEach(pago => {
-                const row = document.createElement('tr');
+    const pagosURL = `historial_pagos.html?cliente_id=${encodeURIComponent(id)}&cliente_nombre=${encodeURIComponent(nombre)}`;
+    const fichaURL = `historial_fichas.html?cliente_id=${encodeURIComponent(id)}&cliente_nombre=${encodeURIComponent(nombre)}`;
 
-                // Formatear datos
-                const fechaPago = new Date(pago.fecha_pago).toLocaleDateString('es-CL', { timeZone: 'UTC' });
-                const monto = Number(pago.monto_pagado || 0).toLocaleString('es-CL', { style: 'currency', currency: 'CLP' });
-                
-                // Asignar clase de estilo según tipo de pago
-                let tipoPagoClass = '';
-                if (pago.tipo_pago?.toLowerCase() === 'abono') {
-                    tipoPagoClass = 'pago-tipo-abono';
-                } else if (pago.tipo_pago?.toLowerCase() === 'pago final') {
-                    tipoPagoClass = 'pago-tipo-pago-final';
-                }
+    return `
+      <article class="tarjeta-cliente" data-id="${id}">
+        <div class="cliente-info">
+          <div class="avatar" aria-hidden="true">${inicialesDe(nombre)}</div>
+          <div>
+            <h3 class="cliente-nombre">${nombre}</h3>
+            <p class="cliente-meta">
+              ${correo ? `<i class="fas fa-envelope"></i> ${correo}` : ''}
+              ${correo && telefono ? ' · ' : ''}
+              ${telefono ? `<i class="fas fa-phone-alt"></i> ${telefono}` : ''}
+            </p>
+          </div>
+        </div>
+        <div class="cliente-acciones">
+          <a class="btn btn-secundario" href="${pagosURL}" title="Ver historial de pagos">
+            <i class="fas fa-receipt"></i> Pagos
+          </a>
+          <a class="btn btn-primario" href="${fichaURL}" title="Ver ficha clínica">
+            <i class="fas fa-notes-medical"></i> Ficha
+          </a>
+        </div>
+      </article>
+    `;
+  };
 
-                row.innerHTML = `
-                    <td>${fechaPago}</td>
-                    <td>${pago.nombre_cliente || 'N/A'}</td>
-                    <td>${pago.tipo_servicio || 'N/A'}</td>
-                    <td><span class="${tipoPagoClass}">${pago.tipo_pago || 'N/A'}</span></td>
-                    <td>${pago.metodo_pago || 'N/A'}</td>
-                    <td>${monto}</td>
-                    <td>${pago.registrado_por || 'Sistema'}</td>
-                `;
-                paymentHistoryList.appendChild(row);
-            });
+  const renderClientes = (lista) => {
+    if (!contenedor) return;
+    if (!lista || lista.length === 0) {
+      contenedor.innerHTML = '';
+      if (mensajeVacio) mensajeVacio.style.display = 'block';
+      return;
+    }
+    if (mensajeVacio) mensajeVacio.style.display = 'none';
+    contenedor.innerHTML = lista.map(tarjetaClienteHTML).join('');
+  };
 
-        } catch (error) {
-            console.error("Error cargando historial de pagos:", error);
-            paymentHistoryList.innerHTML = `<tr><td colspan="7" class="error-message">${error.message}</td></tr>`;
-        }
-    };
+  const filtrar = () => {
+    const q = normalizar(inputBuscar?.value || '');
+    if (!q) {
+      renderClientes(clientes);
+      return;
+    }
+    const resultado = clientes.filter(c =>
+      normalizar(c.nombre || c.nombre_completo || c.cliente).includes(q) ||
+      normalizar(c.correo || c.email).includes(q) ||
+      normalizar(c.telefono || c.fono).includes(q)
+    );
+    renderClientes(resultado);
+  };
 
-    // --- INICIALIZACIÓN ---
-    loadPaymentHistory();
+  // Intenta distintos endpoints comunes para clientes
+  const fetchClientes = async () => {
+    const intentos = [
+      `${API_BASE_URL}/api/clientes`,
+      `${API_BASE_URL}/api/admin/clientes`,
+      `${API_BASE_URL}/api/usuarios/clientes`
+    ];
+    let ultimoError = null;
 
-}); // Fin DOMContentLoaded
+    for (const url of intentos) {
+      try {
+        const r = await fetch(url);
+        if (!r.ok) throw new Error(`${r.status}`);
+        const data = await r.json();
+        if (Array.isArray(data)) return data;
+        if (Array.isArray(data?.clientes)) return data.clientes;
+      } catch (e) {
+        ultimoError = e;
+      }
+    }
+    // Si falla todo, devolver arreglo vacío
+    console.warn('No se pudieron cargar clientes.', ultimoError?.message || ultimoError);
+    return [];
+  };
+
+  const init = async () => {
+    clientes = await fetchClientes();
+    renderClientes(clientes);
+  };
+
+  inputBuscar?.addEventListener('input', filtrar);
+  init();
+});

@@ -1,152 +1,198 @@
+// assets/js/servicios.js — Filtro por área corregido con normalización robusta
+
 // --- LÓGICA DE ENTORNO AUTOMÁTICO ---
-// Detecta si estamos en localhost o en el servidor de Render
-const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-// (Espacio falso corregido en la línea de abajo)
+const isLocal =
+  window.location.hostname === 'localhost' ||
+  window.location.hostname === '127.0.0.1';
+
 const API_BASE_URL = isLocal
-    ? 'http://localhost:3000' // URL local
-    : 'https://cosmeticabackend-dqxh.onrender.com'; // URL producción
+  ? 'http://localhost:3000'
+  : 'https://cosmeticabackend-dqxh.onrender.com';
 
 document.addEventListener('DOMContentLoaded', () => {
+  // --- ELEMENTOS DEL DOM ---
+  const servicesContainer = document.getElementById('servicios');
+  const areaFilterSelect  = document.getElementById('area-filter'); // Select de área
+  const searchInput       = document.getElementById('search-input'); // Input de búsqueda
+  const loadingMessage    = document.querySelector('.loading-message'); // Mensaje "Cargando..."
 
-    // --- ELEMENTOS DEL DOM ---
-    const servicesContainer = document.getElementById('servicios');
-    const areaFilterSelect = document.getElementById('area-filter'); // Select de área
-    const searchInput = document.getElementById('search-input'); // Input de búsqueda
-    const loadingMessage = document.querySelector('.loading-message'); // Mensaje "Cargando..."
+  let allServices = []; // Todos los servicios
+  let areaMap     = new Map(); // clave normalizada -> etiqueta visible
 
-    let allServices = []; // Guardaremos todos los servicios aquí
+  // --- Helpers de normalización ---
+  const norm = (str) =>
+    (str || '')
+      .toString()
+      .normalize('NFD')                    // separa diacríticos
+      .replace(/[\u0300-\u036f]/g, '')    // elimina tildes
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, ' ');              // colapsa espacios
 
-    // --- FUNCIÓN PARA MOSTRAR SERVICIOS (RENDERIZAR) ---
-    const renderServices = (servicesToRender) => {
-        // Asegúrate que el contenedor existe
-        if (!servicesContainer) {
-            console.error("Contenedor 'servicios' no encontrado.");
-            return;
-        }
-        servicesContainer.innerHTML = ''; // Limpiar contenedor
+  const getAreaRaw = (s) =>
+    s?.tipo_trabajador ?? s?.nombre_area ?? s?.area ?? '';
 
-        if (!servicesToRender || servicesToRender.length === 0) {
-            servicesContainer.innerHTML = '<p class="empty-message">No se encontraron servicios que coincidan con los filtros.</p>';
-            return;
-        }
+  const getAreaKey = (s) => norm(getAreaRaw(s));
 
-        servicesToRender.forEach((service, index) => {
-            const serviceCard = document.createElement('div');
-            serviceCard.classList.add('servicio-card');
+  // --- RENDERIZAR TARJETAS ---
+  const renderServices = (servicesToRender) => {
+    if (!servicesContainer) {
+      console.error("Contenedor 'servicios' no encontrado.");
+      return;
+    }
+    servicesContainer.innerHTML = ''; // Limpiar contenedor
 
-            // --- ¡CORRECCIÓN DE URL DE CLOUDINARY APLICADA! ---
-            let imageUrl;
-            if (service.imagen_url && service.imagen_url.startsWith('http')) {
-                // Es una URL absoluta (de Cloudinary)
-                imageUrl = service.imagen_url;
-            } else if (service.imagen_url) {
-                // Es una URL relativa antigua (ej: 'assets/img/...')
-                imageUrl = `${API_BASE_URL}/${service.imagen_url}`;
-            } else {
-                // No hay imagen
-                imageUrl = 'https://via.placeholder.com/400x225?text=Servicio'; // Placeholder
-            }
-            
-            // Formatear precio a CLP
-            const valorNumerico = Number(service.valor || 0);
-            const precioFormateado = valorNumerico.toLocaleString('es-CL', { style: 'currency', currency: 'CLP' });
+    if (!servicesToRender || servicesToRender.length === 0) {
+      servicesContainer.innerHTML =
+        '<p class="empty-message">No se encontraron servicios que coincidan con los filtros.</p>';
+      return;
+    }
 
-            // Usamos encodeURIComponent por si el título tiene espacios o caracteres especiales
-            const reservaUrl = `reserva.html?servicio=${encodeURIComponent(service.titulo || '')}`;
+    servicesToRender.forEach((service) => {
+      const serviceCard = document.createElement('div');
+      serviceCard.classList.add('servicio-card');
+      // útil para debug o estilos futuros:
+      serviceCard.dataset.area = getAreaKey(service);
 
-            serviceCard.innerHTML = `
-                <div class="servicio-img">
-                    <img src="${imageUrl}" alt="Imagen de ${service.titulo || 'Servicio'}">
-                </div>
-                <div class="servicio-info">
-                    <h2 class="servicio-titulo">${service.titulo || 'Servicio sin título'}</h2>
-                    <h4 class="servicio-subtitulo">${service.subtitulo || ''}</h4>
-                    <p>${service.descripcion || 'Descripción no disponible.'}</p>
-                    <a href="${reservaUrl}" class="btn-reservar">Reservar por ${precioFormateado}</a>
-                </div>
-            `;
-            servicesContainer.appendChild(serviceCard);
-        });
-    };
+      // Imagen (Cloudinary o relativa al backend)
+      let imageUrl;
+      if (service.imagen_url && service.imagen_url.startsWith('http')) {
+        imageUrl = service.imagen_url;
+      } else if (service.imagen_url) {
+        imageUrl = `${API_BASE_URL}/${service.imagen_url}`;
+      } else {
+        imageUrl = 'https://via.placeholder.com/400x225?text=Servicio';
+      }
 
-    // --- FUNCIÓN PARA POBLAR EL FILTRO DE ÁREAS ---
-    const populateAreaFilter = (services) => {
-         if (!areaFilterSelect) return;
-         const areas = new Set();
-         services.forEach(service => {
-             if (service.tipo_trabajador && service.tipo_trabajador.toLowerCase() !== 'admin') {
-                 areas.add(service.tipo_trabajador);
-             }
-         });
-         areaFilterSelect.innerHTML = '<option value="todos">Mostrar Todas</option>';
-         const sortedAreas = [...areas].sort((a, b) => a.localeCompare(b));
-         sortedAreas.forEach(area => {
-             const option = document.createElement('option');
-             option.value = area;
-             option.textContent = area;
-             areaFilterSelect.appendChild(option);
-         });
-    };
+      // Precio CLP
+      const valorNumerico    = Number(service.valor || 0);
+      const precioFormateado = valorNumerico.toLocaleString('es-CL', {
+        style: 'currency',
+        currency: 'CLP',
+      });
 
-    // --- FUNCIÓN PARA FILTRAR SERVICIOS (POR ÁREA Y BÚSQUEDA) ---
-    const filterServices = () => {
-        const selectedArea = areaFilterSelect ? areaFilterSelect.value : 'todos';
-        const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
+      const reservaUrl = `reserva.html?servicio=${encodeURIComponent(
+        service.titulo || ''
+      )}`;
 
-        console.log("Filtrando - Área:", selectedArea, "Búsqueda:", searchTerm);
+      serviceCard.innerHTML = `
+        <div class="servicio-img">
+          <img src="${imageUrl}" alt="Imagen de ${service.titulo || 'Servicio'}">
+        </div>
+        <div class="servicio-info">
+          <h2 class="servicio-titulo">${service.titulo || 'Servicio sin título'}</h2>
+          <h4 class="servicio-subtitulo">${service.subtitulo || ''}</h4>
+          <p>${service.descripcion || 'Descripción no disponible.'}</p>
+          <a href="${reservaUrl}" class="btn-reservar">Reservar por ${precioFormateado}</a>
+        </div>
+      `;
+      servicesContainer.appendChild(serviceCard);
+    });
+  };
 
-        let filteredServices = allServices;
+  // --- POBLAR SELECT DE ÁREAS (evita duplicados con tildes/espacios) ---
+  const populateAreaFilter = (services) => {
+    if (!areaFilterSelect) return;
 
-        // Filtrar por Área
-        if (selectedArea !== 'todos') {
-            filteredServices = filteredServices.filter(service =>
-                service.tipo_trabajador && service.tipo_trabajador.toLowerCase() === selectedArea.toLowerCase()
-            );
-        } else {
-             filteredServices = filteredServices.filter(service => service.tipo_trabajador?.toLowerCase() !== 'admin');
-        }
+    areaMap = new Map(); // Reinicia
 
-        // Filtrar por Búsqueda
-        if (searchTerm) {
-            filteredServices = filteredServices.filter(service =>
-                (service.titulo && service.titulo.toLowerCase().includes(searchTerm)) ||
-                (service.descripcion && service.descripcion.toLowerCase().includes(searchTerm)) ||
-                (service.subtitulo && service.subtitulo.toLowerCase().includes(searchTerm))
-            );
-        }
+    services.forEach((service) => {
+      const raw = getAreaRaw(service);
+      const key = norm(raw);
+      if (!key || key === 'admin') return; // excluye admin
+      if (!areaMap.has(key)) {
+        // Guarda primera etiqueta “humana” encontrada
+        areaMap.set(key, (raw || '').toString().trim());
+      }
+    });
 
-        renderServices(filteredServices);
-    };
+    // Reconstruye el select
+    const previous = areaFilterSelect.value || 'todos';
+    areaFilterSelect.innerHTML =
+      '<option value="todos">Mostrar Todas</option>';
 
-    // --- FUNCIÓN PRINCIPAL PARA CARGAR DATOS Y CONFIGURAR EVENTOS ---
-    const fetchAndSetupServices = async () => {
-        try {
-            if (loadingMessage) loadingMessage.style.display = 'block';
-            if (servicesContainer) servicesContainer.innerHTML = '';
+    // Ordenar por etiqueta visible (ignorando tildes)
+    const ordenadas = Array.from(areaMap.entries()).sort((a, b) =>
+      a[1].normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .localeCompare(
+          b[1].normalize('NFD').replace(/[\u0300-\u036f]/g, ''),
+          'es',
+          { sensitivity: 'base' }
+        )
+    );
 
-            const response = await fetch(`${API_BASE_URL}/api/servicios`);
-            if (!response.ok) throw new Error('No se pudo conectar al servidor.');
-            allServices = await response.json();
+    ordenadas.forEach(([key, label]) => {
+      const opt = document.createElement('option');
+      opt.value = key;   // valor normalizado
+      opt.textContent = label; // etiqueta visible con tildes
+      areaFilterSelect.appendChild(opt);
+    });
 
-            if (loadingMessage) loadingMessage.style.display = 'none';
+    // Restaura selección si existe
+    const existe = Array.from(areaFilterSelect.options).some(
+      (o) => o.value === previous
+    );
+    areaFilterSelect.value = existe ? previous : 'todos';
+  };
 
-            populateAreaFilter(allServices);
-            filterServices();
+  // --- FILTRAR POR ÁREA + BÚSQUEDA ---
+  const filterServices = () => {
+    const selectedKey = areaFilterSelect ? areaFilterSelect.value : 'todos';
+    const q = searchInput ? norm(searchInput.value) : '';
 
-            // Añadir listeners
-            if (areaFilterSelect) areaFilterSelect.addEventListener('change', filterServices);
-            if (searchInput) searchInput.addEventListener('input', filterServices);
+    let filtered = allServices;
 
-        } catch (error) {
-            console.error('Error al cargar los servicios:', error);
-            if (loadingMessage) loadingMessage.style.display = 'none';
-            if (servicesContainer) {
-                 servicesContainer.innerHTML = `<p class="error-message">Ocurrió un error: ${error.message}. Inténtalo más tarde.</p>`;
-            }
-        }
-    };
+    // Área
+    if (selectedKey !== 'todos') {
+      filtered = filtered.filter((s) => getAreaKey(s) === selectedKey);
+    } else {
+      // En "todas": excluye admin por defecto
+      filtered = filtered.filter((s) => getAreaKey(s) !== 'admin');
+    }
 
-    // --- INICIAR CARGA ---
-    fetchAndSetupServices();
+    // Búsqueda (normalizada: quita tildes, etc.)
+    if (q) {
+      filtered = filtered.filter((s) => {
+        const titulo = norm(s.titulo);
+        const desc   = norm(s.descripcion);
+        const sub    = norm(s.subtitulo);
+        return (
+          (titulo && titulo.includes(q)) ||
+          (desc && desc.includes(q)) ||
+          (sub && sub.includes(q))
+        );
+      });
+    }
 
-}); // Fin DOMContentLoaded
+    renderServices(filtered);
+  };
+
+  // --- CARGA INICIAL ---
+  const fetchAndSetupServices = async () => {
+    try {
+      if (loadingMessage) loadingMessage.style.display = 'block';
+      if (servicesContainer) servicesContainer.innerHTML = '';
+
+      const response = await fetch(`${API_BASE_URL}/api/servicios`);
+      if (!response.ok) throw new Error('No se pudo conectar al servidor.');
+      allServices = await response.json();
+
+      if (loadingMessage) loadingMessage.style.display = 'none';
+
+      populateAreaFilter(allServices);
+      filterServices();
+
+      // Listeners
+      areaFilterSelect?.addEventListener('change', filterServices);
+      searchInput?.addEventListener('input', filterServices);
+    } catch (error) {
+      console.error('Error al cargar los servicios:', error);
+      if (loadingMessage) loadingMessage.style.display = 'none';
+      if (servicesContainer) {
+        servicesContainer.innerHTML = `<p class="error-message">Ocurrió un error: ${error.message}. Inténtalo más tarde.</p>`;
+      }
+    }
+  };
+
+  fetchAndSetupServices();
+});

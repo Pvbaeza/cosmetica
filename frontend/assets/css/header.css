@@ -1,10 +1,21 @@
 /* =========================================================
-   HEADER — Mobile First (menú hamburguesa visible)
+   HEADER — Mobile First (paleta Morín)
    ========================================================= */
+
+/* Tokens de color del brand */
+:root{
+  --bg-pink: #f8d9d0;           /* rosa claro header */
+  --bg-pink-scrolled: #f5c8bf;  /* al hacer scroll */
+  --text-main: #5a3d3d;         /* texto principal cálido */
+  --accent: #c26d86;            /* acento */
+  --accent-hover: #b45a73;      /* hover acento */
+  --border-soft: #f0e6ea;       /* bordes suaves */
+  --shadow: 0 4px 10px rgba(194,109,134,0.25);
+  --shadow-strong: 0 6px 18px rgba(194,109,134,0.35);
+}
 
 /* ----- Reset mínimo del header ----- */
 * { box-sizing: border-box; }
-
 
 /* ----- Header base (mobile) ----- */
 header {
@@ -15,17 +26,19 @@ header {
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  background: #f8d9d0; /* rosa pastel */
-  box-shadow: 0 4px 10px rgba(194, 109, 134, 0.25);
+  background: var(--bg-pink);
+  color: var(--text-main);
+  box-shadow: var(--shadow);
   padding: 12px 18px;
-  transition: padding 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+  transition: padding .25s ease, box-shadow .25s ease, background-color .25s ease, border-color .25s ease;
 }
 
 /* Efecto al hacer scroll */
 body.scrolled header {
   padding: 8px 16px;
-  box-shadow: 0 6px 18px rgba(194, 109, 134, 0.35);
-  background-color: #f5c8bf;
+  background-color: var(--bg-pink-scrolled);
+  box-shadow: var(--shadow-strong);
+  border-color: var(--accent-hover);
 }
 
 /* ----- Marca / logo ----- */
@@ -35,15 +48,15 @@ body.scrolled header {
   gap: 10px;
   font-family: 'Playfair Display', serif;
   font-size: 1.2rem;
-  color: #b45a73;
+  color: var(--accent);
   font-weight: 600;
 }
-.logo img { height: 36px; transition: height 0.25s ease; }
+.logo img { height: 36px; transition: height .25s ease; }
 body.scrolled .logo img { height: 30px; }
 
 /* ----- Navegación ----- */
 nav {
-  position: relative;            /* ancla el menú desplegable */
+  position: relative;
   display: flex;
   align-items: center;
   gap: 14px;
@@ -54,14 +67,14 @@ nav {
   list-style: none;
   margin: 0;
   padding: 12px 14px;
-  display: none;                 /* visible con .open */
+  display: none;
   flex-direction: column;
   gap: 10px;
-
   position: absolute;
-  top: calc(100% + 8px);         /* justo bajo el header */
+  top: calc(100% + 8px);
   right: 0;
-  background: #f8d9d0;
+  background: var(--bg-pink);
+  border: 1px solid var(--border-soft);
   border-radius: 12px;
   box-shadow: 0 10px 20px rgba(194, 109, 134, 0.25);
   z-index: 1001;
@@ -71,19 +84,31 @@ nav {
 #menu a {
   text-decoration: none;
   font-family: 'Poppins', sans-serif;
-  color: #5a3d3d;
+  color: var(--text-main);
   font-weight: 500;
-  transition: color 0.2s ease;
-
+  padding: 6px 8px;
+  border-radius: 8px;
+  transition: color .2s ease, background-color .2s ease;
 }
-#menu a:hover { color: #c26d86; }
+#menu a:hover { color: var(--accent); background: rgba(194,109,134,0.08); }
 
+/* Estado activo */
+#menu a.active {
+  color: var(--accent);
+  background: rgba(194,109,134,0.12);
+}
 
+/* Accesibilidad */
+#menu a:focus-visible,
+#menu-toggle:focus-visible {
+  outline: 3px solid rgba(194,109,134,0.35);
+  outline-offset: 2px;
+  border-radius: 10px;
+}
 
-
-/* ----- Botón hamburguesa (SIEMPRE visible en móvil) ----- */
+/* ----- Botón hamburguesa (móvil) ----- */
 #menu-toggle {
-  display: inline-flex;          /* IMPORTANTE: que no quede oculto */
+  display: inline-flex;
   flex-direction: column;
   justify-content: space-between;
   width: 36px;
@@ -92,7 +117,7 @@ nav {
   background: transparent;
   border: 0;
   cursor: pointer;
-  z-index: 1002;                 /* por encima del menú */
+  z-index: 1002;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -101,20 +126,22 @@ nav {
   display: block;
   height: 3px;
   width: 100%;
-  background-color: #5a3d3d;     /* contraste alto sobre #f8d9d0 */
+  background-color: var(--text-main);
   border-radius: 2px;
-  opacity: 1;                    /* asegura visibilidad */
-  transition: transform 0.25s ease, opacity 0.2s ease, background-color 0.2s ease;
-  /* leve sombra para mejorar contraste en pantallas claras */
+  opacity: 1;
+  transition: transform .25s ease, opacity .2s ease, background-color .2s ease;
   box-shadow: 0 0 0.5px rgba(0,0,0,0.35);
 }
 
-/* Animación a "X" cuando se abre */
+/* Hover del botón */
+#menu-toggle:hover span { background-color: var(--accent); }
+
+/* Animación a "X" */
 #menu-toggle.open span:nth-child(1) { transform: translateY(14px) rotate(45deg); }
 #menu-toggle.open span:nth-child(2) { opacity: 0; }
 #menu-toggle.open span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
 
-/* ----- Utilidad ----- */
+/* Utilidad */
 .hidden { display: none !important; }
 
 /* =========================================================
@@ -125,7 +152,6 @@ nav {
   .logo { font-size: 1.35rem; }
   .logo img { height: 40px; }
 
-  /* En escritorio: menú visible en línea, hamburguesa oculta */
   #menu-toggle { display: none; }
 
   #menu {
@@ -136,8 +162,11 @@ nav {
     background: none;
     border-radius: 0;
     box-shadow: none;
+    border: 0;
     padding: 0;
   }
 
-  #menu a { padding: 4px 6px; }
+  #menu a { padding: 6px 8px; }
+  #menu a:hover { background: rgba(194,109,134,0.10); }
+  #menu a.active { background: rgba(194,109,134,0.14); }
 }

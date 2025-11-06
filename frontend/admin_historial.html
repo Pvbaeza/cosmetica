@@ -1,98 +1,102 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Historial de Pagos</title>
-    <link rel="stylesheet" href="assets/css/header.css">
-    <link rel="stylesheet" href="assets/css/footer.css"> <link rel="stylesheet" href="assets/css/admin_historial.css">
-    <link rel="stylesheet" href="assets/css/historial_pagos.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Historial de Clientes</title>
+
+  <link rel="stylesheet" href="assets/css/header.css"/>
+  <link rel="stylesheet" href="assets/css/footer.css"/>
+  <link rel="stylesheet" href="assets/css/admin_ficha.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
 </head>
-
 <body>
+  <!-- HEADER -->
+  <header>
+    <div class="logo">
+      <span>Cosmetología Morín</span>
+      <img src="assets/img/Logo_header.png" alt="Logo Cosmetología Morín"/>
+    </div>
+    <nav>
+      <button id="menu-toggle"><span></span><span></span><span></span></button>
+      <ul id="menu">
+        <li class="menu-normal"><a href="index.html">Inicio</a></li>
+                 <li class="menu-normal"><a href="servicios.html">Servicios</a></li>
+                 <li class="menu-normal"><a href="productos.html">Productos</a></li>
+                 <li class="menu-admin hidden"><a href="admin_reservas.html"><strong>Reservas</strong></a></li>
+                 <li class="menu-admin hidden"><a href="admin_productos.html"><strong>Productos</strong></a></li>
+                 <li class="menu-admin hidden"><a href="admin_servicios.html"><strong>Servicios</strong></a></li>
+                 <li class="menu-admin hidden"><a href="admin_resenas.html"><strong>Reseñas</strong></a></li>
+                 <li class="menu-admin hidden"><a href="admin_historial.html"><strong>Historial Pagos</strong></a></li>
+                 <li class="menu-admin hidden"><a href="dashboards.html"><strong>Dashboards</strong></a></li>
+                 <li class="menu-admin hidden"><a href="admin_ajustes.html"><strong>Ajustes</strong></a></li>
+                 <li class="menu-admin hidden"><a href="#" id="logout"><strong>Cerrar Sesión</strong></a></li>
+      </ul>
+    </nav>
+  </header>
 
-    <header>
-        <div class="logo">
-            <span>Cosmetología Morín</span>
-            <img src="assets/img/Logo_header.png" alt="Logo Cosmetología Morín">
+  <main>
+    <h1 class="titulo-pagina">Historial de Clientes</h1>
+
+    <!-- Buscador -->
+    <section class="seccion-buscador" aria-label="Buscar clientes">
+      <div class="contenedor-buscador">
+        <label for="entrada-buscar" class="etiqueta-buscador">
+          <i class="fas fa-search" aria-hidden="true"></i> Buscar:
+        </label>
+        <input id="entrada-buscar" class="input-buscar" type="search" placeholder="Nombre, correo o teléfono…"/>
+      </div>
+    </section>
+
+    <!-- Lista de clientes -->
+    <section id="lista-clientes" class="lista-clientes" aria-live="polite">
+      <!-- Estado inicial -->
+      <article class="tarjeta-cliente tarjeta-skeleton">
+        <div class="cliente-info">
+          <div class="avatar-skeleton"></div>
+          <div class="linea-skeleton"></div>
+          <div class="linea-skeleton corta"></div>
         </div>
-        <nav>
-            <button id="menu-toggle"><span></span><span></span><span></span></button>
-            <ul id="menu">
-                 <li class="menu-admin hidden"><a href="admin_reservas.html">Reservas</a></li>
-                 <li class="menu-admin hidden"><a href="admin_productos.html">Productos</a></li>
-                 <li class="menu-admin hidden"><a href="admin_servicios.html">Servicios</a></li>
-                 <li class="menu-admin hidden"><a href="admin_ajustes.html">Ajustes</a></li>
-                 <li class="menu-admin hidden"><a href="#" id="logout">Cerrar Sesión</a></li>
-            </ul>
-        </nav>
-    </header>
-
-    <main>
-        <h1 class="title-page">Historial de Pagos</h1>
-
-        <div class="container">
-            <section class="payment-history">
-                <h2 class="subsection-title">Todos los Pagos Registrados</h2>
-                
-                <div class="table-responsive-wrapper">
-                    <table class="payment-history-table">
-                        <thead>
-                            <tr>
-                                <th>Fecha Pago</th>
-                                <th>Cliente</th>
-                                <th>Servicio</th>
-                                <th>Tipo de Pago</th>
-                                <th>Método</th>
-                                <th>Monto (CLP)</th>
-                                <th>Registrado Por</th>
-                            </tr>
-                        </thead>
-                        <tbody id="historial-lista-body">
-                            <tr>
-                                <td colspan="7" class="loading-message">
-                                    <i class="fas fa-spinner fa-spin"></i> Cargando historial...
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
+        <div class="cliente-acciones">
+          <button class="btn btn-secundario" disabled><i class="fas fa-receipt"></i> Pagos</button>
+          <button class="btn btn-primario" disabled><i class="fas fa-notes-medical"></i> Ficha</button>
         </div>
-    </main>
+      </article>
+    </section>
 
-    <footer class="site-footer">
-        <div class="footer-socials-container">
-            <div class="footer-social">
-                <a href="#" aria-label="Tiktok"><img src="assets/img/Logos/tik-tok.png" alt="Tiktok"></a>
-                <span class="social-text">Tiktok</span>
-            </div>
-            <div class="footer-social">
-                <a href="#" aria-label="Instagram"><img src="assets/img/Logos/instagram.png" alt="Instagram"></a>
-                <span class="social-text">Instagram</span>
-            </div>
-            <div class="footer-social">
-                <a href="#" aria-label="WhatsApp"><img src="assets/img/Logos/whatsapp.png" alt="WhatsApp"></a>
-                <span class="social-text">WhatsApp</span>
-            </div>
-            <div class="footer-social">
-                <a href="#" aria-label="Correo"><img src="assets/img/Logos/gmail.png" alt="Correo"></a>
-                <span class="social-text">Correo</span>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Cosmetología Morín. Todos los derechos reservados MindMatrix.</p>
-        </div>
-        <div class="footer-social">
-            <a href="login.html" aria-label="Administración"></a>
-        </div>
-    </footer>
+    <p id="mensaje-vacio" class="mensaje-vacio" style="display:none;">
+      No se encontraron clientes con ese criterio.
+    </p>
+  </main>
 
-    <script src="assets/js/admin-guard.js"></script>
-    <script src="assets/js/menuhamburguesa.js"></script>
-    <script src="assets/js/historial_pagos.js"></script> 
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-socials-container">
+      <div class="footer-social">
+        <a href="#" aria-label="Tiktok"><img src="assets/img/Logos/tik-tok.png" alt="Tiktok"/></a>
+        <span class="social-text">Tiktok</span>
+      </div>
+      <div class="footer-social">
+        <a href="#" aria-label="Instagram"><img src="assets/img/Logos/instagram.png" alt="Instagram"/></a>
+        <span class="social-text">Instagram</span>
+      </div>
+      <div class="footer-social">
+        <a href="#" aria-label="WhatsApp"><img src="assets/img/Logos/whatsapp.png" alt="WhatsApp"/></a>
+        <span class="social-text">WhatsApp</span>
+      </div>
+      <div class="footer-social">
+        <a href="#" aria-label="Correo"><img src="assets/img/Logos/gmail.png" alt="Correo"/></a>
+        <span class="social-text">Correo</span>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Cosmetología Morín. Todos los derechos reservados MindMatrix.</p>
+    </div>
+  </footer>
 
-</body> 
-
+  <!-- SCRIPTS -->
+  <script src="assets/js/admin-guard.js"></script>
+  <script src="assets/js/menuhamburguesa.js"></script>
+  <script src="assets/js/admin_historial.js"></script>
+</body>
 </html>
