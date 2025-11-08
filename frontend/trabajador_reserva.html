@@ -1,129 +1,252 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mis Reservas Programadas</title>
-    <link rel="stylesheet" href="assets/css/header.css">
-    <link rel="stylesheet" href="assets/css/footer.css">
-    <link rel="stylesheet" href="assets/css/admin_reservas.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mis Reservas Programadas</title>
+  <link rel="stylesheet" href="assets/css/header.css" />
+  <link rel="stylesheet" href="assets/css/footer.css" />
+  <link rel="stylesheet" href="assets/css/admin_reservas.css" />
+  <!-- Reuso estilos de modales del admin para ficha/pago -->
+  <link rel="stylesheet" href="assets/css/admin_historial.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 </head>
 
-<body>
-    <main>
-    <header>
-        <div class="logo">
-            <span>Cosmetología Morín</span>
-            <img src="assets/img/Logo_header.png" alt="Logo Cosmetología Morín">
-        </div>
-        <nav>
-            <button id="menu-toggle"><span></span><span></span><span></span></button>
-            <ul id="menu">
-                <li class="menu-trabajador"><a href="trabajador_reserva.html"><strong>Mis Reservas</strong></a></li>
-                <li class="menu-trabajador"><a href="trabajador_ajustes.html"><strong>Ajustes</strong></a></li>
-                <li class="menu-trabajador"><a href="#" id="logout"><strong>Cerrar Sesión</strong></a></li>
-            </ul>
-        </nav>
-    </header>
 
-    <h1 class="title-page">Mis Reservas Programadas</h1>
-
-    <main class="container">
-        <section class="booking-list">
-            <h2>Próximas Reservas</h2>
-
-            <div class="booking-card" data-reserva='{"id_reserva": 1, "nombre_cliente": "Cliente Ejemplo", "tipo_servicio": "Servicio Asignado", "fecha_reserva": "2025-10-21T14:00:00.000Z", "hora_reserva": "11:00-13:00", "rut_cliente": "11.111.111-1", "telefono_cliente":"+56911111111", "fecha_creacion": "2025-10-19T12:00:00.000Z", "area_servicio": "Peluqueria"}'>
-                <div class="booking-header">
-                    <h3 class="client-name">Cliente Ejemplo</h3>
-                </div>
-                <div class="booking-body">
-                    <p><strong>Servicio:</strong> Servicio Asignado</p>
-                    <p><strong>Fecha:</strong> Martes, 21 de Octubre, 2025</p>
-                    <p><strong>Hora:</strong> 11:00 - 13:00</p>
-                </div>
-                <div class="booking-footer">
-                    <div class="client-contact">
-                        <p><i class="fas fa-id-card"></i> 11.111.111-1</p>
-                        <p><i class="fas fa-phone"></i> +56 9 1111 1111</p>
-                    </div>
-                    <small class="creation-date">Creado: 19/10/2025</small>
-                </div>
-            </div>
-            <div id="loading-placeholder">
-                <p>Cargando tus reservas...</p>
-            </div>
-
-        </section>
-    </main>
-
-    <div class="modal-overlay">
-        <div class="modal-content">
-            <button class="modal-close" title="Cerrar"><i class="fas fa-times"></i></button>
-            <h2>Gestionar Reserva</h2>
-            <form id="manage-booking-form" class="booking-form">
-                <input type="hidden" id="edit-reserva-id">
-                <p><strong>Cliente:</strong> <span id="modal-cliente-nombre"></span></p>
-                <p><strong>Servicio:</strong> <span id="modal-servicio-nombre"></span></p>
-                <p><strong>Fecha/Hora:</strong> <span id="modal-fecha-hora"></span></p>
-                <div class="form-group">
-                    <label for="reserva-status" class="form-label">Estado:</label>
-                    <select id="reserva-status" class="form-select">
-                        <option value="programada">Programada</option>
-                        <option value="confirmada">Confirmada</option>
-                        <option value="completada">Completada</option>
-                        <option value="cancelada">Cancelada</option>
-                        <option value="no_asistio">No Asistió</option>
-                    </select>
-                </div>
-                 <div class="form-group">
-                    <label for="reserva-notas" class="form-label">Notas (Opcional):</label>
-                    <textarea id="reserva-notas" rows="3" class="form-input"></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary">Actualizar Estado</button>
-            </form>
-        </div>
+<header>
+    <div class="logo">
+      <span>Cosmetología Morín</span>
+      <img src="assets/img/Logo_header.png" alt="Logo Cosmetología Morín" />
     </div>
+    <nav>
+      <button id="menu-toggle"><span></span><span></span><span></span></button>
+      <ul id="menu">
+        <li class="menu-trabajador"><a href="trabajador_reserva.html"><strong>Mis Reservas</strong></a></li>
+        <li class="menu-trabajador"><a href="trabajador_historial.html"><strong>Historial</strong></a></li>
+        <li class="menu-trabajador"><a href="trabajador_ajustes.html"><strong>Ajustes</strong></a></li>
+        <li class="menu-trabajador"><a href="#" id="logout"><strong>Cerrar Sesión</strong></a></li>
+      </ul>
+    </nav>
+  </header>
+
+
+
+<body>
+<main>
+  
+
+  <h1 class="title-page">Mis Reservas Programadas</h1>
+
+  <main class="container">
+    <section class="booking-list">
+      <h2>Próximas Reservas</h2>
+
+      <!-- Tarjeta de ejemplo (se elimina en JS al cargar) -->
+      <div class="booking-card" data-reserva='{"id": 1, "nombre_cliente": "Cliente Ejemplo", "id_servicio": 1, "servicio_titulo":"Servicio Asignado", "fecha_reserva": "2025-10-21", "hora_reserva": "11:00-13:00", "rut_cliente": "11.111.111-1", "telefono_cliente":"+56911111111", "fecha_creacion": "2025-10-19T12:00:00.000Z", "area": "Peluquería"}'>
+        <div class="booking-header">
+          <h3 class="client-name">Cliente Ejemplo</h3>
+        </div>
+        <div class="booking-body">
+          <p><strong>Servicio:</strong> Servicio Asignado</p>
+          <p><strong>Fecha:</strong> Martes, 21 de Octubre, 2025</p>
+          <p><strong>Hora:</strong> 11:00 - 13:00</p>
+        </div>
+        <div class="booking-footer">
+          <div class="client-contact">
+            <p><i class="fas fa-id-card"></i> 11.111.111-1</p>
+            <p><i class="fas fa-phone"></i> +56 9 1111 1111</p>
+          </div>
+          <small class="creation-date">Creado: 19/10/2025</small>
+        </div>
+      </div>
+
+      <div id="loading-placeholder">
+        <p>Cargando tus reservas...</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- (Tu modal antiguo de “Gestionar Reserva” puede quedarse si lo usas) -->
+  <div class="modal-overlay">
+    <div class="modal-content">
+      <button class="modal-close" title="Cerrar"><i class="fas fa-times"></i></button>
+      <h2>Gestionar Reserva</h2>
+      <form id="manage-booking-form" class="booking-form">
+        <input type="hidden" id="edit-reserva-id" />
+        <p><strong>Cliente:</strong> <span id="modal-cliente-nombre"></span></p>
+        <p><strong>Servicio:</strong> <span id="modal-servicio-nombre"></span></p>
+        <p><strong>Fecha/Hora:</strong> <span id="modal-fecha-hora"></span></p>
+        <div class="form-group">
+          <label for="reserva-status" class="form-label">Estado:</label>
+          <select id="reserva-status" class="form-select">
+            <option value="programada">Programada</option>
+            <option value="confirmada">Confirmada</option>
+            <option value="completada">Completada</option>
+            <option value="cancelada">Cancelada</option>
+            <option value="no_asistio">No Asistió</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="reserva-notas" class="form-label">Notas (Opcional):</label>
+          <textarea id="reserva-notas" rows="3" class="form-input"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Actualizar Estado</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============== MODAL FICHA (trabajador) ============== -->
+  <div class="modal-ficha" id="modal-ficha" aria-hidden="true">
+    <div class="modal-ficha__overlay" data-close="true"></div>
+    <div class="modal-ficha__dialog" role="dialog" aria-modal="true" aria-labelledby="modal-ficha-title">
+      <header class="modal-ficha__header">
+        <h3 id="modal-ficha-title">Ficha clínica</h3>
+        <button class="modal-ficha__close" id="modal-ficha-close" aria-label="Cerrar">&times;</button>
+      </header>
+
+      <section class="modal-ficha__body">
+        <!-- Resumen reserva -->
+        <article class="tarjeta-resumen">
+          <h4 class="subtitulo-seccion">Detalles de la Reserva</h4>
+          <div id="mf-loading" class="bloque-cargando">
+            <i class="fas fa-spinner fa-spin fa-2x"></i>
+            <p>Cargando datos…</p>
+          </div>
+          <div id="mf-details" class="cuerpo-resumen" style="display:none;">
+            <p><strong>Cliente:</strong> <span id="mf-cliente">—</span></p>
+            <p><strong>Servicio:</strong> <span id="mf-servicio">—</span></p>
+            <p><strong>Fecha:</strong> <span id="mf-fecha">—</span></p>
+            <p><strong>Área:</strong> <span id="mf-area">—</span></p>
+          </div>
+        </article>
+
+        <!-- Ficha -->
+        <article class="tarjeta-ficha">
+          <h4 class="subtitulo-seccion">Registro de la Sesión</h4>
+          <!-- Crear/editar -->
+          <form id="mf-form" class="form-ajustes" style="display:none;">
+            <p class="mensaje-info">
+              Edita los detalles de la sesión. Al guardar por primera vez se marcará como <strong>Realizada</strong>.
+            </p>
+            <div class="grupo-campo">
+              <label for="mf-detalle" class="etiqueta-campo">Detalles de la sesión</label>
+              <textarea id="mf-detalle" class="campo-texto" rows="8" required></textarea>
+            </div>
+          </form>
+          <!-- Solo lectura -->
+          <div id="mf-read" class="contenedor-ficha-guardada" style="display:none;">
+            <p class="mensaje-info">Esta reserva ya fue marcada como <strong>Realizada</strong>.</p>
+            <div id="mf-detalle-read" class="texto-guardado"></div>
+          </div>
+        </article>
+      </section>
+
+      <footer class="modal-ficha__footer">
+        <div class="modal-ficha__left">
+          <button type="button" id="mf-btn-editar" class="btn btn--soft" style="display:none;">Editar</button>
+        </div>
+        <div class="modal-ficha__right">
+          <button type="button" id="mf-btn-guardar" class="btn btn--accent">Guardar</button>
+          <button type="button" id="mf-btn-cerrar" class="btn btn--soft">Cerrar</button>
+        </div>
+      </footer>
+    </div>
+  </div>
+  <!-- ============ FIN MODAL FICHA ============ -->
+
+  <!-- ============== MODAL PAGO (solo pago final) ============== -->
+  <div class="modal-pago" id="modal-pago" aria-hidden="true">
+    <div class="modal-pago__overlay" data-close="true"></div>
+
+    <div class="modal-pago__dialog" role="dialog" aria-modal="true" aria-labelledby="modal-pago-title">
+      <header class="modal-pago__header">
+        <h3 id="modal-pago-title">Registrar pago final</h3>
+        <button class="modal-pago__close" id="modal-pago-close" aria-label="Cerrar">&times;</button>
+      </header>
+
+      <section class="modal-pago__body">
+        <article class="mp-card">
+          <h4 class="mp-card__title">Detalles de la reserva</h4>
+          <div id="mp-loading" class="mp-loading">
+            <i class="fas fa-spinner fa-spin fa-2x"></i>
+            <p>Cargando datos…</p>
+          </div>
+          <div id="mp-details" class="mp-details" style="display:none;">
+            <p><strong>Cliente:</strong> <span id="mp-cliente">—</span></p>
+            <p><strong>Servicio:</strong> <span id="mp-servicio">—</span></p>
+            <p><strong>Fecha:</strong> <span id="mp-fecha">—</span></p>
+            <p><strong>Área:</strong> <span id="mp-area">—</span></p>
+            <p><strong>ID Reserva:</strong> <span id="mp-id">—</span></p>
+          </div>
+        </article>
+
+        <!-- Info de pagos encontrados -->
+        <div id="mp-info" class="mp-info"></div>
+
+        <!-- Form pago final -->
+        <article class="mp-card" id="mp-form-container" style="display:none;">
+          <h4 class="mp-card__title">Detalles del pago final</h4>
+          <form id="mp-form" class="mp-form">
+            <div class="mp-form__group">
+              <label for="mp-monto" class="mp-label">Monto Final Pagado (CLP)</label>
+              <input type="number" id="mp-monto" class="mp-input" placeholder="Ej: 25000" required>
+            </div>
+            <div class="mp-grid">
+              <div class="mp-form__group">
+                <label for="mp-metodo" class="mp-label">Método de Pago</label>
+                <select id="mp-metodo" class="mp-select" required>
+                  <option value="Transferencia">Transferencia</option>
+                  <option value="Efectivo">Efectivo</option>
+                  <option value="Tarjeta">Tarjeta</option>
+                </select>
+              </div>
+              <div class="mp-form__group">
+                <label for="mp-fecha-pago" class="mp-label">Fecha del Pago</label>
+                <input type="date" id="mp-fecha-pago" class="mp-input" required>
+              </div>
+            </div>
+            <button type="submit" class="btn btn--accent" id="mp-btn-guardar-final">
+              <i class="fas fa-save"></i> Guardar pago final
+            </button>
+          </form>
+        </article>
+      </section>
+
+      <footer class="modal-pago__footer">
+        <button type="button" id="mp-btn-cerrar" class="btn btn--soft">Cerrar</button>
+      </footer>
+    </div>
+  </div>
+  <!-- ============ FIN MODAL PAGO ============ -->
+
 </main>
-</body>
 
-    <footer class="site-footer">
-
-  <!-- Redes sociales centradas con texto bajo cada icono -->
+<footer class="site-footer">
   <div class="footer-socials-container">
     <div class="footer-social">
-      <a href="#" aria-label="Tiktok">
-        <img src="assets/img/Logos/tik-tok.png" alt="Tiktok">
-      </a>
+      <a href="#" aria-label="Tiktok"><img src="assets/img/Logos/tik-tok.png" alt="Tiktok" /></a>
       <span class="social-text">Tiktok</span>
     </div>
     <div class="footer-social">
-      <a href="#" aria-label="Instagram">
-        <img src="assets/img/Logos/instagram.png" alt="Instagram">
-      </a>
+      <a href="#" aria-label="Instagram"><img src="assets/img/Logos/instagram.png" alt="Instagram" /></a>
       <span class="social-text">Instagram</span>
     </div>
     <div class="footer-social">
-      <a href="#" aria-label="WhatsApp">
-        <img src="assets/img/Logos/whatsapp.png" alt="WhatsApp">
-      </a>
+      <a href="#" aria-label="WhatsApp"><img src="assets/img/Logos/whatsapp.png" alt="WhatsApp" /></a>
       <span class="social-text">WhatsApp</span>
     </div>
     <div class="footer-social">
-      <a href="#" aria-label="WhatsApp">
-        <img src="assets/img/Logos/gmail.png" alt="Correo">
-      </a>
+      <a href="#" aria-label="WhatsApp"><img src="assets/img/Logos/gmail.png" alt="Correo" /></a>
       <span class="social-text">Correo</span>
     </div>
-
   </div>
   <div class="footer-bottom">
     <p>&copy; 2025 Cosmetología Morín. Todos los derechos reservados MindMatrix.</p>
   </div>
-
 </footer>
 
-    <script src="assets/js/worker-guard.js"></script> 
-    <script src="assets/js/menuhamburguesa.js"></script>
-    <script src="assets/js/trabajador_reservas.js"></script> </body>
+<script src="assets/js/worker-guard.js"></script>
+<script src="assets/js/menuhamburguesa.js"></script>
+<script src="assets/js/trabajador_reservas.js"></script>
+</body>
 </html>

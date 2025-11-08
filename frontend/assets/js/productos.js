@@ -73,3 +73,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // Iniciar la carga de productos cuando la página esté lista
     cargarProductos();
 });
+
+
+
+
+
+// flecha para scroll
+
+window.addEventListener("scroll", function() {
+  const btn = document.getElementById("btnScrollTop");
+  if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+    btn.style.display = "flex";
+  } else {
+    btn.style.display = "none";
+  }
+});
+
+document.getElementById("btnScrollTop").addEventListener("click", function() {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});

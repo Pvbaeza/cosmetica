@@ -1,0 +1,321 @@
+/* =========================================================
+   TRABAJADOR — Historial de Clientes / Fichas (Morín)
+   ========================================================= */
+
+/* ---------- Tokens de color (alineados con el header) ---------- */
+:root{
+  --bg-pink: #faf0eb;
+  --text-main: #5a3d3d;
+  --accent: #c26d86;
+  --accent-hover: #b45a73;
+  --border-soft: #f0e6ea;
+  --card: #ffffff;
+
+  --shadow-sm: 0 2px 6px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 15px rgba(194,109,134,0.15);
+
+  /* Gutters y respiración lateral */
+  --page-gutter: clamp(16px, 5vw, 40px);
+  --card-pad: clamp(12px, 3.2vw, 20px);
+}
+
+/* ---------- Base ---------- */
+html, body { height: 100%; }
+body{
+  background-color: var(--bg-pink);
+  color: var(--text-main);
+  font-family: 'Poppins', 'Cerebri Sans', Arial, sans-serif;
+  line-height: 1.55;
+  margin: 0;
+  overflow-x: hidden; /* evita scroll lateral */
+}
+
+/* ---------- Layout principal ---------- */
+main{
+  /* arriba/abajo | izquierda/derecha */
+  padding: clamp(20px, 4vw, 48px) var(--page-gutter);
+  max-width: 1180px;
+  margin-inline: auto;
+}
+
+/* ---------- Título de página ---------- */
+.titulo-pagina,
+.title-page{
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.6rem, 2.4vw, 2.1rem);
+  color: var(--accent);
+  font-weight: 700;
+  margin: 24px auto 28px;
+  max-width: 30ch;
+}
+.titulo-pagina::after,
+.title-page::after{
+  content:"";
+  display:block;
+  width: 110px;
+  height: 3px;
+  margin: 12px auto 0;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+/* =========================================================
+   Buscador + Selector
+   ========================================================= */
+.seccion-buscador{
+  display: grid;
+  gap: 16px;
+  grid-template-columns: 1fr;
+  align-items: end;
+  margin-bottom: 24px;
+}
+
+.contenedor-buscador{ position: relative; }
+
+.etiqueta-buscador{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 6px;
+  font-size: .95rem;
+}
+
+.input-buscar{
+  width: 100%;
+  padding: 12px 14px 12px 40px; /* espacio para ícono */
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  background: var(--card);
+  box-shadow: var(--shadow-sm);
+  outline: none;
+  transition: box-shadow .2s ease, border-color .2s ease;
+  font-size: 1rem;
+}
+.input-buscar:focus{
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(194,109,134,.15);
+}
+
+/* ícono search dentro del input (Font Awesome 5/6) */
+.contenedor-buscador::before{
+  content: "\f002";
+  font-family: "Font Awesome 5 Free","Font Awesome 6 Free";
+  font-weight: 900;
+  position: absolute;
+  left: 12px; top: 50%; transform: translateY(-10%);
+  color: #a97979;
+  font-size: .95rem;
+  pointer-events: none;
+}
+
+.contenedor-select label{
+  display: inline-block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: var(--accent);
+  font-size: .95rem;
+}
+.input-select{
+  width: min(100%, 420px);
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border-soft);
+  background: var(--card);
+  font-size: 1rem;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow .2s ease, border-color .2s ease;
+}
+.input-select:focus{
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(194,109,134,.15);
+}
+
+@media (min-width: 768px){
+  .seccion-buscador{
+    grid-template-columns: 1.2fr .8fr; /* buscador | select cliente */
+    gap: 18px;
+  }
+}
+
+/* =========================================================
+   Panel de Reservas / Resultados
+   ========================================================= */
+.panel-reservas{
+  margin-top: 24px;
+  padding: var(--card-pad);
+  background: #faf8f8;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-soft);
+}
+.panel-reservas > h2{
+  font-size: 1.1rem;
+  color: #8c5f41;
+  margin: 0 0 12px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--border-soft);
+}
+
+/* Bloques por cliente */
+.bloque-cliente{
+  background: var(--card);
+  border: 1px solid #f5e7e7;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+  padding: calc(var(--card-pad) - 4px) var(--card-pad);
+  margin: 18px 0;
+}
+.bloque-cliente > h3{
+  margin: 0 0 10px 0;
+  color: var(--accent);
+  font-size: 1.05rem;
+}
+
+/* Tarjetas de reserva */
+.reserva-card{
+  background: var(--card);
+  border-radius: 10px;
+  padding: var(--card-pad);
+  margin-bottom: 14px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+  border: 1px solid #f5e7e7;
+}
+.reserva-card p{
+  margin: .25rem 0;
+  color: #444;
+  font-size: .98rem;
+}
+.reserva-card .acciones{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* Botones */
+.btn{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: .45rem .8rem;
+  border-radius: 8px;
+  font-size: .92rem;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease, background-color .2s ease, border-color .2s ease;
+  user-select: none;
+}
+.btn:active{ transform: translateY(1px); }
+
+.btn--soft{
+  background: #ffeef0;
+  color: var(--accent);
+  border-color: #f7d6e0;
+}
+.btn--soft:hover{ background: #ffe1e6; }
+
+.btn--accent{
+  background: var(--accent);
+  color: #fff;
+}
+.btn--accent:hover{ background: var(--accent-hover); }
+
+/* Alias compatibilidad (si tu JS los usa) */
+.btn-primario{ background: var(--accent); color: #fff; border: 1px solid transparent; }
+.btn-primario:hover{ background: var(--accent-hover); }
+
+.btn-secundario{ background: #ffeef0; color: var(--accent); border: 1px solid #f7d6e0; }
+.btn-secundario:hover{ background: #ffe1e6; }
+
+/* Accesibilidad focus */
+.input-buscar:focus,
+.input-select:focus,
+.btn:focus{
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(194,109,134,.18);
+}
+
+/* =========================================================
+   MODAL FICHA — estilos (solo lectura y edición)
+   ========================================================= */
+:root{ --mf-overlay: rgba(0,0,0,.35); }
+
+.modal-ficha{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:2000; }
+.modal-ficha[aria-hidden="false"]{ display:flex; }
+.modal-ficha__overlay{ position:absolute; inset:0; background:var(--mf-overlay); backdrop-filter: blur(1.5px); }
+
+.modal-ficha__dialog{
+  position:relative; width:min(920px,96vw); max-height:90vh; background:#fff;
+  border:1px solid var(--border-soft); border-radius:14px; box-shadow:0 18px 50px rgba(0,0,0,.25);
+  display:grid; grid-template-rows:auto 1fr auto; overflow:hidden; animation:mf-pop .18s ease-out;
+}
+@keyframes mf-pop{ from{ transform:translateY(6px); opacity:.96; } to{ transform:translateY(0); opacity:1; } }
+
+.modal-ficha__header{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  padding:12px 16px; background:#fff6f3; border-bottom:1px solid var(--border-soft);
+}
+.modal-ficha__header h3{ margin:0; font-family:'Playfair Display',serif; font-size:1.25rem; color:var(--accent); }
+.modal-ficha__close{ appearance:none; background:transparent; border:0; font-size:1.8rem; line-height:1; color:#8c5f41; cursor:pointer; padding:0 4px; }
+.modal-ficha__close:hover{ color:var(--accent); }
+
+.modal-ficha__body{ overflow:auto; padding:14px 16px 8px; background:#faf8f8; }
+
+.modal-ficha__footer{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:12px 16px; background:#fff; border-top:1px solid var(--border-soft);
+}
+.modal-ficha__right, .modal-ficha__left{ display:flex; gap:10px; }
+
+/* Tarjetas dentro del modal */
+.modal-ficha .tarjeta-resumen, .modal-ficha .tarjeta-ficha{
+  background:#fff; border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,0.06);
+  overflow:hidden; margin-bottom:16px; border:1px solid var(--border-soft);
+}
+.modal-ficha .subtitulo-seccion{ margin:0; padding:.8rem 1rem; font-size:1.05rem; color:#5a3d3d; border-bottom:1px solid #f0f0f0; background:#fff6f3; }
+.modal-ficha .cuerpo-resumen{ padding:.8rem 1rem; }
+.modal-ficha .bloque-cargando{ text-align:center; padding:1.4rem; color:#8c5f41; }
+
+/* Edición / lectura del detalle */
+.modal-ficha .campo-texto{
+  width:100%; min-height:160px; border:1px solid #e0d8e0; border-radius:10px; padding:.8rem .9rem; font-size:1rem;
+  resize:vertical; outline:none; transition:border-color .2s ease, box-shadow .2s ease;
+  background: #fff;
+}
+.modal-ficha .campo-texto:focus{ border-color:#8c5f41; box-shadow:0 0 0 3px rgba(140,95,65,0.12); }
+.modal-ficha .texto-guardado{
+  white-space:pre-wrap; border:1px solid var(--border-soft); background:#fff; border-radius:10px; padding:1rem 1rem; color:#333;
+}
+
+/* Evita scroll del body cuando el modal está abierto */
+body.mf-open{ overflow:hidden; }
+
+/* Responsivo modal */
+@media (max-width:480px){
+  .modal-ficha__dialog{ width:96vw; }
+  .modal-ficha__footer{ flex-direction:column; align-items:stretch; }
+  .modal-ficha__right .btn, .modal-ficha__left .btn{ width:100%; }
+}
+
+/* =========================================================
+   Estados / utilidades
+   ========================================================= */
+.loading-message{
+  text-align: center;
+  color: #7f6e6e;
+  font-style: italic;
+  padding: 2.2rem;
+  font-size: 1rem;
+}
+.loading-message i{
+  margin-right: .5rem;
+  color: var(--accent);
+}
+
+/* Pequeños ajustes móviles extra */
+@media (max-width: 420px){
+  :root{ --page-gutter: 20px; }
+}

@@ -27,7 +27,7 @@
         <li class="menu-admin hidden"><a href="admin_productos.html"><strong>Productos</strong></a></li>
         <li class="menu-admin hidden"><a href="admin_servicios.html"><strong>Servicios</strong></a></li>
         <li class="menu-admin hidden"><a href="admin_resenas.html"><strong>Reseñas</strong></a></li>
-        <li class="menu-admin hidden"><a href="admin_historial.html"><strong>Historial Pagos</strong></a></li>
+        <li class="menu-admin hidden"><a href="admin_historial.html"><strong>Historial</strong></a></li>
         <li class="menu-admin hidden"><a href="dashboards.html"><strong>Dashboards</strong></a></li>
         <li class="menu-admin hidden"><a href="admin_ajustes.html"><strong>Ajustes</strong></a></li>
         <li class="menu-admin hidden"><a href="#" id="logout"><strong>Cerrar Sesión</strong></a></li>
@@ -36,28 +36,232 @@
   </header>
 
   <main>
-  <h1 class="titulo-pagina">Historial de Clientes</h1>
+    <h1 class="titulo-pagina">Historial de Clientes</h1>
 
-  <!-- Buscador y dropdown -->
-  <section class="seccion-buscador" aria-label="Seleccionar cliente">
-    <div class="contenedor-buscador">
-      <label for="entrada-buscar" class="etiqueta-buscador">
-        <i class="fas fa-search" aria-hidden="true"></i> Buscar:
-      </label>
-      <input id="entrada-buscar" class="input-buscar" type="search" placeholder="Nombre o teléfono…"/>
+    <!-- Buscador y dropdown -->
+    <section class="seccion-buscador" aria-label="Seleccionar cliente">
+      <div class="contenedor-buscador">
+        <label for="entrada-buscar" class="etiqueta-buscador">
+          <i class="fas fa-search" aria-hidden="true"></i> Buscar:
+        </label>
+        <input id="entrada-buscar" class="input-buscar" type="search" placeholder="Nombre o teléfono…"/>
+      </div>
+
+      <div class="contenedor-select">
+        <label for="select-cliente">Cliente:</label>
+        <select id="select-cliente" class="input-select"></select>
+      </div>
+    </section>
+
+   <!-- Filtros adicionales -->
+<section class="seccion-filtros" aria-label="Filtros de reservas">
+  <div class="filtro-item">
+    <label for="filtro-area">Área:</label>
+    <select id="filtro-area" class="input-select">
+      <option value="all" selected>Todas</option>
+      <!-- opciones dinámicas desde JS -->
+    </select>
+  </div>
+
+  <div class="filtro-item">
+    <label for="filtro-fecha">Fecha:</label>
+    <input type="date" id="filtro-fecha" class="input-buscar" />
+  </div>
+
+  <div class="filtro-item">
+    <label for="filtro-orden">Ordenar por:</label>
+    <select id="filtro-orden" class="input-select">
+      <option value="desc" selected>Más recientes primero</option>
+      <option value="asc">Más antiguas primero</option>
+    </select>
+  </div>
+
+  <div class="filtro-actions">
+    <button id="btn-limpiar-filtros" class="btn btn--soft">
+      <i class="fas fa-broom"></i> Limpiar filtros
+    </button>
+  </div>
+</section>
+
+
+
+
+
+
+
+    <!-- Panel de reservas -->
+    <section id="panel-reservas" class="panel-reservas">
+      <h2>Selecciona un cliente para ver sus reservas</h2>
+    </section>
+
+
+    
+
+  </main>
+
+  <!-- ============== MODAL FICHA (nuevo) ============== -->
+  <div class="modal-ficha" id="modal-ficha" aria-hidden="true">
+    <div class="modal-ficha__overlay" data-close="true"></div>
+
+    <div class="modal-ficha__dialog" role="dialog" aria-modal="true" aria-labelledby="modal-ficha-title">
+      <header class="modal-ficha__header">
+        <h3 id="modal-ficha-title">Ficha clínica</h3>
+        <button class="modal-ficha__close" id="modal-ficha-close" aria-label="Cerrar">&times;</button>
+      </header>
+
+      <section class="modal-ficha__body">
+        <!-- Resumen reserva -->
+        <article class="tarjeta-resumen">
+          <h4 class="subtitulo-seccion">Detalles de la Reserva</h4>
+
+          <div id="mf-loading" class="bloque-cargando">
+            <i class="fas fa-spinner fa-spin fa-2x"></i>
+            <p>Cargando datos…</p>
+          </div>
+
+          <div id="mf-details" class="cuerpo-resumen" style="display:none;">
+            <p><strong>Cliente:</strong> <span id="mf-cliente">—</span></p>
+            <p><strong>Servicio:</strong> <span id="mf-servicio">—</span></p>
+            <p><strong>Fecha:</strong> <span id="mf-fecha">—</span></p>
+            <p><strong>Área:</strong> <span id="mf-area">—</span></p>
+          </div>
+        </article>
+
+        <!-- Ficha -->
+        <article class="tarjeta-ficha">
+          <h4 class="subtitulo-seccion">Registro de la Sesión</h4>
+
+          <!-- Crear/editar -->
+          <form id="mf-form" class="form-ajustes" style="display:none;">
+            <p class="mensaje-info">
+              Edita los detalles de la sesión. Al guardar por primera vez se marcará como <strong>Realizada</strong>.
+            </p>
+            <div class="grupo-campo">
+              <label for="mf-detalle" class="etiqueta-campo">Detalles de la sesión</label>
+              <textarea id="mf-detalle" class="campo-texto" rows="8" required></textarea>
+            </div>
+          </form>
+
+          <!-- Solo lectura -->
+          <div id="mf-read" class="contenedor-ficha-guardada" style="display:none;">
+            <p class="mensaje-info">Esta reserva ya fue marcada como <strong>Realizada</strong>.</p>
+            <div id="mf-detalle-read" class="texto-guardado"></div>
+          </div>
+        </article>
+      </section>
+
+      <footer class="modal-ficha__footer">
+        <div class="modal-ficha__left">
+          <button type="button" id="mf-btn-editar" class="btn btn--soft" style="display:none;">Editar</button>
+        </div>
+        <div class="modal-ficha__right">
+          <button type="button" id="mf-btn-guardar" class="btn btn--accent">Guardar</button>
+          <button type="button" id="mf-btn-cerrar" class="btn btn--soft">Cerrar</button>
+        </div>
+      </footer>
     </div>
+  </div>
+  <!-- ============ FIN MODAL FICHA ============ -->
 
-    <div class="contenedor-select">
-      <label for="select-cliente">Cliente:</label>
-      <select id="select-cliente" class="input-select"></select>
-    </div>
-  </section>
 
-  <!-- Panel de reservas -->
-  <section id="panel-reservas" class="panel-reservas">
-    <h2>Selecciona un cliente para ver sus reservas</h2>
-  </section>
-</main>
+  <!-- ============== MODAL PAGO (nuevo) ============== -->
+<div class="modal-pago" id="modal-pago" aria-hidden="true">
+  <div class="modal-pago__overlay" data-close="true"></div>
+
+  <div class="modal-pago__dialog" role="dialog" aria-modal="true" aria-labelledby="modal-pago-title">
+    <header class="modal-pago__header">
+      <h3 id="modal-pago-title">Registrar pago</h3>
+      <button class="modal-pago__close" id="modal-pago-close" aria-label="Cerrar">&times;</button>
+    </header>
+
+    <section class="modal-pago__body">
+      <!-- Resumen -->
+      <article class="mp-card">
+        <h4 class="mp-card__title">Detalles de la reserva</h4>
+
+        <div id="mp-loading" class="mp-loading">
+          <i class="fas fa-spinner fa-spin fa-2x"></i>
+          <p>Cargando datos…</p>
+        </div>
+
+        <div id="mp-details" class="mp-details" style="display:none;">
+          <p><strong>Cliente:</strong> <span id="mp-cliente">—</span></p>
+          <p><strong>Servicio:</strong> <span id="mp-servicio">—</span></p>
+          <p><strong>Fecha:</strong> <span id="mp-fecha">—</span></p>
+          <p><strong>Área:</strong> <span id="mp-area">—</span></p>
+          <p><strong>ID Reserva:</strong> <span id="mp-id">—</span></p>
+        </div>
+      </article>
+
+      <!-- Info pagos existentes -->
+      <div id="mp-info" class="mp-info"></div>
+
+      <!-- Opciones -->
+      <article class="mp-card" id="mp-options">
+        <h4 class="mp-card__title">Selecciona una opción</h4>
+        <div class="mp-actions">
+          <button id="mp-btn-abono" class="btn btn--soft">
+            <i class="fas fa-hand-holding-usd"></i> Registrar Abono ($10.000)
+          </button>
+          <button id="mp-btn-pago-final" class="btn btn--accent">
+            <i class="fas fa-money-check-alt"></i> Registrar Pago Final
+          </button>
+        </div>
+      </article>
+
+      <!-- Form pago final -->
+      <article class="mp-card" id="mp-form-container" style="display:none;">
+        <h4 class="mp-card__title">Detalles del pago final</h4>
+
+        <form id="mp-form" class="mp-form">
+          <div class="mp-form__group">
+            <label for="mp-monto" class="mp-label">Monto Final Pagado (CLP)</label>
+            <input type="number" id="mp-monto" class="mp-input" placeholder="Ej: 25000" required>
+          </div>
+
+          <div class="mp-grid">
+            <div class="mp-form__group">
+              <label for="mp-metodo" class="mp-label">Método de Pago</label>
+              <select id="mp-metodo" class="mp-select" required>
+                <option value="Transferencia">Transferencia</option>
+                <option value="Efectivo">Efectivo</option>
+                <option value="Tarjeta">Tarjeta</option>
+              </select>
+            </div>
+            <div class="mp-form__group">
+              <label for="mp-fecha" class="mp-label">Fecha del Pago</label>
+              <input type="date" id="mp-fecha-pago" class="mp-input" required>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn--accent">
+            <i class="fas fa-save"></i> Guardar pago final
+          </button>
+        </form>
+      </article>
+    </section>
+
+    <footer class="modal-pago__footer">
+      <button type="button" id="mp-btn-cerrar" class="btn btn--soft">Cerrar</button>
+    </footer>
+  </div>
+</div>
+<!-- ============ FIN MODAL PAGO ============ -->
+
+
+  <!-- BOTON PARA SUBIR FLECHA -->
+     <button id="btnScrollTop" title="Volver arriba" aria-label="Volver arriba">
+     <svg xmlns="http://www.w3.org/2000/svg"
+       width="24" height="24" viewBox="0 0 24 24"
+       fill="none" stroke="white" stroke-width="2"
+       stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 18V8"/>
+    <path d="M8 12l4-4 4 4"/>
+    </svg>
+    </button>
+
+
+
 
 
   <!-- FOOTER -->
@@ -89,5 +293,7 @@
   <script src="assets/js/admin-guard.js"></script>
   <script src="assets/js/menuhamburguesa.js"></script>
   <script src="assets/js/admin_historial.js"></script>
+
+  
 </body>
 </html>

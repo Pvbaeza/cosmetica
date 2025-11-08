@@ -1,48 +1,88 @@
-/* =========================================================
-   ADMIN — Historial de Clientes / Pagos (Morín)
-   ========================================================= */
+/* ==========================================================================
+   ADMIN — Historial de Clientes / Pagos  (Morín) — CSS sin :root
+   ========================================================================== */
 
-/* ---------- Tokens de color (mismos del header) ---------- */
-:root{
-  --bg-pink: #faf0eb;
-  --text-main: #5a3d3d;
-  --accent: #c26d86;
-  --accent-hover: #b45a73;
-  --border-soft: #f0e6ea;
-  --card: #ffffff;
-  --shadow-sm: 0 2px 6px rgba(0,0,0,0.08);
-  --shadow-md: 0 4px 15px rgba(194,109,134,0.15);
-}
+/* ==========================
+   1) Base / reset de vista
+   ========================== */
+html, body { height: 100%; }
+* { box-sizing: border-box; }
 
-/* ---------- Base ---------- */
-html, body {
-  height: 100%;
-}
 body{
-  background-color: var(--bg-pink);
-  color: var(--text-main);
-  font-family: 'Poppins', 'Cerebri Sans', Arial, sans-serif;
-  line-height: 1.55;
   margin: 0;
+  line-height: 1.55;
+  font-family: 'Poppins', 'Cerebri Sans', Arial, sans-serif;
+  color: #5a3d3d;
+  background-color: #faf0eb; /* fondo suave de esta vista */
+  overflow-x: hidden; /* evita scroll lateral */
 }
 
-/* ---------- Layout principal ---------- */
+/* ==========================
+   2) FIX header (mismo look que en el resto)
+   ========================== */
+header,
+.site-header{
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: #f8d9d0 !important;           /* color del brand para header */
+  color: #5a3d3d !important;
+  box-shadow: 0 4px 10px rgba(194,109,134,0.25) !important;
+  border-color: transparent !important;
+}
+
+/* Estado con scroll (coincide con header global) */
+body.scrolled header,
+body.scrolled .site-header{
+  background: #f5c8bf !important;
+  box-shadow: 0 6px 18px rgba(194,109,134,0.35) !important;
+}
+
+/* Marca y enlaces */
+header .logo span,
+.site-header .logo span{ color: #c26d86 !important; }
+header nav a,
+.site-header nav a{ color: #5a3d3d !important; }
+header nav a:hover,
+.site-header nav a:hover{ color: #c26d86 !important; }
+
+/* Botón hamburguesa */
+#menu-toggle span{ background-color: #5a3d3d !important; }
+#menu-toggle:hover span{ background-color: #c26d86 !important; }
+
+/* Dropdown móvil/tablet */
+#menu{
+  background-color: #f8d9d0 !important;
+}
+#menu a{ color: #5a3d3d !important; }
+#menu a:hover{
+  color: #c26d86 !important;
+  background: rgba(194,109,134,0.08) !important;
+}
+#menu a.active{
+  color: #c26d86 !important;
+  background: rgba(194,109,134,0.12) !important;
+}
+
+/* ==========================
+   3) Layout principal
+   ========================== */
 main{
   max-width: 1180px;
   margin-inline: auto;
   padding: clamp(16px, 3vw, 32px) 18px;
 }
 
-/* ---------- Título de página ---------- */
+/* Título de página */
 .titulo-pagina,
-.title-page{ /* alias para no romper si usas la clase antigua */
+.title-page{
+  max-width: 30ch;
+  margin: 24px auto 28px;
   text-align: center;
+  font-weight: 700;
+  color: #c26d86;
   font-family: 'Playfair Display', serif;
   font-size: clamp(1.6rem, 2.4vw, 2.1rem);
-  color: var(--accent);
-  font-weight: 700;
-  margin: 24px auto 28px;
-  max-width: 30ch;
 }
 .titulo-pagina::after,
 .title-page::after{
@@ -51,13 +91,13 @@ main{
   width: 110px;
   height: 3px;
   margin: 12px auto 0;
-  background: var(--accent);
+  background: #c26d86;
   border-radius: 2px;
 }
 
-/* =========================================================
-   Buscador + Selector
-   ========================================================= */
+/* ==========================
+   4) Buscador + Selector
+   ========================== */
 .seccion-buscador{
   display: grid;
   gap: 14px;
@@ -65,34 +105,40 @@ main{
   align-items: end;
   margin-bottom: 18px;
 }
-
-.contenedor-buscador{
-  position: relative;
+@media (min-width: 768px){
+  .seccion-buscador{
+    grid-template-columns: 1.2fr .8fr;
+    gap: 16px;
+    margin-bottom: 22px;
+  }
 }
+
+.contenedor-buscador{ position: relative; }
+
 .etiqueta-buscador{
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-weight: 600;
-  color: var(--accent);
   margin-bottom: 6px;
+  font-weight: 600;
   font-size: .95rem;
+  color: #c26d86;
 }
 .etiqueta-buscador i{ font-size: .95rem; }
 
 .input-buscar{
   width: 100%;
-  padding: 12px 14px 12px 40px; /* espacio para ícono */
-  border: 1px solid var(--border-soft);
+  padding: 12px 14px 12px 40px; /* espacio ícono */
+  font-size: 1rem;
+  background: #ffffff;
+  border: 1px solid #f0e6ea;
   border-radius: 10px;
-  background: var(--card);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
   outline: none;
   transition: box-shadow .2s ease, border-color .2s ease;
-  font-size: 1rem;
 }
 .input-buscar:focus{
-  border-color: var(--accent);
+  border-color: #c26d86;
   box-shadow: 0 0 0 3px rgba(194,109,134,.15);
 }
 
@@ -102,7 +148,8 @@ main{
   font-family: "Font Awesome 5 Free";
   font-weight: 900;
   position: absolute;
-  left: 12px; top: 50%; transform: translateY(-10%);
+  left: 12px; top: 50%;
+  transform: translateY(-10%);
   color: #a97979;
   font-size: .95rem;
   pointer-events: none;
@@ -112,64 +159,56 @@ main{
   display: inline-block;
   margin-bottom: 6px;
   font-weight: 600;
-  color: var(--accent);
   font-size: .95rem;
+  color: #c26d86;
 }
 .input-select{
   width: min(100%, 420px);
   padding: 12px 14px;
-  border-radius: 10px;
-  border: 1px solid var(--border-soft);
-  background: var(--card);
   font-size: 1rem;
-  box-shadow: var(--shadow-sm);
+  background: #ffffff;
+  border: 1px solid #f0e6ea;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
   transition: box-shadow .2s ease, border-color .2s ease;
 }
 .input-select:focus{
-  border-color: var(--accent);
+  border-color: #c26d86;
   box-shadow: 0 0 0 3px rgba(194,109,134,.15);
 }
 
-@media (min-width: 768px){
-  .seccion-buscador{
-    grid-template-columns: 1.2fr .8fr;
-    gap: 16px;
-    margin-bottom: 22px;
-  }
-}
-
-/* =========================================================
-   Panel de Reservas / Resultados
-   ========================================================= */
+/* ==========================
+   5) Panel de Reservas / Resultados
+   ========================== */
 .panel-reservas{
   margin-top: 18px;
   padding: 16px;
   background: #faf8f8;
+  border: 1px solid #f0e6ea;
   border-radius: 12px;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--border-soft);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
 }
 .panel-reservas > h2{
-  font-size: 1.1rem;
-  color: #8c5f41;
   margin: 0 0 12px 0;
   padding-bottom: 8px;
-  border-bottom: 2px solid var(--border-soft);
+  font-size: 1.1rem;
+  color: #8c5f41;
+  border-bottom: 2px solid #f0e6ea;
 }
 
-/* Tarjetas generadas por JS */
+/* Tarjetas (reservas) */
 .reserva-card{
-  background: var(--card);
+  background: #ffffff;
+  border: 1px solid #f5e7e7;
   border-radius: 10px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.05);
   padding: 14px;
   margin-bottom: 12px;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.05);
-  border: 1px solid #f5e7e7;
 }
 .reserva-card p{
   margin: .25rem 0;
-  color: #444;
   font-size: .98rem;
+  color: #444;
 }
 .reserva-card .acciones{
   display: flex;
@@ -178,115 +217,143 @@ main{
   margin-top: 10px;
 }
 
-/* Botones utilitarios dentro de tarjetas */
+/* ==========================
+   6) Botones utilitarios
+   ========================== */
 .btn{
   display: inline-flex;
   align-items: center;
   gap: 8px;
   padding: .45rem .8rem;
-  border-radius: 8px;
   font-size: .92rem;
   border: 1px solid transparent;
+  border-radius: 8px;
   cursor: pointer;
-  transition: transform .15s ease, box-shadow .15s ease, background-color .2s ease, border-color .2s ease;
   user-select: none;
+  transition: transform .15s ease, box-shadow .15s ease, background-color .2s ease, border-color .2s ease;
 }
 .btn:active{ transform: translateY(1px); }
 
 .btn--soft{
   background: #ffeef0;
-  color: var(--accent);
+  color: #c26d86;
   border-color: #f7d6e0;
 }
 .btn--soft:hover{ background: #ffe1e6; }
 
 .btn--accent{
-  background: var(--accent);
+  background: #c26d86;
   color: #fff;
 }
-.btn--accent:hover{ background: var(--accent-hover); }
+.btn--accent:hover{ background: #b45a73; }
 
-/* =========================================================
-   Tabla de Historial de Pagos (si la usas en esta vista)
-   ========================================================= */
-.payment-history{
-  width: 100%;
-  margin-top: 22px;
+/* Alias (compatibilidad con JS) */
+.btn-primario{
+  background: #c26d86;
+  color: #fff;
+  border: 1px solid transparent;
 }
+.btn-primario:hover{ background: #b45a73; }
+
+.btn-secundario{
+  background: #ffeef0;
+  color: #c26d86;
+  border: 1px solid #f7d6e0;
+}
+.btn-secundario:hover{ background: #ffe1e6; }
+
+/* Botones deshabilitados (modal Pago) */
+.btn[disabled],
+.btn.btn--disabled{
+  opacity: .65;
+  cursor: not-allowed;
+  pointer-events: none;
+  transform: none !important;
+  box-shadow: none !important;
+}
+.btn--soft[disabled]{
+  background: #fde8ec;
+  border-color: #f6d6de;
+  color: #b47b92;
+}
+.btn--accent[disabled]{
+  background: #d7a3b5;
+  border-color: #d7a3b5;
+  color: #fff;
+}
+
+/* ==========================
+   7) Tabla Historial de Pagos
+   ========================== */
+.payment-history{ width: 100%; margin-top: 22px; }
+
 .table-responsive-wrapper{
   width: 100%;
   overflow-x: auto;
-  background-color: var(--card);
+  background-color: #ffffff;
+  border: 1px solid #f0e6ea;
   border-radius: 12px;
-  box-shadow: var(--shadow-md);
-  border: 1px solid var(--border-soft);
+  box-shadow: 0 4px 15px rgba(194,109,134,0.15);
 }
+
 .payment-history-table{
   width: 100%;
+  min-width: 760px;
   border-collapse: collapse;
-  min-width: 760px; /* asegura layout cómodo si hay muchas columnas */
 }
 .payment-history-table th{
-  background: var(--card);
-  color: var(--accent);
+  background: #ffffff;
+  color: #c26d86;
+  padding: 1rem 1.1rem;
   font-size: .85rem;
   font-weight: 700;
-  padding: 1rem 1.1rem;
   text-align: left;
   text-transform: uppercase;
-  border-bottom: 2px solid var(--border-soft);
+  border-bottom: 2px solid #f0e6ea;
   white-space: nowrap;
 }
 .payment-history-table td{
   padding: .9rem 1.1rem;
-  border-bottom: 1px solid var(--border-soft);
-  color: var(--text-main);
   font-size: .98rem;
+  color: #5a3d3d;
   white-space: nowrap;
+  border-bottom: 1px solid #f0e6ea;
 }
-.payment-history-table tbody tr:nth-child(even){
-  background: #fdf7f6;
-}
-.payment-history-table tbody tr:hover{
-  background: #f8d9d0;
-}
+.payment-history-table tbody tr:nth-child(even){ background: #fdf7f6; }
+.payment-history-table tbody tr:hover{ background: #f8d9d0; }
 
-/* Estado de carga / vacío */
 .loading-message{
-  text-align: center;
-  color: #7f6e6e;
-  font-style: italic;
   padding: 2.2rem;
   font-size: 1rem;
+  text-align: center;
+  font-style: italic;
+  color: #7f6e6e;
 }
-.loading-message i{
-  margin-right: .5rem;
-  color: var(--accent);
-}
+.loading-message i{ margin-right: .5rem; color: #c26d86; }
 
-/* Chips de tipo de pago */
+/* Chips tipo de pago */
 .pago-tipo-abono{
   display: inline-block;
-  color: #b45a73;
-  font-weight: 600;
-  background-color: #f8d9d0;
   padding: .2rem .6rem;
-  border-radius: 6px;
   font-size: .85rem;
+  font-weight: 600;
+  color: #b45a73;
+  background-color: #f8d9d0;
+  border-radius: 6px;
 }
 .pago-tipo-pago-final{
   display: inline-block;
-  color: #fff;
-  font-weight: 600;
-  background-color: var(--accent);
   padding: .2rem .6rem;
-  border-radius: 6px;
   font-size: .85rem;
+  font-weight: 600;
+  color: #fff;
+  background-color: #c26d86;
+  border-radius: 6px;
 }
 
-/* =========================================================
-   Pequeñas mejoras de accesibilidad
-   ========================================================= */
+/* ==========================
+   8) Accesibilidad / focus
+   ========================== */
 .input-buscar:focus,
 .input-select:focus,
 .btn:focus{
@@ -294,5 +361,275 @@ main{
   box-shadow: 0 0 0 3px rgba(194,109,134,.18);
 }
 
-/* Evitar scroll lateral por elementos desbordados */
-body { overflow-x: hidden; }
+/* ==========================
+   9) MODAL FICHA
+   ========================== */
+.modal-ficha{
+  position: fixed; inset: 0;
+  display: none; align-items: center; justify-content: center;
+  z-index: 2000;
+}
+.modal-ficha[aria-hidden="false"]{ display: flex; }
+
+.modal-ficha__overlay{
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,.35);
+  backdrop-filter: blur(1.5px);
+}
+
+.modal-ficha__dialog{
+  position: relative;
+  width: min(920px, 96vw);
+  max-height: 90vh;
+  background: #fff;
+  border: 1px solid #f0e6ea;
+  border-radius: 14px;
+  box-shadow: 0 18px 50px rgba(0,0,0,.25);
+  display: grid; grid-template-rows: auto 1fr auto;
+  overflow: hidden;
+  animation: mf-pop .18s ease-out;
+}
+@keyframes mf-pop{
+  from{ transform: translateY(6px); opacity: .96; }
+  to  { transform: translateY(0);   opacity: 1; }
+}
+
+.modal-ficha__header{
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 12px 16px;
+  background: #fff6f3;
+  border-bottom: 1px solid #f0e6ea;
+}
+.modal-ficha__header h3{
+  margin: 0;
+  color: #c26d86;
+  font-size: 1.25rem;
+  font-family: 'Playfair Display', serif;
+}
+.modal-ficha__close{
+  appearance: none; background: transparent; border: 0;
+  font-size: 1.8rem; line-height: 1; color: #8c5f41; cursor: pointer; padding: 0 4px;
+}
+.modal-ficha__close:hover{ color: #c26d86; }
+
+.modal-ficha__body{
+  overflow: auto;
+  padding: 14px 16px 8px;
+  background: #faf8f8;
+}
+.modal-ficha__footer{
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 16px;
+  background: #fff;
+  border-top: 1px solid #f0e6ea;
+}
+.modal-ficha__right, .modal-ficha__left{ display: flex; gap: 10px; }
+
+/* Tarjetas internas del modal */
+.modal-ficha .tarjeta-resumen,
+.modal-ficha .tarjeta-ficha{
+  background: #fff;
+  border: 1px solid #f0e6ea;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.modal-ficha .subtitulo-seccion{
+  margin: 0; padding: .8rem 1rem;
+  font-size: 1.05rem; color: #5a3d3d;
+  background: #fff6f3;
+  border-bottom: 1px solid #f0f0f0;
+}
+.modal-ficha .cuerpo-resumen{ padding: .8rem 1rem; }
+.modal-ficha .bloque-cargando{
+  text-align: center; padding: 1.4rem; color: #8c5f41;
+}
+
+.modal-ficha .campo-texto{
+  width: 100%; min-height: 160px;
+  padding: .8rem .9rem;
+  font-size: 1rem;
+  background: #fff;
+  border: 1px solid #e0d8e0;
+  border-radius: 10px;
+  resize: vertical; outline: none;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.modal-ficha .campo-texto:focus{
+  border-color: #8c5f41;
+  box-shadow: 0 0 0 3px rgba(140,95,65,0.12);
+}
+.modal-ficha .texto-guardado{
+  white-space: pre-wrap;
+  padding: .9rem 1rem;
+  color: #333;
+  background: #fff;
+  border: 1px solid #f0e6ea;
+  border-radius: 10px;
+}
+
+/* Responsive modal ficha */
+@media (max-width:480px){
+  .modal-ficha__dialog{ width: 96vw; }
+  .modal-ficha__footer{ flex-direction: column; align-items: stretch; }
+  .modal-ficha__right .btn, .modal-ficha__left .btn{ width: 100%; }
+}
+
+/* Bloquea scroll del body cuando modal abierto */
+body.mf-open{ overflow: hidden; }
+
+/* ==========================
+   10) MODAL PAGO
+   ========================== */
+.modal-pago{
+  position: fixed; inset: 0;
+  display: none; align-items: center; justify-content: center;
+  z-index: 2000;
+}
+.modal-pago[aria-hidden="false"]{ display: flex; }
+
+.modal-pago__overlay{
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,.35);
+  backdrop-filter: blur(1.5px);
+}
+
+.modal-pago__dialog{
+  position: relative;
+  width: min(920px, 96vw);
+  max-height: 90vh;
+  background: #fff;
+  border: 1px solid #f0e6ea;
+  border-radius: 14px;
+  box-shadow: 0 18px 50px rgba(0,0,0,.25);
+  display: grid; grid-template-rows: auto 1fr auto;
+  overflow: hidden;
+  animation: mp-pop .18s ease-out;
+}
+@keyframes mp-pop{
+  from{ transform: translateY(6px); opacity: .96; }
+  to  { transform: translateY(0);   opacity: 1; }
+}
+
+.modal-pago__header{
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 12px 16px;
+  background: #fff6f3;
+  border-bottom: 1px solid #f0e6ea;
+}
+.modal-pago__header h3{
+  margin: 0;
+  color: #c26d86;
+  font-size: 1.25rem;
+  font-family: 'Playfair Display', serif;
+}
+.modal-pago__close{
+  appearance: none; background: transparent; border: 0;
+  font-size: 1.8rem; line-height: 1; color: #8c5f41; cursor: pointer; padding: 0 4px;
+}
+.modal-pago__close:hover{ color: #c26d86; }
+
+.modal-pago__body{
+  overflow: auto;
+  padding: 14px 16px 8px;
+  background: #faf8f8;
+}
+.modal-pago__footer{
+  display: flex; justify-content: flex-end; gap: 10px;
+  padding: 12px 16px;
+  background: #fff;
+  border-top: 1px solid #f0e6ea;
+}
+
+/* Tarjetas internas */
+.mp-card{
+  background: #fff;
+  border: 1px solid #f0e6ea;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+.mp-card__title{
+  margin: 0; padding: .8rem 1rem;
+  font-size: 1.05rem; color: #5a3d3d;
+  background: #fff6f3;
+  border-bottom: 1px solid #f0f0f0;
+}
+.mp-loading{ text-align: center; padding: 1.4rem; color: #8c5f41; }
+.mp-details{ padding: .9rem 1rem; }
+.mp-details p{ margin: .25rem 0; }
+
+/* Info pagos existentes */
+.mp-info{
+  display: flex; flex-direction: column; gap: 10px;
+  margin-bottom: 16px;
+}
+.mp-info__box{
+  padding: 12px 15px;
+  background: #fff;
+  border: 1px solid #f0e6ea;
+  border-radius: 10px;
+}
+.mp-info__box--abono{ background: #f8f4ff; border-left: 6px solid #a67bd7; }
+.mp-info__box--final{ background: #f3fff3; border-left: 6px solid #4caf50; }
+
+/* Acciones */
+.mp-actions{ display: flex; flex-wrap: wrap; gap: 10px; padding: 1rem; }
+
+/* Formulario pago final */
+.mp-form{ padding: 1rem; }
+.mp-form__group{ margin-bottom: .85rem; }
+.mp-label{
+  display: block;
+  margin-bottom: .35rem;
+  font-weight: 600;
+  color: #5a3d3d;
+}
+.mp-input,
+.mp-select{
+  width: 100%;
+  padding: 12px 14px;
+  font-size: 1rem;
+  background: #fff;
+  border: 1px solid #f0e6ea;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  transition: box-shadow .2s, border-color .2s;
+}
+.mp-input:focus,
+.mp-select:focus{
+  outline: none;
+  border-color: #c26d86;
+  box-shadow: 0 0 0 3px rgba(194,109,134,.15);
+}
+.mp-grid{ display: grid; gap: 12px; grid-template-columns: 1fr; }
+@media (min-width:560px){ .mp-grid{ grid-template-columns: 1fr 1fr; } }
+
+/* Bloquea scroll del body cuando modal pago abierto */
+body.mp-open{ overflow: hidden; }
+
+/* ==========================
+   11) Botón flotante "volver arriba"
+   ========================== */
+#btnScrollTop{
+  position: fixed;
+  right: 35px; bottom: 35px;
+  width: 55px; height: 55px;
+  display: none; /* oculto por defecto */
+  align-items: center; justify-content: center;
+  background-color: #c26d86;
+  color: #fff;
+  border: none; outline: none;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 99;
+  box-shadow: 0 8px 20px rgba(194,109,134,0.25);
+  transition: all .3s ease;
+}
+#btnScrollTop:hover{
+  background-color: #b45a73;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(194,109,134,0.35);
+}

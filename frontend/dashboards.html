@@ -13,6 +13,7 @@
 </head>
 <body>
 
+    <!-- HEADER -->
     <header>
         <div class="logo">
             <span>Cosmetología Morín</span>
@@ -28,7 +29,7 @@
                 <li class="menu-admin hidden"><a href="admin_productos.html"><strong>Productos</strong></a></li>
                 <li class="menu-admin hidden"><a href="admin_servicios.html"><strong>Servicios</strong></a></li>
                 <li class="menu-admin hidden"><a href="admin_resenas.html"><strong>Reseñas</strong></a></li>
-                <li class="menu-admin hidden"><a href="admin_historial.html"><strong>Historial Pagos</strong></a></li>
+                <li class="menu-admin hidden"><a href="admin_historial.html"><strong>Historial</strong></a></li>
                 <li class="menu-admin hidden"><a href="dashboards.html"><strong>Dashboards</strong></a></li>
                 <li class="menu-admin hidden"><a href="admin_ajustes.html"><strong>Ajustes</strong></a></li>
                 <li class="menu-admin hidden"><a href="#" id="logout"><strong>Cerrar Sesión</strong></a></li>
@@ -36,7 +37,20 @@
         </nav>
     </header>
 
+    <!-- MAIN -->
     <main>
+
+        <!-- 🔍 FILTRO ENTRE FECHAS -->
+        <section class="filtros-fechas" style="margin: 20px 25px; text-align: right;">
+            <label for="fechaInicio">Desde:</label>
+            <input type="date" id="fechaInicio" style="margin-right: 10px; padding: 5px;">
+            <label for="fechaFin">Hasta:</label>
+            <input type="date" id="fechaFin" style="margin-right: 10px; padding: 5px;">
+            <button id="btnFiltrarFechas" class="btn btn--soft">Filtrar</button>
+            <button id="btnLimpiarFechas" class="btn btn--accent">Limpiar</button>
+        </section>
+
+        <!-- KPI CARDS -->
         <section class="kpi-grid">
             <div class="card">
                 <h3>Ingresos Totales (Mes)</h3>
@@ -54,14 +68,14 @@
                 <small></small>
             </div>
             <div class="card">
-                <h3>Tasa de Cancelación</h3>
-                <p id="kpi-cancelacion"></p>
-                <small></small>
-            </div>
+                <h3>Tasa de Cancelación</h3>
+                <p id="kpi-cancelacion"></p>
+                <small></small>
+            </div>
         </section>
 
+        <!-- CHARTS -->
         <section class="chart-grid">
-            
             <div class="chart-container">
                 <h2>Ingresos por Área de Trabajo en %</h2>
                 <canvas id="ingresosTipoChart"></canvas>
@@ -81,22 +95,11 @@
                 <h2>Ingresos del Mes (Últimos 30 días)</h2>
                 <canvas id="ingresosMesChart"></canvas>
             </div>
-
-            <h1></h1>
-            <h1></h1>
-            <h1></h1>
-
-
         </section>
     </main>
 
-    
-
-</body>
-
-
-
-<footer class="site-footer">
+    <!-- FOOTER -->
+    <footer class="site-footer">
         <div class="footer-socials-container">
             <div class="footer-social">
                 <a href="#" aria-label="Tiktok"><img src="assets/img/Logos/tik-tok.png" alt="Tiktok"></a>
@@ -123,8 +126,10 @@
         </div>
     </footer>
 
-
+    <!-- JS -->
     <script src="assets/js/dashboards.js"></script>
     <script src="assets/js/admin-guard.js"></script>
     <script src="assets/js/menuhamburguesa.js"></script>
+
+</body>
 </html>

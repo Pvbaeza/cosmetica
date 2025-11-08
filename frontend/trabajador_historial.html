@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Historial de Clientes — Trabajador</title>
+
+  <link rel="stylesheet" href="assets/css/header.css"/>
+  <link rel="stylesheet" href="assets/css/footer.css"/>
+  <link rel="stylesheet" href="assets/css/trabajador_historial.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+</head>
+<body>
+  <!-- HEADER (menú trabajador) -->
+  <header>
+    <div class="logo">
+      <span>Cosmetología Morín</span>
+      <img src="assets/img/Logo_header.png" alt="Logo Cosmetología Morín"/>
+    </div>
+    <nav>
+      <button id="menu-toggle"><span></span><span></span><span></span></button>
+      <ul id="menu">
+        <li class="menu-trabajador"><a href="trabajador_reserva.html"><strong>Mis Reservas</strong></a></li>
+        <li class="menu-trabajador"><a href="trabajador_historial.html"><strong>Historial</strong></a></li>
+        <li class="menu-trabajador"><a href="trabajador_ajustes.html"><strong>Ajustes</strong></a></li>
+        <li class="menu-trabajador"><a href="#" id="logout"><strong>Cerrar Sesión</strong></a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main class="page-main">
+    <h1 class="title-page">Historial de Clientes (Mi Área)</h1>
+
+    <!-- Buscador + selector cliente -->
+    <section class="search-section" aria-label="Filtros de historial">
+      <div class="search-group">
+        <label for="entrada-buscar" class="label">
+          <i class="fas fa-search" aria-hidden="true"></i> Buscar:
+        </label>
+        <input id="entrada-buscar" class="input" type="search" placeholder="Nombre o teléfono…"/>
+      </div>
+
+      <div class="select-group">
+        <label for="select-cliente" class="label">Cliente:</label>
+        <select id="select-cliente" class="select"></select>
+      </div>
+    </section>
+
+    <!-- Panel historial -->
+    <section id="panel-historial" class="panel-historial">
+      <h2>Selecciona un cliente o usa el buscador</h2>
+    </section>
+  </main>
+
+  <!-- ============== MODAL FICHA (igual que admin, sin pagos) ============== -->
+  <div class="modal-ficha" id="modal-ficha" aria-hidden="true">
+    <div class="modal-ficha__overlay" data-close="true"></div>
+
+    <div class="modal-ficha__dialog" role="dialog" aria-modal="true" aria-labelledby="modal-ficha-title">
+      <header class="modal-ficha__header">
+        <h3 id="modal-ficha-title">Ficha clínica</h3>
+        <button class="modal-ficha__close" id="modal-ficha-close" aria-label="Cerrar">&times;</button>
+      </header>
+
+      <section class="modal-ficha__body">
+        <!-- Resumen reserva -->
+        <article class="tarjeta-resumen">
+          <h4 class="subtitulo-seccion">Detalles de la Reserva</h4>
+
+          <div id="mf-loading" class="bloque-cargando">
+            <i class="fas fa-spinner fa-spin fa-2x"></i>
+            <p>Cargando datos…</p>
+          </div>
+
+          <div id="mf-details" class="cuerpo-resumen" style="display:none;">
+            <p><strong>Cliente:</strong> <span id="mf-cliente">—</span></p>
+            <p><strong>Servicio:</strong> <span id="mf-servicio">—</span></p>
+            <p><strong>Fecha:</strong> <span id="mf-fecha">—</span></p>
+            <p><strong>Área:</strong> <span id="mf-area">—</span></p>
+          </div>
+        </article>
+
+        <!-- Ficha -->
+        <article class="tarjeta-ficha">
+          <h4 class="subtitulo-seccion">Registro de la Sesión</h4>
+
+          <!-- Crear/editar -->
+          <form id="mf-form" class="form-ajustes" style="display:none;">
+            <p class="mensaje-info">
+              Edita los detalles de la sesión. Al guardar por primera vez se marcará como <strong>Realizada</strong>.
+            </p>
+            <div class="grupo-campo">
+              <label for="mf-detalle" class="etiqueta-campo">Detalles de la sesión</label>
+              <textarea id="mf-detalle" class="campo-texto" rows="8" required></textarea>
+            </div>
+          </form>
+
+          <!-- Solo lectura -->
+          <div id="mf-read" class="contenedor-ficha-guardada" style="display:none;">
+            <p class="mensaje-info">Esta reserva ya fue marcada como <strong>Realizada</strong>.</p>
+            <div id="mf-detalle-read" class="texto-guardado"></div>
+          </div>
+        </article>
+      </section>
+
+      <footer class="modal-ficha__footer">
+        <div class="modal-ficha__left">
+          <button type="button" id="mf-btn-editar" class="btn btn--soft" style="display:none;">Editar</button>
+        </div>
+        <div class="modal-ficha__right">
+          <button type="button" id="mf-btn-guardar" class="btn btn--accent">Guardar</button>
+          <button type="button" id="mf-btn-cerrar" class="btn btn--soft">Cerrar</button>
+        </div>
+      </footer>
+    </div>
+  </div>
+  <!-- ============ FIN MODAL FICHA ============ -->
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="footer-socials-container">
+      <div class="footer-social">
+        <a href="#" aria-label="Tiktok"><img src="assets/img/Logos/tik-tok.png" alt="Tiktok"/></a>
+        <span class="social-text">Tiktok</span>
+      </div>
+      <div class="footer-social">
+        <a href="#" aria-label="Instagram"><img src="assets/img/Logos/instagram.png" alt="Instagram"/></a>
+        <span class="social-text">Instagram</span>
+      </div>
+      <div class="footer-social">
+        <a href="#" aria-label="WhatsApp"><img src="assets/img/Logos/whatsapp.png" alt="WhatsApp"/></a>
+        <span class="social-text">WhatsApp</span>
+      </div>
+      <div class="footer-social">
+        <a href="#" aria-label="Correo"><img src="assets/img/Logos/gmail.png" alt="Correo"/></a>
+        <span class="social-text">Correo</span>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Cosmetología Morín. Todos los derechos reservados MindMatrix.</p>
+    </div>
+  </footer>
+
+  <!-- SCRIPTS -->
+  <script src="assets/js/worker-guard.js"></script>
+  <script src="assets/js/menuhamburguesa.js"></script>
+  <script src="assets/js/trabajador_historial.js"></script>
+</body>
+</html>

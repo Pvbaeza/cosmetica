@@ -70,26 +70,26 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // --- Clientes ---
-// --- Clientes ---
-const loadClientesIntoSelect = async () => {
-  try {
-    const r = await fetch(`${API_BASE_URL}/api/clientes`);
-    if (!r.ok) throw new Error('No se pudieron cargar los clientes.');
-    const clientes = await r.json();
+  // --- Clientes ---
+  const loadClientesIntoSelect = async () => {
+    try {
+      const r = await fetch(`${API_BASE_URL}/api/clientes`);
+      if (!r.ok) throw new Error('No se pudieron cargar los clientes.');
+      const clientes = await r.json();
 
-    clienteSelect.innerHTML = '<option value="">Selecciona un cliente...</option>';
+      clienteSelect.innerHTML = '<option value="">Selecciona un cliente...</option>';
 
-    clientes.forEach(c => {
-      const opt = document.createElement('option');
-      opt.value = c.id_cliente;
-      opt.textContent = `${c.nombre || 'Sin nombre'} (${c.telefono || 'sin teléfono'})`;
-      clienteSelect.appendChild(opt);
-    });
-  } catch (e) {
-    console.error('Error al cargar clientes:', e);
-    clienteSelect.innerHTML = '<option value="">Error al cargar clientes</option>';
-  }
-};
+      clientes.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id_cliente;
+        opt.textContent = `${c.nombre || 'Sin nombre'} (${c.telefono || 'sin teléfono'})`;
+        clienteSelect.appendChild(opt);
+      });
+    } catch (e) {
+      console.error('Error al cargar clientes:', e);
+      clienteSelect.innerHTML = '<option value="">Error al cargar clientes</option>';
+    }
+  };
 
 
   // --- Obtener reservas ---
@@ -153,8 +153,8 @@ const loadClientesIntoSelect = async () => {
       const horaReserva = booking.hora_reserva ? String(booking.hora_reserva).replace('-', ' a ') : 'Sin horario';
       const fechaReserva = booking.fecha_reserva
         ? new Date(booking.fecha_reserva).toLocaleDateString('es-CL', {
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC'
-          })
+          weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC'
+        })
         : 'Sin fecha';
       const fechaCreacion = booking.fecha_creacion
         ? new Date(booking.fecha_creacion).toLocaleDateString('es-CL')
@@ -301,35 +301,53 @@ const loadClientesIntoSelect = async () => {
   modalOverlay.addEventListener('click', e => (e.target === modalOverlay) && closeModal());
 
   // --- Submit ---
-  bookingForm.addEventListener('submit', async (ev) => {
-    ev.preventDefault();
-    const selectedOpt = serviceSelect.options[serviceSelect.selectedIndex];
-    const bookingData = {
-      id_cliente: clienteSelect.value,
-      id_servicio: serviceSelect.value,
-      fecha_reserva: dateInput.value,
-      hora_reserva: timeSelect.value,
-      id_area: selectedOpt ? selectedOpt.dataset.area : ''
-    };
+bookingForm.addEventListener('submit', async (ev) => {
+  ev.preventDefault();
 
-    const method = editingBookingId ? 'PUT' : 'POST';
-    const url = editingBookingId
-      ? `${API_BASE_URL}/api/admin/reservas/${editingBookingId}`
-      : `${API_BASE_URL}/api/admin/reservas`;
+  // Normaliza valores
+  const cliente = clienteSelect.value?.trim() || null;
+  const servicio = serviceSelect.value?.trim() || null;
+  const fecha = dateInput.value?.trim() || null;
+  const hora = timeSelect.value?.trim() || null;
 
-    try {
-      const r = await fetch(url, {
-        method, headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(bookingData)
-      });
-      if (!r.ok) {
-        const err = await r.json().catch(() => ({ message: 'Error inesperado' }));
-        throw new Error(err.message);
-      }
-      closeModal();
-      fetchBookings();
-    } catch (e) { alert(`Error: ${e.message}`); }
-  });
+  // Validación previa
+  if (!cliente || !servicio || !fecha || !hora) {
+    alert("⚠️ Por favor completa todos los campos antes de guardar la reserva.");
+    return;
+  }
+
+  const bookingData = {
+    id_cliente: Number(cliente),
+    id_servicio: Number(servicio),
+    fecha,
+    hora
+  };
+
+  const method = editingBookingId ? 'PUT' : 'POST';
+  const url = editingBookingId
+    ? `${API_BASE_URL}/api/admin/reservas/${editingBookingId}`
+    : `${API_BASE_URL}/api/admin/reservas`;
+
+  try {
+    const r = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(bookingData)
+    });
+
+    if (!r.ok) {
+      const err = await r.json().catch(() => ({ message: 'Error inesperado en el servidor.' }));
+      throw new Error(err.message);
+    }
+
+    closeModal();
+    fetchBookings();
+  } catch (e) {
+    alert(`❌ Error: ${e.message}`);
+  }
+});
+
+
 
   // --- Editar / Eliminar ---
   bookingListContainer.addEventListener('click', (ev) => {

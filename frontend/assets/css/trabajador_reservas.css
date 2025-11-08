@@ -1,3 +1,11 @@
+main {
+    max-width: 1180px; 
+    margin-inline: auto;
+}
+
+
+
+
 /* Add to your CSS if missing */
 .title-page {
     text-align: center;

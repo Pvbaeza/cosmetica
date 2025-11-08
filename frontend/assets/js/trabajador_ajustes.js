@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Llenamos la información del perfil
             if (profileName) profileName.textContent = userData.nombre_completo || 'No disponible';
             if (profileUsername) profileUsername.textContent = userData.username || 'No disponible';
-            if (profileEmail) profileEmail.textContent = userData.Correo || 'No disponible';
+            if (profileEmail) profileEmail.textContent = userData.correo || 'No disponible';
             if (profileArea) profileArea.textContent = userData.nombre_area || 'No asignada';
 
         } catch (error) {

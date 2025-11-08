@@ -40,7 +40,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (service.nombre_area?.toLowerCase() === 'admin') return;
                 const option = document.createElement('option');
                 option.value = service.id_servicio;
-                option.textContent = `${service.titulo} ($${Number(service.valor || 0).toLocaleString('es-CL')})`;
+                // Concatenar título + subtítulo si existe
+                const tituloCompleto = service.subtitulo
+                ? `${service.titulo} ${service.subtitulo}`
+                : service.titulo;
+
+                // Mostrar el texto con el valor formateado
+                option.textContent = `${tituloCompleto} ($${Number(service.valor || 0).toLocaleString('es-CL')})`;
                 option.dataset.areaId = service.id_area;
                 option.dataset.titulo = service.titulo;
                 serviceSelect.appendChild(option);

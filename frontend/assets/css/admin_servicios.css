@@ -460,3 +460,31 @@ body {
   .select-filtro { min-width: 200px; flex-grow: 0; }
   .input-buscar { flex-grow: 1; }
 }
+
+/* --- Botón Flotante Volver Arriba --- */
+#btnScrollTop {
+  position: fixed;
+  bottom: 35px;
+  right: 35px;
+  background-color: #c26d86; /* Rosa acento */
+  color: white;
+  border: none;
+  outline: none;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%; /* más redondeado */
+  box-shadow: 0 8px 20px rgba(194, 109, 134, 0.25);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  display: none; /* oculto por defecto */
+  z-index: 99;
+}
+
+#btnScrollTop:hover {
+  background-color: #b45a73; /* tono más oscuro al pasar el cursor */
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(194, 109, 134, 0.35);
+}
