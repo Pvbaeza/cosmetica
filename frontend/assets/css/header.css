@@ -1,23 +1,23 @@
 /* =========================================================
-   HEADER — Mobile First (paleta Morín)
+   HEADER — Mobile/Tablet First (paleta Morín)
    ========================================================= */
 
 /* Tokens de color del brand */
 :root{
-  --bg-pink: #f8d9d0;           /* rosa claro header */
-  --bg-pink-scrolled: #f5c8bf;  /* al hacer scroll */
-  --text-main: #5a3d3d;         /* texto principal cálido */
-  --accent: #c26d86;            /* acento */
-  --accent-hover: #b45a73;      /* hover acento */
-  --border-soft: #f0e6ea;       /* bordes suaves */
+  --bg-pink: #f8d9d0;
+  --bg-pink-scrolled: #f5c8bf;
+  --text-main: #5a3d3d;
+  --accent: #c26d86;
+  --accent-hover: #b45a73;
+  --border-soft: #f0e6ea;
   --shadow: 0 4px 10px rgba(194,109,134,0.25);
   --shadow-strong: 0 6px 18px rgba(194,109,134,0.35);
 }
 
-/* ----- Reset mínimo del header ----- */
+/* Reset mínimo */
 * { box-sizing: border-box; }
 
-/* ----- Header base (mobile) ----- */
+/* ----- Header base (mobile/tablet) ----- */
 header {
   position: sticky;
   top: 0;
@@ -31,9 +31,10 @@ header {
   box-shadow: var(--shadow);
   padding: 12px 18px;
   transition: padding .25s ease, box-shadow .25s ease, background-color .25s ease, border-color .25s ease;
+  max-width: 100%;
+  overflow-x: clip; /* evita desborde lateral */
 }
 
-/* Efecto al hacer scroll */
 body.scrolled header {
   padding: 8px 16px;
   background-color: var(--bg-pink-scrolled);
@@ -50,6 +51,7 @@ body.scrolled header {
   font-size: 1.2rem;
   color: var(--accent);
   font-weight: 600;
+  min-width: 0;
 }
 .logo img { height: 36px; transition: height .25s ease; }
 body.scrolled .logo img { height: 30px; }
@@ -60,16 +62,17 @@ nav {
   display: flex;
   align-items: center;
   gap: 14px;
+  min-width: 0;
 }
 
-/* Lista (móvil: oculta por defecto) */
+/* Lista (móvil/tablet: dropdown) */
 #menu {
   list-style: none;
   margin: 0;
   padding: 12px 14px;
   display: none;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px; /* más separación entre ítems */
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
@@ -78,27 +81,39 @@ nav {
   border-radius: 12px;
   box-shadow: 0 10px 20px rgba(194, 109, 134, 0.25);
   z-index: 1001;
+
+  /* Aprovecha alto de pantalla y permite scroll interno */
+  width: clamp(240px, 60vw, 420px);
+  max-height: calc(100vh - 24px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
 }
 #menu.open { display: flex; }
 
+/* Link con área “clickeable” más cómoda */
 #menu a {
+  display: block;
   text-decoration: none;
   font-family: 'Poppins', sans-serif;
   color: var(--text-main);
   font-weight: 500;
-  padding: 6px 8px;
+  padding: 10px 12px; /* más padding vertical */
+  line-height: 1.35;
   border-radius: 8px;
   transition: color .2s ease, background-color .2s ease;
 }
 #menu a:hover { color: var(--accent); background: rgba(194,109,134,0.08); }
+#menu a.active { color: var(--accent); background: rgba(194,109,134,0.12); }
 
-/* Estado activo */
-#menu a.active {
-  color: var(--accent);
-  background: rgba(194,109,134,0.12);
+/* “Cerrar sesión” al final del menú (sin tocar HTML) */
+#menu li:has(#logout) {
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 1px solid var(--border-soft);
 }
 
-/* Accesibilidad */
+/* Accesibilidad focus */
 #menu a:focus-visible,
 #menu-toggle:focus-visible {
   outline: 3px solid rgba(194,109,134,0.35);
@@ -106,9 +121,9 @@ nav {
   border-radius: 10px;
 }
 
-/* ----- Botón hamburguesa (móvil) ----- */
+/* ----- Botón hamburguesa (mobile/tablet) ----- */
 #menu-toggle {
-  display: inline-flex;
+  display: inline-flex; /* visible hasta < 1200px */
   flex-direction: column;
   justify-content: space-between;
   width: 36px;
@@ -120,8 +135,6 @@ nav {
   z-index: 1002;
   -webkit-tap-highlight-color: transparent;
 }
-
-/* Barras del ícono */
 #menu-toggle span {
   display: block;
   height: 3px;
@@ -132,8 +145,6 @@ nav {
   transition: transform .25s ease, opacity .2s ease, background-color .2s ease;
   box-shadow: 0 0 0.5px rgba(0,0,0,0.35);
 }
-
-/* Hover del botón */
 #menu-toggle:hover span { background-color: var(--accent); }
 
 /* Animación a "X" */
@@ -145,9 +156,25 @@ nav {
 .hidden { display: none !important; }
 
 /* =========================================================
-   DESKTOP / TABLET (≥768px)
+   TABLET (768–1199px) -> se mantiene hamburguesa
    ========================================================= */
-@media (min-width: 768px) {
+@media (min-width: 768px) and (max-width: 1199px) {
+  header { padding: 16px 24px; }
+  .logo { font-size: 1.3rem; }
+  .logo img { height: 40px; }
+
+  /* Menú más ancho en tablet si hay espacio */
+  #menu {
+    width: clamp(260px, 50vw, 520px);
+    right: 0;
+    left: auto;
+  }
+}
+
+/* =========================================================
+   DESKTOP (≥1200px) -> menú horizontal
+   ========================================================= */
+@media (min-width: 1200px) {
   header { padding: 16px 30px; }
   .logo { font-size: 1.35rem; }
   .logo img { height: 40px; }
@@ -164,9 +191,20 @@ nav {
     box-shadow: none;
     border: 0;
     padding: 0;
+    width: auto;
+    max-height: none;
+    overflow: visible;
+    white-space: nowrap;
   }
 
-  #menu a { padding: 6px 8px; }
+  /* En desktop, quitamos el "push a fondo" del logout */
+  #menu li:has(#logout) {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  #menu a { padding: 6px 8px; line-height: 1.2; }
   #menu a:hover { background: rgba(194,109,134,0.10); }
   #menu a.active { background: rgba(194,109,134,0.14); }
 }

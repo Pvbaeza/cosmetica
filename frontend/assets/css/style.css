@@ -1,6 +1,6 @@
-/* =================================== */
-/* ============ MOVIIIIIL============= */
-/* =================================== */
+/* =========================================================
+   BASE (Mobile First)
+   ========================================================= */
 
 body {
   background-color: #faf0eb;
@@ -11,9 +11,22 @@ body {
   line-height: 1.6;
 }
 
-/* =================================== */
-/* ======== SECCIÓN INICIO MORÍN ===== */
-/* =================================== */
+/* Espaciado general entre secciones */
+section {
+  padding: 30px 18px;
+}
+
+/* Contenedor general opcional */
+.container-body {
+  background-color: #faf0eb;
+  font-family: 'Poppins', sans-serif;
+  color: #5a3d3d;
+}
+
+
+/* =========================================================
+   INICIO MORÍN (Tarjeta de bienvenida)
+   ========================================================= */
 
 .card-simple {
   display: flex;
@@ -29,21 +42,19 @@ body {
   color: #5a3d3d;
 }
 
-/* === Imagen circular corregida (sin óvalo ni fondo extendido) === */
 .card-simple img {
   width: 160px;
   height: 160px;
-  border-radius: 50%;            /* Círculo perfecto */
+  border-radius: 50%;
   object-fit: cover;
   display: block;
-  border: 4px solid #fff;        /* Borde blanco limpio */
+  border: 4px solid #fff;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  background: none;              /* Sin fondo ovalado */
+  background: none;
   margin: 0;
   padding: 0;
 }
 
-/* === Títulos con tipografía elegante === */
 .card-simple h2 {
   font-family: 'Playfair Display', serif;
   color: #c26d86;
@@ -61,7 +72,6 @@ body {
   font-weight: 400;
 }
 
-/* === Texto descriptivo === */
 .card-simple p {
   font-family: 'Poppins', sans-serif;
   font-size: 1rem;
@@ -75,7 +85,7 @@ body {
   color: #8a4a4a;
 }
 
-/* === Botón elegante === */
+/* Botón genérico */
 .btn {
   background: #c26d86;
   color: #fff;
@@ -95,41 +105,11 @@ body {
   transform: translateY(-2px);
 }
 
-/* === Responsive (para pantallas pequeñas) === */
-@media (max-width: 768px) {
-  .card-simple {
-    flex-direction: column;
-    text-align: center;
-    padding: 2rem;
-  }
 
-  .card-simple img {
-    width: 140px;
-    height: 140px;
-  }
+/* =========================================================
+   SECCIÓN INICIO (#inicio)
+   ========================================================= */
 
-  .card-simple h2 {
-    font-size: 1.6rem;
-  }
-}
-
-/* =================================== */
-/* ======== RESTO DE SECCIONES ======= */
-/* =================================== */
-
-/* Fondo del container */
-.container-body {
-  background-color: #faf0eb;
-  font-family: 'Poppins', sans-serif;
-  color: #5a3d3d;
-}
-
-/* ESPACIO ENTRE SECCIONES */
-section {
-  padding: 30px 18px;
-}
-
-/* Section Inicio */
 #inicio {
   display: flex;
   flex-direction: column;
@@ -139,7 +119,6 @@ section {
   background-color: #faf0eb;
 }
 
-/* LOGO */
 .inicio-logo img {
   width: 100%;
   max-width: 300px;
@@ -147,7 +126,6 @@ section {
   margin-bottom: 0;
 }
 
-/* TEXTO BAJO LOGO */
 .primer-text {
   font-size: 1.1em;
   color: #4b3b3b;
@@ -169,7 +147,11 @@ section {
   color: #c26d86;
 }
 
-/* Section Servicios */
+
+/* =========================================================
+   SERVICIOS
+   ========================================================= */
+
 .services-section {
   background-color: #faf0eb;
 }
@@ -200,7 +182,6 @@ section {
   display: block;
 }
 
-/* Alineación: textos al mismo margen del título */
 .service-content {
   font-family: 'Poppins', sans-serif;
   text-align: left;
@@ -237,7 +218,6 @@ section {
   margin-right: 0;
 }
 
-/* Botón servicios */
 .btn-service {
   display: inline-block;
   background-color: #c26d86;
@@ -256,7 +236,11 @@ section {
   transform: translateY(-2px);
 }
 
-/* Section Reseñas */
+
+/* =========================================================
+   RESEÑAS
+   ========================================================= */
+
 .reviews-section {
   background-color: #faf0eb;
 }
@@ -269,7 +253,7 @@ section {
   color: #c26d86;
 }
 
-/* Formulario */
+/* Formulario de reseña */
 .review-form {
   display: flex;
   flex-direction: column;
@@ -313,7 +297,7 @@ section {
   line-height: 1.5;
 }
 
-/* Botón Submit */
+/* Botón enviar */
 .btn-submit {
   background-color: #c26d86;
   color: #fff;
@@ -337,23 +321,25 @@ section {
   outline: none;
 }
 
-/* Reseñas */
+/* Grid fallback (si no se usa carrusel) */
 .reviews-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 15px;
 }
 
+/* Tarjeta de reseña (única definición, mantiene min-height y height) */
 .review-card {
   background: #fff;
   border: 1px solid #f0e6ea;
   border-radius: 12px;
   padding: 1rem 1.25rem;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+  min-height: 180px;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 180px;
 }
 
 .review-content {
@@ -370,7 +356,7 @@ section {
 }
 
 .review-content::before { content: '“'; }
-.review-content::after { content: '”'; }
+.review-content::after  { content: '”'; }
 
 .review-author {
   font-family: 'Playfair Display', serif;
@@ -381,9 +367,27 @@ section {
   text-align: right;
 }
 
-/* =============================================== */
-/* ========== ESTILOS WEB / PC Y TABLET ========== */
-/* =============================================== */
+
+/* =========================================================
+   MEDIA QUERIES
+   ========================================================= */
+
+@media (max-width: 768px) {
+  .card-simple {
+    flex-direction: column;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  .card-simple img {
+    width: 140px;
+    height: 140px;
+  }
+
+  .card-simple h2 {
+    font-size: 1.6rem;
+  }
+}
 
 @media (min-width: 1024px) {
   .services-section {
@@ -440,4 +444,126 @@ section {
     margin-left: 0;
     margin-right: 0;
   }
+}
+
+
+/* =========================================================
+   CARRUSEL DE RESEÑAS
+   ========================================================= */
+
+.rv-carousel {
+  position: relative;
+  max-width: 1180px;
+  margin: 0 auto;
+  background: #faf0eb;
+}
+
+.rv-viewport { overflow: hidden; width: 100%; }
+
+.rv-track {
+  display: flex;
+  will-change: transform;
+  user-select: none;
+  touch-action: pan-y;
+}
+
+/* Cada slide envuelve la tarjeta */
+.rv-slide {
+  flex: 0 0 auto;
+  padding: 0 12px; /* gutter entre tarjetas */
+  box-sizing: border-box;
+}
+
+/* Estrellas */
+.review-rating {
+  color: #f1b400;
+  font-size: 1.05rem;
+  margin-bottom: .35rem;
+  letter-spacing: 1px;
+}
+
+/* Flechas */
+.rv-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 9999px;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  z-index: 2;
+  background: radial-gradient(140% 100% at 50% 0%, #ffe9e5 0%, #f7d6ca 60%, #f1c7b9 100%);
+  border: 1px solid rgba(200,120,110,.35);
+  color: #8c5f41;
+  box-shadow:
+    0 8px 20px rgba(194,109,134,.25),
+    0 1px 0 rgba(255,255,255,.7) inset,
+    0 -1px 0 rgba(0,0,0,.04) inset;
+  transition:
+    transform .22s ease,
+    box-shadow .22s ease,
+    background .22s ease,
+    color .22s ease,
+    border-color .22s ease;
+}
+
+.rv-nav:hover {
+  background: linear-gradient(180deg, #c26d86 0%, #b45a73 100%);
+  color: #fff;
+  border-color: rgba(178,86,111,.5);
+  transform: translateY(-50%) scale(1.06);
+  box-shadow:
+    0 12px 28px rgba(194,109,134,.32),
+    0 0 0 3px rgba(194,109,134,.16);
+}
+
+.rv-nav:active {
+  transform: translateY(-50%) scale(.97);
+  box-shadow:
+    0 6px 16px rgba(194,109,134,.22),
+    0 0 0 2px rgba(194,109,134,.20);
+}
+
+.rv-prev { left: -12px; }
+.rv-next { right: -12px; }
+.rv-grabbing { cursor: grabbing; }
+
+/* Modo estático (si hay pocas reseñas) */
+.rv-carousel.rv-static .rv-viewport { overflow: visible; }
+.rv-carousel.rv-static .rv-track {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+  transform: none !important;
+}
+.rv-carousel.rv-static .rv-nav { display: none; }
+
+/* Responsivo del carrusel */
+@media (min-width: 640px) {
+  .rv-prev { left: -8px; }
+  .rv-next { right: -8px; }
+  .rv-carousel.rv-static .rv-track { grid-template-columns: repeat(2, 1fr); gap: 20px; }
+}
+
+@media (min-width: 1024px) {
+  .rv-prev { left: -10px; }
+  .rv-next { right: -10px; }
+  .rv-carousel.rv-static .rv-track { grid-template-columns: repeat(3, 1fr); gap: 24px; }
+}
+
+/* Overrides para alejar flechas en desktop y XL */
+@media (min-width: 1024px) {
+  .rv-prev { left: -64px; }
+  .rv-next { right: -64px; }
+}
+
+@media (min-width: 1440px) {
+  .rv-prev { left: -88px; }
+  .rv-next { right: -88px; }
 }

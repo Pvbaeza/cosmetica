@@ -101,7 +101,16 @@
         <input type="text" id="nombre" name="nombre" required>
 
         <label for="rut">RUT:</label>
-        <input type="text" id="rut" name="rut" required>
+        <input 
+          type="text"
+          id="rut"
+          name="rut"
+          maxlength="9"
+          inputmode="numeric"
+          pattern="[0-9]*"
+          placeholder="Ej: 207016764"
+          required
+        />
 
         <label for="telefono">Número de teléfono:</label>
         <input type="tel" id="telefono" name="telefono" required>

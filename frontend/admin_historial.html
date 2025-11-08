@@ -7,7 +7,7 @@
 
   <link rel="stylesheet" href="assets/css/header.css"/>
   <link rel="stylesheet" href="assets/css/footer.css"/>
-  <link rel="stylesheet" href="assets/css/admin_ficha.css"/>
+  <link rel="stylesheet" href="assets/css/admin_historial.css"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
 </head>
 <body>
@@ -21,53 +21,44 @@
       <button id="menu-toggle"><span></span><span></span><span></span></button>
       <ul id="menu">
         <li class="menu-normal"><a href="index.html">Inicio</a></li>
-                 <li class="menu-normal"><a href="servicios.html">Servicios</a></li>
-                 <li class="menu-normal"><a href="productos.html">Productos</a></li>
-                 <li class="menu-admin hidden"><a href="admin_reservas.html"><strong>Reservas</strong></a></li>
-                 <li class="menu-admin hidden"><a href="admin_productos.html"><strong>Productos</strong></a></li>
-                 <li class="menu-admin hidden"><a href="admin_servicios.html"><strong>Servicios</strong></a></li>
-                 <li class="menu-admin hidden"><a href="admin_resenas.html"><strong>Reseñas</strong></a></li>
-                 <li class="menu-admin hidden"><a href="admin_historial.html"><strong>Historial Pagos</strong></a></li>
-                 <li class="menu-admin hidden"><a href="dashboards.html"><strong>Dashboards</strong></a></li>
-                 <li class="menu-admin hidden"><a href="admin_ajustes.html"><strong>Ajustes</strong></a></li>
-                 <li class="menu-admin hidden"><a href="#" id="logout"><strong>Cerrar Sesión</strong></a></li>
+        <li class="menu-normal"><a href="servicios.html">Servicios</a></li>
+        <li class="menu-normal"><a href="productos.html">Productos</a></li>
+        <li class="menu-admin hidden"><a href="admin_reservas.html"><strong>Reservas</strong></a></li>
+        <li class="menu-admin hidden"><a href="admin_productos.html"><strong>Productos</strong></a></li>
+        <li class="menu-admin hidden"><a href="admin_servicios.html"><strong>Servicios</strong></a></li>
+        <li class="menu-admin hidden"><a href="admin_resenas.html"><strong>Reseñas</strong></a></li>
+        <li class="menu-admin hidden"><a href="admin_historial.html"><strong>Historial Pagos</strong></a></li>
+        <li class="menu-admin hidden"><a href="dashboards.html"><strong>Dashboards</strong></a></li>
+        <li class="menu-admin hidden"><a href="admin_ajustes.html"><strong>Ajustes</strong></a></li>
+        <li class="menu-admin hidden"><a href="#" id="logout"><strong>Cerrar Sesión</strong></a></li>
       </ul>
     </nav>
   </header>
 
   <main>
-    <h1 class="titulo-pagina">Historial de Clientes</h1>
+  <h1 class="titulo-pagina">Historial de Clientes</h1>
 
-    <!-- Buscador -->
-    <section class="seccion-buscador" aria-label="Buscar clientes">
-      <div class="contenedor-buscador">
-        <label for="entrada-buscar" class="etiqueta-buscador">
-          <i class="fas fa-search" aria-hidden="true"></i> Buscar:
-        </label>
-        <input id="entrada-buscar" class="input-buscar" type="search" placeholder="Nombre, correo o teléfono…"/>
-      </div>
-    </section>
+  <!-- Buscador y dropdown -->
+  <section class="seccion-buscador" aria-label="Seleccionar cliente">
+    <div class="contenedor-buscador">
+      <label for="entrada-buscar" class="etiqueta-buscador">
+        <i class="fas fa-search" aria-hidden="true"></i> Buscar:
+      </label>
+      <input id="entrada-buscar" class="input-buscar" type="search" placeholder="Nombre o teléfono…"/>
+    </div>
 
-    <!-- Lista de clientes -->
-    <section id="lista-clientes" class="lista-clientes" aria-live="polite">
-      <!-- Estado inicial -->
-      <article class="tarjeta-cliente tarjeta-skeleton">
-        <div class="cliente-info">
-          <div class="avatar-skeleton"></div>
-          <div class="linea-skeleton"></div>
-          <div class="linea-skeleton corta"></div>
-        </div>
-        <div class="cliente-acciones">
-          <button class="btn btn-secundario" disabled><i class="fas fa-receipt"></i> Pagos</button>
-          <button class="btn btn-primario" disabled><i class="fas fa-notes-medical"></i> Ficha</button>
-        </div>
-      </article>
-    </section>
+    <div class="contenedor-select">
+      <label for="select-cliente">Cliente:</label>
+      <select id="select-cliente" class="input-select"></select>
+    </div>
+  </section>
 
-    <p id="mensaje-vacio" class="mensaje-vacio" style="display:none;">
-      No se encontraron clientes con ese criterio.
-    </p>
-  </main>
+  <!-- Panel de reservas -->
+  <section id="panel-reservas" class="panel-reservas">
+    <h2>Selecciona un cliente para ver sus reservas</h2>
+  </section>
+</main>
+
 
   <!-- FOOTER -->
   <footer class="site-footer">

@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Administrar Reservas</title>
   <link rel="stylesheet" href="assets/css/header.css">
   <link rel="stylesheet" href="assets/css/footer.css">
@@ -75,24 +76,23 @@
       <button class="modal-close" title="Cerrar"><i class="fas fa-times"></i></button>
       <h2>Añadir/Editar Reserva</h2>
       <form class="booking-form">
+        <!-- Cliente -->
         <div class="form-group">
-          <label for="nombre_cliente">Nombre del Cliente</label>
-          <input type="text" id="nombre_cliente" placeholder="Ej: Javiera Paz" required>
+          <label for="cliente-select">Cliente</label>
+          <select id="cliente-select" required>
+            <option value="">Selecciona un cliente...</option>
+          </select>
         </div>
-        <div class="form-group">
-          <label for="rut_cliente">RUT del Cliente</label>
-          <input type="text" id="rut_cliente" placeholder="Ej: 12.345.678-9">
-        </div>
-        <div class="form-group">
-          <label for="telefono_cliente">Teléfono de Contacto</label>
-          <input type="tel" id="telefono_cliente" placeholder="Ej: +56 9 1234 5678" required>
-        </div>
+
+        <!-- Servicio -->
         <div class="form-group">
           <label for="tipo_servicio">Tipo de Servicio</label>
           <select id="tipo_servicio" required>
             <option value="" disabled selected>Selecciona un servicio...</option>
           </select>
         </div>
+
+        <!-- Fecha y hora -->
         <div class="form-row">
           <div class="form-group">
             <label for="fecha_reserva">Fecha</label>
@@ -110,17 +110,23 @@
             </select>
           </div>
         </div>
+
         <button type="submit" class="btn btn-primary">Guardar Reserva</button>
       </form>
+
     </div>
   </div>
 
   <footer class="site-footer">
     <div class="footer-socials-container">
-      <div class="footer-social"><a href="#" aria-label="Tiktok"><img src="assets/img/Logos/tik-tok.png" alt="Tiktok"></a><span class="social-text">Tiktok</span></div>
-      <div class="footer-social"><a href="#" aria-label="Instagram"><img src="assets/img/Logos/instagram.png" alt="Instagram"></a><span class="social-text">Instagram</span></div>
-      <div class="footer-social"><a href="#" aria-label="WhatsApp"><img src="assets/img/Logos/whatsapp.png" alt="WhatsApp"></a><span class="social-text">WhatsApp</span></div>
-      <div class="footer-social"><a href="#" aria-label="Correo"><img src="assets/img/Logos/gmail.png" alt="Correo"></a><span class="social-text">Correo</span></div>
+      <div class="footer-social"><a href="#" aria-label="Tiktok"><img src="assets/img/Logos/tik-tok.png"
+            alt="Tiktok"></a><span class="social-text">Tiktok</span></div>
+      <div class="footer-social"><a href="#" aria-label="Instagram"><img src="assets/img/Logos/instagram.png"
+            alt="Instagram"></a><span class="social-text">Instagram</span></div>
+      <div class="footer-social"><a href="#" aria-label="WhatsApp"><img src="assets/img/Logos/whatsapp.png"
+            alt="WhatsApp"></a><span class="social-text">WhatsApp</span></div>
+      <div class="footer-social"><a href="#" aria-label="Correo"><img src="assets/img/Logos/gmail.png"
+            alt="Correo"></a><span class="social-text">Correo</span></div>
     </div>
     <div class="footer-bottom">
       <p>&copy; 2025 Cosmetología Morín. Todos los derechos reservados MindMatrix.</p>
@@ -134,4 +140,5 @@
   <script src="assets/js/admin_reservas.js"></script>
   <script src="assets/js/menuhamburguesa.js"></script>
 </body>
+
 </html>

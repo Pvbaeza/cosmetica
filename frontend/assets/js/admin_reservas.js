@@ -9,27 +9,25 @@ const API_BASE_URL = isLocal
 document.addEventListener('DOMContentLoaded', () => {
   // --- DOM ---
   const modalOverlay = document.querySelector('.modal-overlay');
-  const modalTitle   = document.querySelector('.modal-content h2');
+  const modalTitle = document.querySelector('.modal-content h2');
   const openModalBtn = document.querySelector('.btn-open-modal');
-  const closeModalBtn= document.querySelector('.modal-close');
+  const closeModalBtn = document.querySelector('.modal-close');
   const bookingListContainer = document.querySelector('.booking-list');
-  const bookingForm  = document.querySelector('.booking-form');
+  const bookingForm = document.querySelector('.booking-form');
 
-  const areaFilter   = document.getElementById('area-filter');
-  const dateFilter   = document.getElementById('fecha-filter');
-  const orderSelect  = document.getElementById('orden-filter');
-  const clearBtn     = document.getElementById('limpiar-filtros');
+  const areaFilter = document.getElementById('area-filter');
+  const dateFilter = document.getElementById('fecha-filter');
+  const orderSelect = document.getElementById('orden-filter');
+  const clearBtn = document.getElementById('limpiar-filtros');
 
   // Inputs modal
-  const nameInput    = document.getElementById('nombre_cliente');
-  const rutInput     = document.getElementById('rut_cliente');
-  const phoneInput   = document.getElementById('telefono_cliente');
-  const serviceSelect= document.getElementById('tipo_servicio');
-  const dateInput    = document.getElementById('fecha_reserva');
-  const timeSelect   = document.getElementById('hora_reserva');
+  const clienteSelect = document.getElementById('cliente-select');
+  const serviceSelect = document.getElementById('tipo_servicio');
+  const dateInput = document.getElementById('fecha_reserva');
+  const timeSelect = document.getElementById('hora_reserva');
 
   let editingBookingId = null;
-  let allBookings = []; // fuente de verdad para filtros locales
+  let allBookings = [];
 
   // --- Modal ---
   const openModal = () => modalOverlay.classList.add('active');
@@ -38,23 +36,24 @@ document.addEventListener('DOMContentLoaded', () => {
     bookingForm.reset();
     editingBookingId = null;
     Array.from(timeSelect.options).forEach(opt => {
-      opt.disabled = false; opt.style.color = '';
+      opt.disabled = false;
+      opt.style.color = '';
       if (opt.value) opt.textContent = opt.value.replace('-', ' a ');
     });
   };
 
   // --- Utilidades ---
   const getSortKey = (b) => {
-    const fecha = (b.fecha_reserva || '').slice(0,10);
+    const fecha = (b.fecha_reserva || '').slice(0, 10);
     let inicio = '00:00';
     if (b.hora_reserva) {
       const m = String(b.hora_reserva).match(/^(\d{2}:\d{2})/);
       if (m) inicio = m[1];
     }
-    return `${fecha} ${inicio}`; // lexicográficamente ordenable
+    return `${fecha} ${inicio}`;
   };
 
-  // --- Áreas en filtro ---
+  // --- Áreas ---
   const loadAreasIntoFilter = async () => {
     try {
       const r = await fetch(`${API_BASE_URL}/api/areas`);
@@ -70,13 +69,35 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) { console.error(e); }
   };
 
-  // --- Obtener reservas (por área en servidor; resto client-side) ---
+  // --- Clientes ---
+// --- Clientes ---
+const loadClientesIntoSelect = async () => {
+  try {
+    const r = await fetch(`${API_BASE_URL}/api/clientes`);
+    if (!r.ok) throw new Error('No se pudieron cargar los clientes.');
+    const clientes = await r.json();
+
+    clienteSelect.innerHTML = '<option value="">Selecciona un cliente...</option>';
+
+    clientes.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id_cliente;
+      opt.textContent = `${c.nombre || 'Sin nombre'} (${c.telefono || 'sin teléfono'})`;
+      clienteSelect.appendChild(opt);
+    });
+  } catch (e) {
+    console.error('Error al cargar clientes:', e);
+    clienteSelect.innerHTML = '<option value="">Error al cargar clientes</option>';
+  }
+};
+
+
+  // --- Obtener reservas ---
   const fetchBookings = async () => {
     const selectedArea = areaFilter.value;
     const url = selectedArea === 'todos'
       ? `${API_BASE_URL}/api/admin/reservas`
       : `${API_BASE_URL}/api/admin/reservas?id_area=${selectedArea}`;
-
     try {
       const r = await fetch(url);
       if (!r.ok) throw new Error('No se pudieron obtener las reservas.');
@@ -88,26 +109,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // --- Aplicar filtros locales + ordenar + render ---
+  // --- Aplicar filtros ---
   const applyAndRender = () => {
-    const areaVal  = areaFilter.value;
-    const fechaVal = (dateFilter.value || '').trim(); // YYYY-MM-DD
-    const ordenVal = orderSelect.value; // 'recientes' | 'antiguas'
+    const areaVal = areaFilter.value;
+    const fechaVal = (dateFilter.value || '').trim();
+    const ordenVal = orderSelect.value;
 
     let filtered = allBookings.slice();
-
-    // Seguridad: si por alguna razón el backend devolvió varias áreas y hay filtro activo
     if (areaVal !== 'todos') {
       filtered = filtered.filter(b => String(b.id_area) === String(areaVal));
     }
-
-    // Filtro por fecha exacta (día)
     if (fechaVal) {
-      filtered = filtered.filter(b => (b.fecha_reserva || '').slice(0,10) === fechaVal);
+      filtered = filtered.filter(b => (b.fecha_reserva || '').slice(0, 10) === fechaVal);
     }
 
-    // Orden
-    filtered.sort((a,b) => {
+    filtered.sort((a, b) => {
       const ka = getSortKey(a), kb = getSortKey(b);
       return (ordenVal === 'antiguas') ? ka.localeCompare(kb) : kb.localeCompare(ka);
     });
@@ -128,13 +144,26 @@ document.addEventListener('DOMContentLoaded', () => {
       card.className = 'booking-card';
       card.dataset.booking = JSON.stringify(booking);
 
-      const fechaBonita = new Date(booking.fecha_reserva)
-        .toLocaleDateString('es-CL', {weekday:'long', year:'numeric', month:'long', day:'numeric', timeZone:'UTC'});
-      const creadaBonita = new Date(booking.fecha_creacion).toLocaleDateString('es-CL');
+      // 🧹 Evitar undefined o null
+      const nombreCliente = booking.nombre_cliente || booking.cliente_nombre || 'Cliente desconocido';
+      const rutCliente = booking.rut_cliente || booking.cliente_rut || 'No ingresado';
+      const telefonoCliente = booking.telefono_cliente || booking.cliente_telefono || 'No disponible';
+      const servicioTitulo = booking.servicio_titulo || 'Servicio eliminado';
+      const nombreArea = booking.nombre_area || 'Área no especificada';
+      const horaReserva = booking.hora_reserva ? String(booking.hora_reserva).replace('-', ' a ') : 'Sin horario';
+      const fechaReserva = booking.fecha_reserva
+        ? new Date(booking.fecha_reserva).toLocaleDateString('es-CL', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC'
+          })
+        : 'Sin fecha';
+      const fechaCreacion = booking.fecha_creacion
+        ? new Date(booking.fecha_creacion).toLocaleDateString('es-CL')
+        : 'Desconocida';
 
       const estadoPago = (booking.estado_pago || 'Pendiente').toLowerCase();
-      const idReserva  = booking.id;
+      const idReserva = booking.id;
 
+      // --- Pago ---
       let pagoHTML = '';
       if (estadoPago === 'abonado') {
         pagoHTML = `
@@ -145,11 +174,13 @@ document.addEventListener('DOMContentLoaded', () => {
             <i class="fas fa-dollar-sign"></i>
           </a>`;
       } else if (estadoPago === 'pago final' || estadoPago === 'pagado') {
-        pagoHTML = `<span class="btn-icon btn-chip btn-pagado" title="Pago completado">
+        pagoHTML = `
+          <span class="btn-icon btn-chip btn-pagado" title="Pago completado">
             <i class="fas fa-check-circle"></i> Pagado
           </span>`;
       } else {
-        pagoHTML = `<a href="admin_pagos.html?id_reserva=${idReserva}" class="btn-icon btn-pay" title="Registrar Pago/Abono">
+        pagoHTML = `
+          <a href="admin_pagos.html?id_reserva=${idReserva}" class="btn-icon btn-pay" title="Registrar Pago/Abono">
             <i class="fas fa-dollar-sign"></i>
           </a>`;
       }
@@ -157,12 +188,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const fichaHTML = `
         <a href="admin_ficha.html?id_reserva=${idReserva}" class="btn-icon btn-ficha" title="Ver/Añadir Ficha Clínica">
           <i class="fas fa-file-medical"></i>
-        </a>
-      `;
+        </a>`;
 
       card.innerHTML = `
         <div class="booking-header">
-          <h3 class="client-name">${booking.nombre_cliente}</h3>
+          <h3 class="client-name">${nombreCliente}</h3>
           <div class="booking-actions">
             ${pagoHTML}
             ${fichaHTML}
@@ -171,24 +201,24 @@ document.addEventListener('DOMContentLoaded', () => {
           </div>
         </div>
         <div class="booking-body">
-          <p><strong>Servicio:</strong> ${booking.servicio_titulo || 'Servicio eliminado'}</p>
-          <p><strong>Área:</strong> ${booking.nombre_area || 'Área no especificada'}</p>
-          <p><strong>Fecha:</strong> ${fechaBonita}</p>
-          <p><strong>Hora:</strong> ${String(booking.hora_reserva).replace('-', ' a ')}</p>
+          <p><strong>Servicio:</strong> ${servicioTitulo}</p>
+          <p><strong>Área:</strong> ${nombreArea}</p>
+          <p><strong>Fecha:</strong> ${fechaReserva}</p>
+          <p><strong>Hora:</strong> ${horaReserva}</p>
         </div>
         <div class="booking-footer">
           <div class="client-contact">
-            <p><i class="fas fa-id-card"></i> ${booking.rut_cliente || 'No ingresado'}</p>
-            <p><i class="fas fa-phone"></i> ${booking.telefono_cliente}</p>
+            <p><i class="fas fa-id-card"></i> ${rutCliente}</p>
+            <p><i class="fas fa-phone"></i> ${telefonoCliente}</p>
           </div>
-          <small class="creation-date">Creado: ${creadaBonita}</small>
-        </div>
-      `;
+          <small class="creation-date">Creado: ${fechaCreacion}</small>
+        </div>`;
+
       bookingListContainer.appendChild(card);
     });
   };
 
-  // --- Servicios en modal ---
+  // --- Servicios ---
   const loadServicesIntoSelect = async () => {
     try {
       const r = await fetch(`${API_BASE_URL}/api/servicios`);
@@ -208,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // --- Disponibilidad en modal ---
+  // --- Disponibilidad ---
   const checkAvailability = async () => {
     const date = dateInput.value;
     const selectedOpt = serviceSelect.options[serviceSelect.selectedIndex];
@@ -248,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // --- Eventos de filtros ---
+  // --- Filtros ---
   areaFilter.addEventListener('change', fetchBookings);
   dateFilter.addEventListener('change', applyAndRender);
   orderSelect.addEventListener('change', applyAndRender);
@@ -259,7 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchBookings();
   });
 
-  // --- Eventos modal ---
+  // --- Modal ---
   dateInput.addEventListener('change', checkAvailability);
   serviceSelect.addEventListener('change', checkAvailability);
 
@@ -270,17 +300,15 @@ document.addEventListener('DOMContentLoaded', () => {
   closeModalBtn.addEventListener('click', closeModal);
   modalOverlay.addEventListener('click', e => (e.target === modalOverlay) && closeModal());
 
-  // Submit modal
+  // --- Submit ---
   bookingForm.addEventListener('submit', async (ev) => {
     ev.preventDefault();
     const selectedOpt = serviceSelect.options[serviceSelect.selectedIndex];
     const bookingData = {
-      nombre_cliente: nameInput.value,
-      rut_cliente: rutInput.value,
-      telefono_cliente: phoneInput.value,
+      id_cliente: clienteSelect.value,
+      id_servicio: serviceSelect.value,
       fecha_reserva: dateInput.value,
       hora_reserva: timeSelect.value,
-      id_servicio: serviceSelect.value,
       id_area: selectedOpt ? selectedOpt.dataset.area : ''
     };
 
@@ -291,11 +319,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       const r = await fetch(url, {
-        method, headers: {'Content-Type':'application/json'},
+        method, headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(bookingData)
       });
       if (!r.ok) {
-        const err = await r.json().catch(()=>({message:'Error inesperado'}));
+        const err = await r.json().catch(() => ({ message: 'Error inesperado' }));
         throw new Error(err.message);
       }
       closeModal();
@@ -303,11 +331,11 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) { alert(`Error: ${e.message}`); }
   });
 
-  // Editar / Eliminar desde tarjetas
+  // --- Editar / Eliminar ---
   bookingListContainer.addEventListener('click', (ev) => {
     const editBtn = ev.target.closest('.btn-edit');
-    const delBtn  = ev.target.closest('.btn-delete');
-    if (ev.target.closest('.btn-pay')) return; // no interferir
+    const delBtn = ev.target.closest('.btn-delete');
+    if (ev.target.closest('.btn-pay')) return;
 
     if (editBtn) {
       const card = editBtn.closest('.booking-card');
@@ -315,10 +343,9 @@ document.addEventListener('DOMContentLoaded', () => {
       modalTitle.textContent = 'Editar Reserva';
       editingBookingId = booking.id;
 
-      nameInput.value = booking.nombre_cliente;
-      rutInput.value  = booking.rut_cliente || '';
-      phoneInput.value= booking.telefono_cliente;
-      const fechaISO = new Date(booking.fecha_reserva).toISOString().split('T')[0];
+      if (booking.id_cliente) clienteSelect.value = booking.id_cliente;
+
+      const fechaISO = booking.fecha_reserva ? new Date(booking.fecha_reserva).toISOString().split('T')[0] : '';
       dateInput.value = fechaISO;
 
       setTimeout(() => {
@@ -332,7 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (delBtn) {
       const card = delBtn.closest('.booking-card');
       const booking = JSON.parse(card.dataset.booking);
-      if (confirm(`¿Seguro que quieres eliminar la reserva de ${booking.nombre_cliente}?`)) {
+      if (confirm(`¿Seguro que quieres eliminar la reserva de ${booking.nombre_cliente || 'Cliente desconocido'}?`)) {
         fetch(`${API_BASE_URL}/api/admin/reservas/${booking.id}`, { method: 'DELETE' })
           .then(res => {
             if (res.status !== 204 && !res.ok) {
@@ -346,6 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --- Carga inicial ---
+  loadClientesIntoSelect();
   loadServicesIntoSelect();
   loadAreasIntoFilter().then(fetchBookings);
 });
