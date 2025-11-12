@@ -5,14 +5,328 @@ document.addEventListener('DOMContentLoaded', () => {
     ? 'http://localhost:3000'
     : 'https://cosmeticabackend-dqxh.onrender.com';
 
+  // ----------- DOM principal -----------
   const selectCliente = document.getElementById('select-cliente');
   const panelReservas = document.getElementById('panel-reservas');
-  const inputBuscar = document.getElementById('entrada-buscar');
+  const inputBuscar   = document.getElementById('entrada-buscar');
 
+  // Filtros (esta vista)
+  const filtroArea  = document.getElementById('filtro-area');
+  const filtroFecha = document.getElementById('filtro-fecha');
+  const filtroOrden = document.getElementById('filtro-orden');
+  const btnLimpiar  = document.getElementById('btn-limpiar-filtros');
+
+  // Estado global para filtros
   let clientes = [];
+  let reservasAll = [];           // dataset cuando "Ver todos"
+  let reservasClienteActual = []; // dataset del cliente seleccionado
+  let nombreClienteActual = '';
 
   // ==========================
-  //   MODAL FICHA — refs/estado
+  // Helpers generales
+  // ==========================
+  // --- Helpers de fecha seguros (sin desfase) ---
+  const parseYMD = (s) => {
+    if (!s) return null;
+    const clean = String(s).slice(0,10).replace(/\//g,'-').trim();
+    const [yy, mm, dd] = clean.split('-').map(n => parseInt(n, 10));
+    if (!yy || !mm || !dd) return null;
+    return { y: yy, m: mm, d: dd };
+  };
+
+  const formatDateCL = (dateStr, hourRange = '') => {
+    const p = parseYMD(dateStr);
+    if (!p) return 'Sin fecha';
+
+    // si viene rango "HH:mm - HH:mm", tomamos el inicio
+    let hh = 0, mi = 0;
+    if (hourRange) {
+      const first = String(hourRange).split('-')[0].trim();
+      const [h, m] = first.split(':').map(n => parseInt(n || '0', 10));
+      if (!Number.isNaN(h)) hh = h;
+      if (!Number.isNaN(m)) mi = m;
+    }
+
+    // Fecha LOCAL (no UTC) → evita correr un día
+    const d = new Date(p.y, p.m - 1, p.d, hh, mi, 0, 0);
+
+    const fechaBonita = d.toLocaleDateString('es-CL', {
+      timeZone: 'America/Santiago',
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    const cap = fechaBonita.charAt(0).toUpperCase() + fechaBonita.slice(1);
+    return cap + (hourRange ? ` (${hourRange.replace('-', ' - ').trim()})` : '');
+  };
+
+  const norm = (s) =>
+    String(s ?? '')
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .toLowerCase()
+      .trim();
+
+  const normalizeDateStr = (s) => {
+    if (!s) return null;
+    const clean = String(s).slice(0, 10).replace(/\//g, '-').trim();
+    const y = clean.slice(0, 4), m = clean.slice(5, 7), d = clean.slice(8, 10);
+    return (y.length === 4 && m.length === 2 && d.length === 2) ? `${y}-${m}-${d}` : null;
+  };
+
+  const dateTimeKey = (res) => {
+    const p = parseYMD(res?.fecha_reserva);
+    if (!p) return -Infinity;
+
+    let hh = 0, mm = 0;
+    if (res?.hora_reserva) {
+      const first = String(res.hora_reserva).split('-')[0].trim();
+      const [h, m] = first.split(':').map(n => parseInt(n || '0', 10));
+      if (!Number.isNaN(h)) hh = h;
+      if (!Number.isNaN(m)) mm = m;
+    }
+
+    // ¡Local time! evita desfase
+    const dt = new Date(p.y, p.m - 1, p.d, hh, mm, 0, 0);
+    return dt.getTime();
+  };
+
+  const getAreaId = (r) => r?.id_area ?? r?.area_id ?? r?.servicio?.id_area ?? null;
+  const getAreaNombre = (r) => r?.nombre_area ?? r?.area ?? r?.servicio?.area ?? '';
+
+  // ==========================
+  // Select de clientes
+  // ==========================
+  const fetchClientes = async () => {
+    const urls = [
+      `${API_BASE_URL}/api/clientes`,
+      `${API_BASE_URL}/api/admin/clientes`,
+      `${API_BASE_URL}/api/usuarios/clientes`
+    ];
+    for (const url of urls) {
+      try {
+        const r = await fetch(url);
+        if (!r.ok) continue;
+        const data = await r.json();
+        return Array.isArray(data) ? data : (data.clientes || []);
+      } catch {}
+    }
+    console.warn('No se pudieron cargar clientes.');
+    return [];
+  };
+
+  const renderSelect = (lista) => {
+    selectCliente.innerHTML = `
+      <option value="" disabled selected>Selecciona un cliente...</option>
+      <option value="all">👥 Ver todos los clientes</option>
+    `;
+    lista.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id_cliente || c.id || '';
+      opt.textContent = c.nombre_cliente || c.nombre || 'Cliente sin nombre';
+      selectCliente.appendChild(opt);
+    });
+  };
+
+  const filtrarSelect = (q) => {
+    const listaFiltrada = clientes.filter(c =>
+      norm(c.nombre_cliente || c.nombre).includes(norm(q)) ||
+      norm(c.telefono_cliente || c.telefono).includes(norm(q))
+    );
+    renderSelect(listaFiltrada);
+  };
+
+  inputBuscar?.addEventListener('input', (e) => filtrarSelect(e.target.value));
+
+  // ==========================
+  // Filtros (área/fecha/orden)
+  // ==========================
+  const loadAreasIntoFiltro = async () => {
+    try {
+      const r = await fetch(`${API_BASE_URL}/api/areas`);
+      if (!r.ok) throw new Error('No se pudieron cargar áreas.');
+      const areas = await r.json();
+      // Reset + opción "Todas"
+      filtroArea.innerHTML = `<option value="all" selected>Todas</option>`;
+      areas
+        .sort((a,b)=> String(a.nombre_area).localeCompare(b.nombre_area,'es'))
+        .forEach(a => {
+          const opt = document.createElement('option');
+          opt.value = String(a.id_area);          // valor = id para comparar fácil
+          opt.textContent = a.nombre_area || `Área ${a.id_area}`;
+          filtroArea.appendChild(opt);
+        });
+    } catch (e) {
+      console.warn('No se poblaron áreas en el filtro:', e.message);
+    }
+  };
+
+  const aplicarFiltros = (lista) => {
+    let out = Array.isArray(lista) ? [...lista] : [];
+
+    // Área: si value es 'all' no filtra; si es id, intenta por id; fallback por nombre
+    const areaVal = filtroArea?.value || 'all';
+    if (areaVal !== 'all') {
+      out = out.filter(r => {
+        const rid = getAreaId(r);
+        if (rid != null && String(rid) === String(areaVal)) return true;
+        // fallback por nombre (por si no viene id_area)
+        return norm(getAreaNombre(r)) === norm(filtroArea.options[filtroArea.selectedIndex]?.textContent || '');
+      });
+    }
+
+    // Fecha (YYYY-MM-DD exacto)
+    const selDate = filtroFecha?.value?.trim();
+    if (selDate) {
+      out = out.filter(r => normalizeDateStr(r?.fecha_reserva) === selDate);
+    }
+
+    // Orden
+    const ord = filtroOrden?.value || 'desc';
+    out.sort((a,b) => {
+      const ka = dateTimeKey(a), kb = dateTimeKey(b);
+      return ord === 'asc' ? (ka - kb) : (kb - ka);
+    });
+    return out;
+  };
+
+  const renderAllFiltered = () => {
+    const filtradas = aplicarFiltros(reservasAll);
+    const porCliente = {};
+    filtradas.forEach(res => {
+      const nombre = res.nombre_cliente || 'Cliente sin nombre';
+      if (!porCliente[nombre]) porCliente[nombre] = [];
+      porCliente[nombre].push(res);
+    });
+
+    const nombres = Object.keys(porCliente).sort((a,b)=>a.localeCompare(b,'es'));
+    if (!nombres.length) {
+      panelReservas.innerHTML = `
+        <h2>Todas las reservas</h2>
+        <p>No hay resultados con los filtros aplicados.</p>
+      `;
+      return;
+    }
+
+    let html = '';
+    for (const nombre of nombres) {
+      const bloque = porCliente[nombre].map(res => {
+        // ✅ Evitar desfase: usar formatDateCL
+        const fechaTexto = formatDateCL(res.fecha_reserva, res.hora_reserva || '');
+        return `
+          <div class="reserva-card mini">
+            <p><strong>Servicio:</strong> ${res.servicio_titulo || '-'}</p>
+            <p><strong>Área:</strong> ${getAreaNombre(res) || '-'}</p>
+            <p><strong>Fecha:</strong> ${fechaTexto}</p>
+            <div class="acciones">
+              <a href="admin_pagos.html?id_reserva=${res.id}" class="btn btn-secundario">
+                <i class="fas fa-dollar-sign"></i> Pago
+              </a>
+              <a href="admin_ficha.html?id_reserva=${res.id}" class="btn btn-primario">
+                <i class="fas fa-file-medical"></i> Ficha
+              </a>
+            </div>
+          </div>`;
+      }).join('');
+      html += `<div class="bloque-cliente"><h3>${nombre}</h3>${bloque}</div>`;
+    }
+    panelReservas.innerHTML = `<h2>Todas las reservas</h2>${html}`;
+  };
+
+  const renderClienteFiltered = () => {
+    const lista = aplicarFiltros(reservasClienteActual);
+    if (!lista.length) {
+      panelReservas.innerHTML = `
+        <h2>Reservas de ${nombreClienteActual}</h2>
+        <p>No hay resultados con los filtros aplicados.</p>
+      `;
+      return;
+    }
+    const html = lista.map(res => {
+      // ✅ Evitar desfase: usar formatDateCL
+      const fechaTexto = formatDateCL(res.fecha_reserva, res.hora_reserva || '');
+      return `
+        <div class="reserva-card">
+          <p><strong>Servicio:</strong> ${res.servicio_titulo || 'No especificado'}</p>
+          <p><strong>Área:</strong> ${getAreaNombre(res) || 'Sin área'}</p>
+          <p><strong>Fecha:</strong> ${fechaTexto}</p>
+          <div class="acciones">
+            <a href="admin_pagos.html?id_reserva=${res.id}" class="btn btn-secundario">
+              <i class="fas fa-dollar-sign"></i> Pago
+            </a>
+            <a href="admin_ficha.html?id_reserva=${res.id}" class="btn btn-primario">
+              <i class="fas fa-file-medical"></i> Ficha
+            </a>
+          </div>
+        </div>`;
+    }).join('');
+    panelReservas.innerHTML = `<h2>Reservas de ${nombreClienteActual}</h2>${html}`;
+  };
+
+  const handleFiltroChange = () => {
+    const val = selectCliente?.value;
+    if (val === 'all') renderAllFiltered();
+    else renderClienteFiltered();
+  };
+
+  [filtroArea, filtroFecha, filtroOrden].forEach(el => {
+    el?.addEventListener('change', handleFiltroChange);
+  });
+
+  btnLimpiar?.addEventListener('click', () => {
+    if (filtroArea)  filtroArea.value = 'all';
+    if (filtroFecha) filtroFecha.value = '';
+    if (filtroOrden) filtroOrden.value = 'desc';
+    handleFiltroChange();
+  });
+
+  // ==========================
+  // Reservas (fetch y render)
+  // ==========================
+  const fetchReservasCliente = async (idCliente, nombreCliente) => {
+    panelReservas.innerHTML = `
+      <h2>Reservas de ${nombreCliente}</h2>
+      <p class="loading">Cargando reservas...</p>
+    `;
+    try {
+      const r = await fetch(`${API_BASE_URL}/api/reservas/cliente/${idCliente}`);
+      if (!r.ok) throw new Error('Error al cargar reservas');
+      const reservas = await r.json();
+
+      reservasClienteActual = Array.isArray(reservas) ? reservas : [];
+      nombreClienteActual = nombreCliente;
+
+      renderClienteFiltered();
+    } catch (e) {
+      console.error(e);
+      panelReservas.innerHTML = `
+        <h2>Reservas de ${nombreCliente}</h2>
+        <p>Error al cargar las reservas.</p>
+      `;
+    }
+  };
+
+  const fetchReservasTodas = async () => {
+    panelReservas.innerHTML = `
+      <h2>Todas las reservas</h2>
+      <p class="loading">Cargando...</p>
+    `;
+    try {
+      const r = await fetch(`${API_BASE_URL}/api/admin/reservas`);
+      if (!r.ok) throw new Error('Error al cargar reservas');
+      const reservas = await r.json();
+
+      reservasAll = Array.isArray(reservas) ? reservas : [];
+      renderAllFiltered();
+    } catch (e) {
+      console.error(e);
+      panelReservas.innerHTML = `<p>Error al cargar todas las reservas.</p>`;
+    }
+  };
+
+  // ==========================
+  // MODAL FICHA (mismo flujo)
   // ==========================
   const modal = document.getElementById('modal-ficha');
   const overlay = modal?.querySelector('.modal-ficha__overlay');
@@ -35,94 +349,40 @@ document.addEventListener('DOMContentLoaded', () => {
   const mfBtnCerrar = document.getElementById('mf-btn-cerrar');
 
   let mfReservaId = null;
-  let mfFichaId = null;
+  let mfFichaId   = null;
   let mfLastSaved = '';
-
-  const normalizar = (s) => (s || '').toString().toLowerCase().trim();
 
   const resolveRegistradoPor = () => {
     const nombre = localStorage.getItem('nombre_completo');
     if (nombre && nombre.trim()) return nombre.trim();
-
     const user = localStorage.getItem('username');
     if (user && user.trim()) return user.trim();
-
     const t = localStorage.getItem('token') || localStorage.getItem('authToken');
     if (t) {
       try {
         const payload = JSON.parse(atob((t.split('.')[1] || '').replace(/-/g, '+').replace(/_/g, '/')));
         if (payload?.username) return String(payload.username);
-      } catch { }
+      } catch {}
     }
     return null;
   };
 
-  const formatearFechaBonita = (fechaISO, horaStr = '') => {
-    try {
-      if (!fechaISO) return 'Sin fecha';
-
-      // Asegurar formato ISO
-      const fechaLimpia = fechaISO.replace(/\//g, '-').trim();
-
-      // Si la hora es un rango, tomamos solo la primera parte (para no romper el Date)
-      let horaInicio = horaStr;
-      if (horaStr.includes('-')) {
-        horaInicio = horaStr.split('-')[0].trim();
-      }
-
-      // Crear objeto Date válido
-      const fechaObj = new Date(`${fechaLimpia}T${horaInicio || '00:00'}:00`);
-
-      // Si aún no es válida, mostrar crudo
-      if (isNaN(fechaObj)) {
-        return `${fechaLimpia}${horaStr ? ` (${horaStr})` : ''}`;
-      }
-
-      // Formatear con día de semana, mes y año
-      const fechaBonita = fechaObj.toLocaleDateString('es-CL', {
-        timeZone: 'America/Santiago',
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      });
-
-      // Capitalizar la primera letra (opcional)
-      const fechaCapitalizada = fechaBonita.charAt(0).toUpperCase() + fechaBonita.slice(1);
-
-      // Retornar fecha con hora
-      return `${fechaCapitalizada}${horaStr ? ` (${horaStr})` : ''}`;
-    } catch {
-      return `${fechaISO}${horaStr ? ` (${horaStr})` : ''}`;
-    }
-  };
-
-
-
-  // ----- abrir/cerrar -----
-  const mfOpen = () => { if (modal) { modal.setAttribute('aria-hidden', 'false'); document.body.classList.add('mf-open'); } };
+  const mfOpen = () => { if (modal){ modal.setAttribute('aria-hidden','false'); document.body.classList.add('mf-open'); } };
   const mfClose = () => {
     if (!modal) return;
-    modal.setAttribute('aria-hidden', 'true');
-    document.body.classList.remove('mf-open');
-    // limpia estado
+    modal.setAttribute('aria-hidden','true'); document.body.classList.remove('mf-open');
     mfReservaId = null; mfFichaId = null; mfLastSaved = '';
     if (mfTextarea) mfTextarea.value = '';
-    if (mfReadTxt) mfReadTxt.textContent = '';
-    if (mfDetails) mfDetails.style.display = 'none';
-    if (mfForm) mfForm.style.display = 'none';
-    if (mfRead) mfRead.style.display = 'none';
-    if (mfLoading) mfLoading.style.display = 'block';
+    if (mfReadTxt)  mfReadTxt.textContent = '';
+    if (mfDetails)  mfDetails.style.display = 'none';
+    if (mfForm)     mfForm.style.display = 'none';
+    if (mfRead)     mfRead.style.display = 'none';
+    if (mfLoading)  mfLoading.style.display = 'block';
   };
-  const mfHasChanges = () => (mfForm?.style.display !== 'none' && (mfTextarea?.value || '').trim() !== mfLastSaved.trim());
+  const mfHasChanges = () =>
+    (mfForm?.style.display !== 'none' && (mfTextarea?.value || '').trim() !== mfLastSaved.trim());
+  const mfHandleClose = async () => { try { if (mfHasChanges()) await mfSave(false); } finally { mfClose(); } };
 
-  const mfHandleClose = async () => {
-    try {
-      if (mfHasChanges()) await mfSave(false);
-    } finally { mfClose(); }
-  };
-
-  // ----- carga de datos -----
   const mfLoadReserva = async (idReserva) => {
     mfLoading.style.display = 'block';
     mfDetails.style.display = 'none';
@@ -131,9 +391,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!r.ok) throw new Error('No se pudo obtener la reserva.');
       const reserva = await r.json();
       mfCliente.textContent = reserva.nombre_cliente || 'N/A';
-      mfServicio.textContent = reserva.servicio_titulo || 'N/A';
-      mfFecha.textContent = formatearFechaBonita(reserva.fecha_reserva, reserva.hora_reserva || '');
-      mfArea.textContent = reserva.nombre_area || 'N/A';
+      mfServicio.textContent= reserva.servicio_titulo || 'N/A';
+      // ✅ Usar formatDateCL aquí también
+      mfFecha.textContent   = formatDateCL(reserva.fecha_reserva, reserva.hora_reserva || '');
+      mfArea.textContent    = reserva.nombre_area || 'N/A';
       mfLoading.style.display = 'none';
       mfDetails.style.display = 'block';
     } catch (e) {
@@ -146,7 +407,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const f = await fetch(`${API_BASE_URL}/api/fichas?id_reserva=${idReserva}`);
       if (f.status === 200) {
         const ficha = await f.json();
-        mfFichaId = ficha.id ?? ficha.id_ficha ?? null;
+        mfFichaId   = ficha.id ?? ficha.id_ficha ?? null;
         mfLastSaved = ficha.detalle || '';
         const firmado = ficha.registrado_por ? `\n\n— Registrado por ${ficha.registrado_por}` : '';
         mfReadTxt.textContent = `${mfLastSaved}${firmado}`;
@@ -154,7 +415,7 @@ document.addEventListener('DOMContentLoaded', () => {
         mfRead.style.display = 'block';
         mfBtnEditar.style.display = 'inline-flex';
       } else if (f.status === 204) {
-        mfFichaId = null;
+        mfFichaId   = null;
         mfLastSaved = '';
         mfTextarea.value = '';
         mfForm.style.display = 'block';
@@ -165,7 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
         throw new Error('Error al verificar la ficha clínica.');
       }
     } catch {
-      mfFichaId = null;
+      mfFichaId   = null;
       mfLastSaved = '';
       mfTextarea.value = '';
       mfForm.style.display = 'block';
@@ -175,44 +436,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // ----- guardar -----
   const mfSave = async (showAlert = true) => {
     if (!mfReservaId) return;
     const detalleStr = (mfForm.style.display !== 'none' ? mfTextarea.value : mfLastSaved).trim();
-    if (!detalleStr) {
-      if (showAlert) alert('Por favor, escribe los detalles de la sesión.');
-      return;
-    }
+    if (!detalleStr) { if (showAlert) alert('Por favor, escribe los detalles de la sesión.'); return; }
 
-    const payload = {
-      id_reserva: mfReservaId,
-      detalle: detalleStr,
-      registrado_por: resolveRegistradoPor() || undefined
-    };
+    const payload = { id_reserva: mfReservaId, detalle: detalleStr, registrado_por: resolveRegistradoPor() || undefined };
 
     try {
       if (!mfFichaId) {
         const r = await fetch(`${API_BASE_URL}/api/fichas`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
         });
         const data = await r.json().catch(() => ({}));
         if (!r.ok) throw new Error(data?.message || `Error ${r.status}`);
-
-        mfFichaId = data.id ?? data.id_ficha ?? mfFichaId;
+        mfFichaId   = data.id ?? data.id_ficha ?? mfFichaId;
         mfLastSaved = detalleStr;
         const firmado = payload.registrado_por ? `\n\n— Registrado por ${payload.registrado_por}` : '';
         mfReadTxt.textContent = `${mfLastSaved}${firmado}`;
-        mfForm.style.display = 'none';
-        mfRead.style.display = 'block';
-        mfBtnEditar.style.display = 'inline-flex';
+        mfForm.style.display = 'none'; mfRead.style.display = 'block'; mfBtnEditar.style.display = 'inline-flex';
         if (showAlert) alert(data?.message || 'Ficha guardada y marcada como realizada.');
       } else {
         const actualizar = async (method) => {
           const resp = await fetch(`${API_BASE_URL}/api/fichas/${mfFichaId}`, {
-            method,
-            headers: { 'Content-Type': 'application/json' },
+            method, headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ detalle: detalleStr, registrado_por: payload.registrado_por })
           });
           const json = await resp.json().catch(() => ({}));
@@ -220,251 +467,37 @@ document.addEventListener('DOMContentLoaded', () => {
           return json;
         };
         try { await actualizar('PUT'); } catch { await actualizar('PATCH'); }
-
         mfLastSaved = detalleStr;
         const firmado = payload.registrado_por ? `\n\n— Registrado por ${payload.registrado_por}` : '';
         mfReadTxt.textContent = `${mfLastSaved}${firmado}`;
-        if (mfForm.style.display !== 'none') {
-          mfForm.style.display = 'none';
-          mfRead.style.display = 'block';
-          mfBtnEditar.style.display = 'inline-flex';
-        }
+        if (mfForm.style.display !== 'none') { mfForm.style.display = 'none'; mfRead.style.display = 'block'; mfBtnEditar.style.display = 'inline-flex'; }
         if (showAlert) alert('Cambios guardados.');
       }
-    } catch (e) {
-      if (showAlert) alert(`No se pudo guardar: ${e.message}`);
-    }
+    } catch (e) { if (showAlert) alert(`No se pudo guardar: ${e.message}`); }
   };
 
-  // eventos UI del modal
   mfBtnEditar?.addEventListener('click', () => {
     mfTextarea.value = mfLastSaved || '';
-    mfForm.style.display = 'block';
-    mfRead.style.display = 'none';
-    mfBtnEditar.style.display = 'none';
-    mfTextarea.focus();
+    mfForm.style.display = 'block'; mfRead.style.display = 'none'; mfBtnEditar.style.display = 'none'; mfTextarea.focus();
   });
   mfBtnGuardar?.addEventListener('click', () => mfSave(true));
-  mfBtnCerrar?.addEventListener('click', mfHandleClose);
+  mfBtnCerrar?.addEventListener('click', () => {
+    if (modal?.getAttribute('aria-hidden') === 'false') { mfHandleClose(); }
+  });
   btnCloseX?.addEventListener('click', mfHandleClose);
   overlay?.addEventListener('click', (e) => { if (e.target?.dataset?.close) mfHandleClose(); });
   document.addEventListener('keydown', (e) => {
     if (modal?.getAttribute('aria-hidden') === 'false' && e.key === 'Escape') mfHandleClose();
   });
 
-  // =========================================================
-  //              LÓGICA ORIGINAL DE HISTORIAL
-  // =========================================================
-  const fetchClientes = async () => {
-    const urls = [
-      `${API_BASE_URL}/api/clientes`,
-      `${API_BASE_URL}/api/admin/clientes`,
-      `${API_BASE_URL}/api/usuarios/clientes`
-    ];
-    for (const url of urls) {
-      try {
-        const r = await fetch(url);
-        if (!r.ok) continue;
-        const data = await r.json();
-        return Array.isArray(data) ? data : data.clientes || [];
-      } catch { }
-    }
-    console.warn('No se pudieron cargar clientes.');
-    return [];
-  };
-
-  const renderSelect = (lista) => {
-    selectCliente.innerHTML = `
-      <option value="" disabled selected>Selecciona un cliente...</option>
-      <option value="all">👥 Ver todos los clientes</option>
-    `;
-    lista.forEach(c => {
-      const opt = document.createElement('option');
-      opt.value = c.id_cliente || c.id || '';
-      opt.textContent = c.nombre_cliente || c.nombre || 'Cliente sin nombre';
-      selectCliente.appendChild(opt);
-    });
-  };
-
-  const filtrarSelect = (q) => {
-    const listaFiltrada = clientes.filter(c =>
-      normalizar(c.nombre_cliente || c.nombre).includes(normalizar(q)) ||
-      normalizar(c.telefono_cliente || c.telefono).includes(normalizar(q))
-    );
-    renderSelect(listaFiltrada);
-  };
-
-  const fetchReservasCliente = async (idCliente, nombreCliente) => {
-    panelReservas.innerHTML = `
-      <h2>Reservas de ${nombreCliente}</h2>
-      <p class="loading">Cargando reservas...</p>
-    `;
-    try {
-      const r = await fetch(`${API_BASE_URL}/api/reservas/cliente/${idCliente}`);
-      if (!r.ok) throw new Error('Error al cargar reservas');
-      const reservas = await r.json();
-
-      if (!reservas || reservas.length === 0) {
-        panelReservas.innerHTML = `
-          <h2>Reservas de ${nombreCliente}</h2>
-          <p>Este cliente no tiene reservas registradas.</p>
-        `;
-        return;
-      }
-
-      const html = reservas.map(res => {
-        // Normalizar la fecha
-        const fechaISO = (res.fecha_reserva || '').replace(/\//g, '-');
-        const fechaBonita = fechaISO
-          ? new Date(fechaISO).toLocaleDateString('es-CL', {
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/Santiago'
-          })
-          : 'Sin fecha';
-
-        // Mostrar el rango de hora completo (sin romper si es null)
-        const horaTexto = res.hora_reserva ? res.hora_reserva.replace('-', ' - ') : '-';
-
-        return `
-        <div class="reserva-card">
-          <p><strong>Servicio:</strong> ${res.servicio_titulo || 'No especificado'}</p>
-          <p><strong>Área:</strong> ${res.nombre_area || 'Sin área'}</p>
-          <p><strong>Fecha:</strong> ${fechaBonita} (${horaTexto})</p>
-          <div class="acciones">
-            <a href="admin_pagos.html?id_reserva=${res.id}" class="btn btn-secundario">
-              <i class="fas fa-dollar-sign"></i> Pago
-            </a>
-            <a href="admin_ficha.html?id_reserva=${res.id}" class="btn btn-primario">
-              <i class="fas fa-file-medical"></i> Ficha
-            </a>
-          </div>
-        </div>
-      `;
-      }).join('');
-
-
-      panelReservas.innerHTML = `
-        <h2>Reservas de ${nombreCliente}</h2>
-        ${html}
-      `;
-    } catch (e) {
-      console.error(e);
-      panelReservas.innerHTML = `
-        <h2>Reservas de ${nombreCliente}</h2>
-        <p>Error al cargar las reservas.</p>
-      `;
-    }
-  };
-
-  const fetchReservasTodas = async () => {
-    panelReservas.innerHTML = `
-      <h2>Todas las reservas</h2>
-      <p class="loading">Cargando...</p>
-    `;
-    try {
-      const r = await fetch(`${API_BASE_URL}/api/admin/reservas`);
-      if (!r.ok) throw new Error('Error al cargar reservas');
-      const reservas = await r.json();
-
-      if (!reservas || reservas.length === 0) {
-        panelReservas.innerHTML = `<p>No hay reservas registradas.</p>`;
-        return;
-      }
-
-      const agrupado = {};
-      reservas.forEach(res => {
-        const nombre = res.nombre_cliente || 'Cliente sin nombre';
-        if (!agrupado[nombre]) agrupado[nombre] = [];
-        agrupado[nombre].push(res);
-      });
-
-      let html = '';
-      for (const [nombre, lista] of Object.entries(agrupado)) {
-        const bloque = lista.map(res => {
-          const fechaISO = (res.fecha_reserva || '').replace(/\//g, '-');
-          const fechaBonita = fechaISO
-            ? new Date(fechaISO).toLocaleDateString('es-CL', {
-              weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/Santiago'
-            })
-            : 'Sin fecha';
-
-          const horaTexto = res.hora_reserva ? res.hora_reserva.replace('-', ' - ') : '-';
-
-          return `
-            <div class="reserva-card mini">
-              <p><strong>Servicio:</strong> ${res.servicio_titulo || '-'}</p>
-              <p><strong>Área:</strong> ${res.nombre_area || '-'}</p>
-              <p><strong>Fecha:</strong> ${fechaBonita} (${horaTexto})</p>
-              <div class="acciones">
-                <a href="admin_pagos.html?id_reserva=${res.id}" class="btn btn-secundario">
-                  <i class="fas fa-dollar-sign"></i> Pago
-                </a>
-                <a href="admin_ficha.html?id_reserva=${res.id}" class="btn btn-primario">
-                  <i class="fas fa-file-medical"></i> Ficha
-                </a>
-              </div>
-            </div>
-          `;
-        }).join('');
-
-        html += `
-          <div class="bloque-cliente">
-            <h3>${nombre}</h3>
-            ${bloque}
-          </div>
-        `;
-      }
-
-      panelReservas.innerHTML = `
-        <h2>Todas las reservas</h2>
-        ${html}
-      `;
-    } catch (e) {
-      console.error(e);
-      panelReservas.innerHTML = `<p>Error al cargar todas las reservas.</p>`;
-    }
-  };
-
-  // Inicializar
-  const init = async () => {
-    clientes = await fetchClientes();
-    renderSelect(clientes);
-
-    // Seleccionar automáticamente la opción "Ver todos los clientes"
-    const optAll = selectCliente.querySelector('option[value="all"]');
-    if (optAll) {
-      selectCliente.value = 'all';
-      await fetchReservasTodas(); // Cargar todas las reservas al inicio
-    }
-  };
-
-
-  selectCliente.addEventListener('change', () => {
-    const selectedOption = selectCliente.options[selectCliente.selectedIndex];
-    if (!selectedOption?.value) return;
-
-    if (selectedOption.value === 'all') {
-      fetchReservasTodas();
-    } else {
-      const id = selectedOption.value;
-      const nombre = selectedOption.textContent;
-      fetchReservasCliente(id, nombre);
-    }
-  });
-
-  inputBuscar?.addEventListener('input', (e) => {
-    filtrarSelect(e.target.value);
-  });
-
-  // ============ "Ficha" y abre la ventana emergente ============
+  // Abre modal ficha desde los links del panel
   panelReservas.addEventListener('click', async (e) => {
     const aFicha = e.target.closest('a[href*="admin_ficha.html"]');
     if (!aFicha) return;
-
     e.preventDefault();
     const url = new URL(aFicha.getAttribute('href'), location.href);
     const id = Number(url.searchParams.get('id_reserva'));
     if (!id) return;
-
     mfReservaId = id;
     mfOpen();
     await mfLoadReserva(mfReservaId);
@@ -472,24 +505,46 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!mfFichaId) mfTextarea?.focus();
   });
 
+  // ==========================
+  // Inicialización
+  // ==========================
+  const init = async () => {
+    await loadAreasIntoFiltro();
+    clientes = await fetchClientes();
+    renderSelect(clientes);
+
+    // Seleccionar y cargar "Ver todos"
+    const optAll = selectCliente.querySelector('option[value="all"]');
+    if (optAll) {
+      selectCliente.value = 'all';
+      await fetchReservasTodas();
+    }
+  };
+
+  // Cambio de cliente/“ver todos”
+  selectCliente.addEventListener('change', () => {
+    const val = selectCliente.value;
+    if (val === 'all') {
+      fetchReservasTodas();
+    } else if (val) {
+      const nombre = selectCliente.options[selectCliente.selectedIndex].textContent;
+      fetchReservasCliente(val, nombre);
+    }
+  });
+
   init();
 });
 
 
-
-
-
-
 /* =========================================================
-   MODAL PAGO — integración en historial
+   MODAL PAGO — integración en historial (se mantiene)
    ========================================================= */
 (function () {
   const isLocal = ['localhost', '127.0.0.1'].includes(window.location.hostname);
   const API_BASE_URL = isLocal ? 'http://localhost:3000' : 'https://cosmeticabackend-dqxh.onrender.com';
 
-  // Refs modal
   const modalPago = document.getElementById('modal-pago');
-  if (!modalPago) return; // por si aún no pegaste el HTML
+  if (!modalPago) return;
 
   const overlayPago = modalPago.querySelector('.modal-pago__overlay');
   const btnClosePago = document.getElementById('modal-pago-close');
@@ -503,7 +558,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const mpIdSpan = document.getElementById('mp-id');
 
   const mpInfo = document.getElementById('mp-info');
-
   const mpOptions = document.getElementById('mp-options');
   const mpBtnAbono = document.getElementById('mp-btn-abono');
   const mpBtnPF = document.getElementById('mp-btn-pago-final');
@@ -517,12 +571,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let mpReservaId = null;
 
-
-
-
-
-
-  // ===== Helpers para estado de botones =====
   const DEFAULT_LABELS = {
     abono: '<i class="fas fa-hand-holding-usd"></i> Registrar Abono ($10.000)',
     final: '<i class="fas fa-money-check-alt"></i> Registrar Pago Final'
@@ -536,65 +584,32 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const markAbonoRealizado = () => {
-    setBtnState(mpBtnAbono, {
-      html: '<i class="fas fa-circle-check"></i> Abono realizado',
-      disabled: true
-    });
+    setBtnState(mpBtnAbono, { html: '<i class="fas fa-circle-check"></i> Abono realizado', disabled: true });
   };
-
   const markReservaPagada = () => {
-    setBtnState(mpBtnPF, {
-      html: '<i class="fas fa-circle-check"></i> Reserva pagada',
-      disabled: true
-    });
-    // bloquear abono también
-    setBtnState(mpBtnAbono, {
-      html: '<i class="fas fa-circle-check"></i> Abono bloqueado',
-      disabled: true
-    });
+    setBtnState(mpBtnPF, { html: '<i class="fas fa-circle-check"></i> Reserva pagada', disabled: true });
+    setBtnState(mpBtnAbono, { html: '<i class="fas fa-circle-check"></i> Abono bloqueado', disabled: true });
   };
-
 
   const fmtFechaLarga = (fechaISO, horaStr = '') => {
     try {
       if (!fechaISO) return 'Sin fecha';
-
       const fechaLimpia = fechaISO.replace(/\//g, '-').trim();
-
-      // Si viene con rango, tomar solo la primera parte (ej: "11:00 - 13:00")
       let horaInicio = horaStr;
-      if (horaStr.includes('-')) {
-        horaInicio = horaStr.split('-')[0].trim();
-      }
-
-      // Crear la fecha de forma segura
+      if (horaStr.includes('-')) horaInicio = horaStr.split('-')[0].trim();
       const d = new Date(`${fechaLimpia}T${horaInicio || '00:00'}:00`);
-
-      // Si no es válida, mostrar crudo
-      if (isNaN(d.getTime())) {
-        return `${fechaLimpia}${horaStr ? ` (${horaStr})` : ''}`;
-      }
-
+      if (isNaN(d.getTime())) return `${fechaLimpia}${horaStr ? ` (${horaStr})` : ''}`;
       const fechaBonita = d.toLocaleDateString('es-CL', {
-        timeZone: 'America/Santiago',
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
+        timeZone: 'America/Santiago', weekday:'long', year:'numeric', month:'long', day:'numeric'
       });
-
-      const capitalizada = fechaBonita.charAt(0).toUpperCase() + fechaBonita.slice(1);
-      return `${capitalizada}${horaStr ? ` (${horaStr})` : ''}`;
-    } catch {
-      return `${fechaISO}${horaStr ? ` (${horaStr})` : ''}`;
-    }
+      const cap = fechaBonita.charAt(0).toUpperCase() + fechaBonita.slice(1);
+      return `${cap}${horaStr ? ` (${horaStr})` : ''}`;
+    } catch { return `${fechaISO}${horaStr ? ` (${horaStr})` : ''}`; }
   };
-
 
   const mpOpen = () => { modalPago.setAttribute('aria-hidden', 'false'); document.body.classList.add('mp-open'); };
   const mpClose = () => {
     modalPago.setAttribute('aria-hidden', 'true'); document.body.classList.remove('mp-open');
-    // reset
     mpReservaId = null;
     mpLoading.style.display = 'block';
     mpDetails.style.display = 'none';
@@ -602,13 +617,10 @@ document.addEventListener('DOMContentLoaded', () => {
     mpOptions.style.display = '';
     mpFormCtn.style.display = 'none';
     mpForm.reset();
-    // reset botones
     setBtnState(mpBtnAbono, { html: DEFAULT_LABELS.abono, disabled: false });
-    setBtnState(mpBtnPF, { html: DEFAULT_LABELS.final, disabled: false });
+    setBtnState(mpBtnPF,   { html: DEFAULT_LABELS.final, disabled: false });
   };
-  const handleClose = () => mpClose();
 
-  // Carga reserva
   const mpLoadReserva = async (idReserva) => {
     mpLoading.style.display = 'block';
     mpDetails.style.display = 'none';
@@ -616,13 +628,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const r = await fetch(`${API_BASE_URL}/api/admin/reservas/${idReserva}`);
       if (!r.ok) throw new Error('No se pudo obtener la reserva.');
       const res = await r.json();
-
       mpCliente.textContent = res.nombre_cliente || 'N/A';
       mpServicio.textContent = res.servicio_titulo || 'N/A';
       mpFecha.textContent = fmtFechaLarga(res.fecha_reserva, res.hora_reserva || '');
       mpArea.textContent = res.nombre_area || 'N/A';
       mpIdSpan.textContent = res.id ?? idReserva;
-
       mpLoading.style.display = 'none';
       mpDetails.style.display = 'block';
     } catch (e) {
@@ -630,199 +640,78 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-
-  // --- Verificar pagos existentes y bloquear botones (robusto) ---
   const mpVerificarPagos = async (idReserva) => {
-    // Reset visual por defecto
     mpInfo.innerHTML = '';
     mpFormCtn.style.display = 'none';
     mpOptions.style.display = '';
     setBtnState(mpBtnAbono, { html: DEFAULT_LABELS.abono, disabled: false });
-    setBtnState(mpBtnPF, { html: DEFAULT_LABELS.final, disabled: false });
+    setBtnState(mpBtnPF,   { html: DEFAULT_LABELS.final, disabled: false });
 
-    const norm = (s) =>
-      String(s ?? '')
-        .normalize('NFD')
-        .replace(/\p{Diacritic}/gu, '')
-        .toLowerCase()
-        .trim();
-
-    // helper seguro para convertir respuesta en arreglo
-    const toArray = (raw) => {
-      if (!raw) return [];
-      if (Array.isArray(raw)) return raw;
-      if (Array.isArray(raw?.pagos)) return raw.pagos;
-      return []; // cae a vacío
-    };
+    const normS = (s) => String(s ?? '').normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().trim();
+    const toArray = (raw) => Array.isArray(raw) ? raw : (Array.isArray(raw?.pagos) ? raw.pagos : []);
 
     try {
       const r = await fetch(`${API_BASE_URL}/api/pagos/reserva/${idReserva}`);
       let pagos = [];
-      if (r.status === 204) {
-        pagos = [];
-      } else if (r.ok) {
-        const raw = await r.json().catch(() => null);
-        pagos = toArray(raw);
-      } else {
-        throw new Error('Error al consultar pagos.');
-      }
+      if (r.status === 204) pagos = [];
+      else if (r.ok) pagos = toArray(await r.json().catch(()=>null));
+      else throw new Error('Error al consultar pagos.');
 
-      // fallback: estado de la reserva
       let estadoReservaPago = null;
       try {
         const resReserva = await fetch(`${API_BASE_URL}/api/admin/reservas/${idReserva}`);
         if (resReserva.ok) {
-          const reserva = await resReserva.json().catch(() => ({}));
-          estadoReservaPago = norm(reserva?.estado_pago);
+          const reserva = await resReserva.json().catch(()=> ({}));
+          estadoReservaPago = normS(reserva?.estado_pago);
         }
-      } catch { }
+      } catch {}
 
-      // Detectores robustos
       const tieneAbono = pagos.some(p => {
-        const tipo = norm(p?.tipo_pago ?? p?.tipo);
-        const estado = norm(p?.estado_pago ?? p?.estado);
+        const tipo = normS(p?.tipo_pago ?? p?.tipo);
+        const estado = normS(p?.estado_pago ?? p?.estado);
         return tipo.includes('abono') || estado === 'abonado';
       }) || estadoReservaPago === 'abonado';
 
       const tieneFinal = pagos.some(p => {
-        const tipo = norm(p?.tipo_pago ?? p?.tipo);
-        const estado = norm(p?.estado_pago ?? p?.estado);
+        const tipo = normS(p?.tipo_pago ?? p?.tipo);
+        const estado = normS(p?.estado_pago ?? p?.estado);
         return tipo.includes('pago final') || estado === 'pagado';
       }) || estadoReservaPago === 'pagado';
 
-      // Renderizar cajas + bloquear botones
       if (tieneAbono) {
         const pAb = pagos.find(p => {
-          const tipo = norm(p?.tipo_pago ?? p?.tipo);
-          const estado = norm(p?.estado_pago ?? p?.estado);
+          const tipo = normS(p?.tipo_pago ?? p?.tipo);
+          const estado = normS(p?.estado_pago ?? p?.estado);
           return tipo.includes('abono') || estado === 'abonado';
         }) || {};
-
         const box = document.createElement('div');
         box.className = 'mp-info__box mp-info__box--abono';
         box.innerHTML = `💰 <strong>Se abonaron:</strong> $${Number(pAb?.monto_pagado || 0).toLocaleString('es-CL')}
-        <small>(${pAb?.metodo_pago || 'Método no especificado'})</small><br>
-        📅 ${pAb?.fecha_pago ? new Date(pAb.fecha_pago).toLocaleDateString('es-CL') : 'Fecha no informada'}`;
+          <small>(${pAb?.metodo_pago || 'Método no especificado'})</small><br>
+          📅 ${pAb?.fecha_pago ? new Date(pAb.fecha_pago).toLocaleDateString('es-CL') : 'Fecha no informada'}`;
         mpInfo.appendChild(box);
         markAbonoRealizado();
       }
 
       if (tieneFinal) {
         const pFin = pagos.find(p => {
-          const tipo = norm(p?.tipo_pago ?? p?.tipo);
-          const estado = norm(p?.estado_pago ?? p?.estado);
+          const tipo = normS(p?.tipo_pago ?? p?.tipo);
+          const estado = normS(p?.estado_pago ?? p?.estado);
           return tipo.includes('pago final') || estado === 'pagado';
         }) || {};
-
         const box = document.createElement('div');
         box.className = 'mp-info__box mp-info__box--final';
         box.innerHTML = `💸 <strong>Pago final completado:</strong> $${Number(pFin?.monto_pagado || 0).toLocaleString('es-CL')}
-        <small>(${pFin?.metodo_pago || 'Método no especificado'})</small><br>
-        📅 ${pFin?.fecha_pago ? new Date(pFin.fecha_pago).toLocaleDateString('es-CL') : 'Fecha no informada'}`;
+          <small>(${pFin?.metodo_pago || 'Método no especificado'})</small><br>
+          📅 ${pFin?.fecha_pago ? new Date(pFin.fecha_pago).toLocaleDateString('es-CL') : 'Fecha no informada'}`;
         mpInfo.appendChild(box);
         markReservaPagada();
       }
     } catch (e) {
       console.warn('[mpVerificarPagos]', e);
-      // En error, mantén botones como estaban, pero puedes optar por bloquear “Abono” si prefieres fail-safe:
-      // setBtnState(mpBtnAbono, { html: DEFAULT_LABELS.abono + ' (verif. falló)', disabled: true });
     }
   };
 
-
-  // --- Registrar Abono con UI optimista + verificación previa ---
-  const mpRegistrarAbono = async () => {
-    if (!mpReservaId) return alert('Error: reserva no cargada.');
-
-    // Evita dobles clics
-    if (mpBtnAbono?.disabled) return;
-    setBtnState(mpBtnAbono, { html: '<i class="fas fa-spinner fa-spin"></i> Registrando...', disabled: true });
-
-    try {
-      // 1) Verificar antes de enviar
-      let yaTieneAbono = false;
-      try {
-        const r = await fetch(`${API_BASE_URL}/api/pagos/reserva/${mpReservaId}`);
-        let pagos = [];
-
-        if (r.status === 204) {
-          pagos = [];
-        } else if (r.ok) {
-          const raw = await r.json().catch(() => null);
-          if (Array.isArray(raw)) {
-            pagos = raw;
-          } else if (Array.isArray(raw?.pagos)) {
-            pagos = raw.pagos;
-          } else {
-            pagos = [];
-          }
-        } else {
-          throw new Error('Error al consultar pagos.');
-        }
-
-        const norm = (s) =>
-          String(s ?? '')
-            .normalize('NFD')
-            .replace(/\p{Diacritic}/gu, '')
-            .toLowerCase()
-            .trim();
-
-        yaTieneAbono = (pagos || []).some(p => {
-          const tipo = norm(p?.tipo_pago ?? p?.tipo);
-          const estado = norm(p?.estado_pago ?? p?.estado);
-          return tipo.includes('abono') || estado === 'abonado';
-        });
-      } catch {
-        throw new Error('No se pudo verificar pagos previos.');
-      }
-
-
-      if (yaTieneAbono) {
-        alert('⚠️ Esta reserva ya tiene un abono registrado.');
-        await mpVerificarPagos(mpReservaId);
-        return;
-      }
-
-      // 2) Confirmar
-      if (!confirm('¿Confirmas registrar un abono de $10.000 para esta reserva?')) {
-        setBtnState(mpBtnAbono, { html: DEFAULT_LABELS.abono, disabled: false });
-        return;
-      }
-
-      // 3) Enviar
-      const payload = {
-        id_reserva: mpReservaId,
-        tipo_pago: 'Abono',
-        monto_pagado: 10000,
-        metodo_pago: 'Transferencia',
-        fecha_pago: new Date().toISOString().split('T')[0],
-        registrado_por: 'Admin'
-      };
-
-      const res = await mpEnviarPago(payload);
-      alert(res?.message || 'Abono registrado con éxito.');
-
-      // 4) UI optimista: bloquea y muestra box sin esperar GET
-      markAbonoRealizado();
-      const box = document.createElement('div');
-      box.className = 'mp-info__box mp-info__box--abono';
-      box.innerHTML = `💰 <strong>Se abonaron:</strong> $${Number(payload.monto_pagado).toLocaleString('es-CL')}
-      <small>(${payload.metodo_pago})</small><br>
-      📅 ${new Date(payload.fecha_pago).toLocaleDateString('es-CL')}`;
-      mpInfo.appendChild(box);
-
-      // 5) Refresca verificación
-      await mpVerificarPagos(mpReservaId);
-    } catch (e) {
-      alert('❌ No se pudo registrar el abono: ' + e.message);
-      // Revertir botón solo si no quedó bloqueado por verificación
-      setBtnState(mpBtnAbono, { html: DEFAULT_LABELS.abono, disabled: false });
-    }
-  };
-
-
-
-  // Enviar pago al backend
   const mpEnviarPago = async (payload) => {
     const r = await fetch(`${API_BASE_URL}/api/pagos`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
@@ -832,10 +721,47 @@ document.addEventListener('DOMContentLoaded', () => {
     return json;
   };
 
+  const mpRegistrarAbono = async () => {
+    if (!mpReservaId) return alert('Error: reserva no cargada.');
+    if (mpBtnAbono?.disabled) return;
+    setBtnState(mpBtnAbono, { html: '<i class="fas fa-spinner fa-spin"></i> Registrando...', disabled: true });
+    try {
+      const r = await fetch(`${API_BASE_URL}/api/pagos/reserva/${mpReservaId}`);
+      let pagos = [];
+      if (r.status === 204) pagos = [];
+      else if (r.ok) {
+        const raw = await r.json().catch(()=>null);
+        pagos = Array.isArray(raw) ? raw : (Array.isArray(raw?.pagos) ? raw.pagos : []);
+      } else throw new Error('Error al consultar pagos.');
+      const n =(s)=>String(s??'').normalize('NFD').replace(/\p{Diacritic}/gu,'').toLowerCase().trim();
+      const yaTieneAbono = pagos.some(p => n(p?.tipo_pago ?? p?.tipo).includes('abono') || n(p?.estado_pago ?? p?.estado)==='abonado');
+      if (yaTieneAbono) { alert('⚠️ Esta reserva ya tiene un abono registrado.'); await mpVerificarPagos(mpReservaId); return; }
+      if (!confirm('¿Confirmas registrar un abono de $10.000 para esta reserva?')) { setBtnState(mpBtnAbono, { html: DEFAULT_LABELS.abono, disabled: false }); return; }
+      const payload = {
+        id_reserva: mpReservaId,
+        tipo_pago: 'Abono',
+        monto_pagado: 10000,
+        metodo_pago: 'Transferencia',
+        fecha_pago: new Date().toISOString().split('T')[0],
+        registrado_por: 'Admin'
+      };
+      const res = await mpEnviarPago(payload);
+      alert(res?.message || 'Abono registrado con éxito.');
+      markAbonoRealizado();
+      const box = document.createElement('div');
+      box.className = 'mp-info__box mp-info__box--abono';
+      box.innerHTML = `💰 <strong>Se abonaron:</strong> $${Number(payload.monto_pagado).toLocaleString('es-CL')}
+        <small>(${payload.metodo_pago})</small><br>
+        📅 ${new Date(payload.fecha_pago).toLocaleDateString('es-CL')}`;
+      mpInfo.appendChild(box);
+      await mpVerificarPagos(mpReservaId);
+    } catch (e) {
+      alert('❌ No se pudo registrar el abono: ' + e.message);
+      setBtnState(mpBtnAbono, { html: DEFAULT_LABELS.abono, disabled: false });
+    }
+  };
 
-  // Mostrar form pago final
   const mpMostrarPagoFinal = () => {
-    // si el botón está deshabilitado, no permitir abrir el form
     if (mpBtnPF?.disabled) return;
     mpOptions.style.display = 'none';
     mpFormCtn.style.display = 'block';
@@ -843,16 +769,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!mpMonto.value) mpMonto.focus();
   };
 
-  // Registrar pago final
   const mpRegistrarPagoFinal = async (ev) => {
     ev.preventDefault();
     if (!mpReservaId) return alert('Error: reserva no cargada.');
-
-    const monto = mpMonto.value;
-    const metodo = mpMetodo.value;
-    const fecha = mpFechaPago.value;
+    const monto = mpMonto.value, metodo = mpMetodo.value, fecha = mpFechaPago.value;
     if (!monto || !metodo || !fecha) return alert('Completa todos los campos del pago final.');
-
     const payload = {
       id_reserva: mpReservaId,
       tipo_pago: 'Pago Final',
@@ -861,7 +782,6 @@ document.addEventListener('DOMContentLoaded', () => {
       fecha_pago: fecha,
       registrado_por: 'Personal'
     };
-
     try {
       const res = await mpEnviarPago(payload);
       alert(res?.message || 'Pago final registrado con éxito.');
@@ -873,14 +793,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Eventos de UI modal
-  btnClosePago?.addEventListener('click', handleClose);
-  overlayPago?.addEventListener('click', (e) => { if (e.target?.dataset?.close) handleClose(); });
-  mpBtnCerrar?.addEventListener('click', handleClose);
+  btnClosePago?.addEventListener('click', mpClose);
+  overlayPago?.addEventListener('click', (e) => { if (e.target?.dataset?.close) mpClose(); });
+  mpBtnCerrar?.addEventListener('click', mpClose);
   mpBtnAbono?.addEventListener('click', mpRegistrarAbono);
   mpBtnPF?.addEventListener('click', mpMostrarPagoFinal);
   mpForm?.addEventListener('submit', mpRegistrarPagoFinal);
-  document.addEventListener('keydown', (e) => { if (modalPago.getAttribute('aria-hidden') === 'false' && e.key === 'Escape') handleClose(); });
+  document.addEventListener('keydown', (e) => { if (modalPago.getAttribute('aria-hidden') === 'false' && e.key === 'Escape') mpClose(); });
 
   // Intercepta clic en "Pago" dentro del panel
   const panelReservas = document.getElementById('panel-reservas');
@@ -888,11 +807,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const aPago = e.target.closest('a[href*="admin_pagos.html"]');
     if (!aPago) return;
     e.preventDefault();
-
     const url = new URL(aPago.getAttribute('href'), location.href);
     const id = Number(url.searchParams.get('id_reserva'));
     if (!id) return;
-
     mpReservaId = id;
     mpOpen();
     await mpLoadReserva(mpReservaId);
@@ -901,197 +818,18 @@ document.addEventListener('DOMContentLoaded', () => {
 })();
 
 
-
-
-
-
-
-// filtros nuevos 
-
-// ---- NUEVOS filtros (DOM) ----
-const filtroArea = document.getElementById('filtro-area');
-const filtroFecha = document.getElementById('filtro-fecha'); // <— único date
-const filtroOrden = document.getElementById('filtro-orden');
-const btnLimpiar = document.getElementById('btn-limpiar-filtros');
-
-// ---- Estado para filtrar/renderizar ----
-let reservasAll = [];               // dataset global (Ver todos)
-let reservasClienteActual = [];     // dataset cliente actual
-let nombreClienteActual = '';       // título cuando hay cliente
-
-
-
-// Normaliza a 'YYYY-MM-DD' (acepta 'YYYY/MM/DD' o 'YYYY-MM-DD')
-const normalizeDateStr = (s) => {
-  if (!s) return null;
-  const clean = String(s).slice(0, 10).replace(/\//g, '-').trim();
-  // si viene con hora/residuo, me quedo con los primeros 10
-  const y = clean.slice(0, 4), m = clean.slice(5, 7), d = clean.slice(8, 10);
-  if (y.length === 4 && m.length === 2 && d.length === 2) return `${y}-${m}-${d}`;
-  return null;
-};
-
-
-
-const aplicarFiltros = (lista) => {
-  let out = Array.isArray(lista) ? [...lista] : [];
-
-  // Área
-  const areaSel = (filtroArea?.value || 'all').toLowerCase();
-  if (areaSel !== 'all') {
-    out = out.filter(r => (r.nombre_area || '').toLowerCase() === areaSel);
-  }
-
-  // Fecha única (comparación por día)
-  const selDate = filtroFecha?.value?.trim(); // formato input: 'YYYY-MM-DD'
-  if (selDate) {
-    out = out.filter(r => normalizeDateStr(r.fecha_reserva) === selDate);
-  }
-
-  // Orden
-  const dateTimeKey = (res) => {
-    const dStr = normalizeDateStr(res.fecha_reserva);
-    if (!dStr) return -Infinity;
-    let h = 0, m = 0;
-    if (res.hora_reserva) {
-      const first = String(res.hora_reserva).split('-')[0].trim();
-      const [hh, mm] = first.split(':').map(n => parseInt(n || '0', 10));
-      h = isNaN(hh) ? 0 : hh; m = isNaN(mm) ? 0 : mm;
-    }
-    const dt = new Date(`${dStr}T00:00:00`);
-    dt.setHours(h, m, 0, 0);
-    return dt.getTime();
-  };
-
-  const orden = (filtroOrden?.value || 'desc');
-  out.sort((a, b) => {
-    const ka = dateTimeKey(a);
-    const kb = dateTimeKey(b);
-    return orden === 'desc' ? (kb - ka) : (ka - kb);
-  });
-
-  return out;
-};
-
-
-
-// Re-aplicar filtros al cambiar cualquier control
-[filtroArea, filtroFecha, filtroOrden].forEach(el => {
-  el?.addEventListener('change', () => {
-    const selectedOption = selectCliente.options[selectCliente.selectedIndex];
-    if (selectedOption?.value === 'all') {
-      // Re-render con dataset global (sin refetch)
-      const porCliente = {};
-      aplicarFiltros(reservasAll).forEach(res => {
-        const nombre = res.nombre_cliente || 'Cliente sin nombre';
-        if (!porCliente[nombre]) porCliente[nombre] = [];
-        porCliente[nombre].push(res);
-      });
-
-      const clientesOrden = Object.keys(porCliente).sort((a, b) => a.localeCompare(b, 'es'));
-      if (!clientesOrden.length) {
-        panelReservas.innerHTML = `
-          <h2>Todas las reservas</h2>
-          <p>No hay resultados con los filtros aplicados.</p>
-        `;
-        return;
-      }
-
-      let html = '';
-      for (const nombre of clientesOrden) {
-        const lista = porCliente[nombre];
-        const bloque = lista.map(res => {
-          const d = normalizeDateStr(res.fecha_reserva);
-          const fechaBonita = d
-            ? new Date(d).toLocaleDateString('es-CL', {
-              weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/Santiago'
-            })
-            : 'Sin fecha';
-          const horaTexto = res.hora_reserva ? res.hora_reserva.replace('-', ' - ') : '-';
-          return `
-            <div class="reserva-card mini">
-              <p><strong>Servicio:</strong> ${res.servicio_titulo || '-'}</p>
-              <p><strong>Área:</strong> ${res.nombre_area || '-'}</p>
-              <p><strong>Fecha:</strong> ${fechaBonita} (${horaTexto})</p>
-              <div class="acciones">
-                <a href="admin_pagos.html?id_reserva=${res.id}" class="btn btn-secundario">
-                  <i class="fas fa-dollar-sign"></i> Pago
-                </a>
-                <a href="admin_ficha.html?id_reserva=${res.id}" class="btn btn-primario">
-                  <i class="fas fa-file-medical"></i> Ficha
-                </a>
-              </div>
-            </div>`;
-        }).join('');
-        html += `<div class="bloque-cliente"><h3>${nombre}</h3>${bloque}</div>`;
-      }
-
-      panelReservas.innerHTML = `<h2>Todas las reservas</h2>${html}`;
-    } else {
-      // Re-render con dataset del cliente actual
-      const lista = aplicarFiltros(reservasClienteActual);
-      if (!lista.length) {
-        panelReservas.innerHTML = `
-          <h2>Reservas de ${nombreClienteActual}</h2>
-          <p>No hay resultados con los filtros aplicados.</p>
-        `;
-        return;
-      }
-      const html = lista.map(res => {
-        const d = normalizeDateStr(res.fecha_reserva);
-        const fechaBonita = d
-          ? new Date(d).toLocaleDateString('es-CL', {
-            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/Santiago'
-          })
-          : 'Sin fecha';
-        const horaTexto = res.hora_reserva ? res.hora_reserva.replace('-', ' - ') : '-';
-        return `
-          <div class="reserva-card">
-            <p><strong>Servicio:</strong> ${res.servicio_titulo || 'No especificado'}</p>
-            <p><strong>Área:</strong> ${res.nombre_area || 'Sin área'}</p>
-            <p><strong>Fecha:</strong> ${fechaBonita} (${horaTexto})</p>
-            <div class="acciones">
-              <a href="admin_pagos.html?id_reserva=${res.id}" class="btn btn-secundario">
-                <i class="fas fa-dollar-sign"></i> Pago
-              </a>
-              <a href="admin_ficha.html?id_reserva=${res.id}" class="btn btn-primario">
-                <i class="fas fa-file-medical"></i> Ficha
-              </a>
-            </div>
-          </div>`;
-      }).join('');
-      panelReservas.innerHTML = `<h2>Reservas de ${nombreClienteActual}</h2>${html}`;
-    }
-  });
-});
-
-// BOTON PARA LIMPIAR
-
-btnLimpiar?.addEventListener('click', () => {
-  if (filtroArea) filtroArea.value = 'all';
-  if (filtroFecha) filtroFecha.value = '';
-  if (filtroOrden) filtroOrden.value = 'desc';
-  // fuerza re-render
-  const evt = new Event('change');
-  filtroOrden.dispatchEvent(evt);
-});
-
-
-
-
-
-//***************************************************************/
-//*******************flecha scroll******************************/
-//**************************************************************/
+//***************************************************************
+//******************* Flecha scroll *****************************
+//***************************************************************
 window.addEventListener("scroll", function() {
   const btn = document.getElementById("btnScrollTop");
+  if (!btn) return;
   if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
     btn.style.display = "flex";
   } else {
     btn.style.display = "none";
   }
 });
-
-document.getElementById("btnScrollTop").addEventListener("click", function() {
+document.getElementById("btnScrollTop")?.addEventListener("click", function() {
   window.scrollTo({ top: 0, behavior: "smooth" });
 });

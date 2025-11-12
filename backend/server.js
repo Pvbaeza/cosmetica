@@ -329,65 +329,65 @@ app.post('/api/login', async (req, res) => {
 
 // --- RUTA POST PARA CREAR RESERVAS (PÚBLICA) ---
 app.post('/api/reservas', async (req, res) => {
-  const client = await pool.connect();
-  try {
-    const { nombre, rut, telefono, id_servicio, fecha, hora } = req.body;
+    const client = await pool.connect();
+    try {
+        const { nombre, rut, telefono, id_servicio, fecha, hora } = req.body;
 
-    if (!nombre || !rut || !telefono || !id_servicio || !fecha || !hora) {
-      return res.status(400).json({ success: false, message: 'Faltan datos obligatorios' });
-    }
+        if (!nombre || !rut || !telefono || !id_servicio || !fecha || !hora) {
+            return res.status(400).json({ success: false, message: 'Faltan datos obligatorios' });
+        }
 
-    // 🧹 LIMPIAR RUT
-    const rutLimpio = rut.trim().toUpperCase();
+        // 🧹 LIMPIAR RUT
+        const rutLimpio = rut.trim().toUpperCase();
 
-    await client.query('BEGIN');
+        await client.query('BEGIN');
 
-    // 1️⃣ Buscar cliente existente
-    const resultCliente = await client.query(
-      'SELECT id_cliente FROM clientes WHERE TRIM(UPPER(rut_cliente)) = $1',
-      [rutLimpio]
-    );
+        // 1️⃣ Buscar cliente existente
+        const resultCliente = await client.query(
+            'SELECT id_cliente FROM clientes WHERE TRIM(UPPER(rut_cliente)) = $1',
+            [rutLimpio]
+        );
 
-    let id_cliente;
-    if (resultCliente.rows.length === 0) {
-      // 2️⃣ Crear nuevo cliente
-      const insertCliente = await client.query(
-        `INSERT INTO clientes (nombre_cliente, rut_cliente, telefono_cliente)
+        let id_cliente;
+        if (resultCliente.rows.length === 0) {
+            // 2️⃣ Crear nuevo cliente
+            const insertCliente = await client.query(
+                `INSERT INTO clientes (nombre_cliente, rut_cliente, telefono_cliente)
          VALUES ($1, $2, $3)
          RETURNING id_cliente`,
-        [nombre.trim(), rutLimpio, telefono.trim()]
-      );
-      id_cliente = insertCliente.rows[0].id_cliente;
-      console.log(`Cliente nuevo creado: ${nombre} (ID ${id_cliente})`);
-    } else {
-      id_cliente = resultCliente.rows[0].id_cliente;
-      console.log(`Cliente existente encontrado: ${rutLimpio} (ID ${id_cliente})`);
-    }
+                [nombre.trim(), rutLimpio, telefono.trim()]
+            );
+            id_cliente = insertCliente.rows[0].id_cliente;
+            console.log(`Cliente nuevo creado: ${nombre} (ID ${id_cliente})`);
+        } else {
+            id_cliente = resultCliente.rows[0].id_cliente;
+            console.log(`Cliente existente encontrado: ${rutLimpio} (ID ${id_cliente})`);
+        }
 
-    // 3️⃣ Crear reserva vinculada al cliente
-    const insertReserva = await client.query(
-      `INSERT INTO reservas (id_cliente, id_servicio, fecha_reserva, hora_reserva, estado_reserva)
+        // 3️⃣ Crear reserva vinculada al cliente
+        const insertReserva = await client.query(
+            `INSERT INTO reservas (id_cliente, id_servicio, fecha_reserva, hora_reserva, estado_reserva)
        VALUES ($1, $2, $3, $4, $5)
        RETURNING id`,
-      [id_cliente, id_servicio, fecha, hora, 'Pendiente']
-    );
+            [id_cliente, id_servicio, fecha, hora, 'Pendiente']
+        );
 
-    await client.query('COMMIT');
-    res.json({
-      success: true,
-      message: 'Reserva creada con éxito',
-      id_reserva: insertReserva.rows[0].id
-    });
-  } catch (error) {
-    await client.query('ROLLBACK');
-    console.error('Error al crear reserva:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error interno al crear la reserva'
-    });
-  } finally {
-    client.release();
-  }
+        await client.query('COMMIT');
+        res.json({
+            success: true,
+            message: 'Reserva creada con éxito',
+            id_reserva: insertReserva.rows[0].id
+        });
+    } catch (error) {
+        await client.query('ROLLBACK');
+        console.error('Error al crear reserva:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error interno al crear la reserva'
+        });
+    } finally {
+        client.release();
+    }
 });
 
 
@@ -564,52 +564,52 @@ app.get('/api/admin/reservas', async (req, res) => {
 
 // --- RUTA POST /api/admin/reservas (NUEVA) ---
 app.post('/api/admin/reservas', async (req, res) => {
-  try {
-    const { id_cliente, id_servicio, fecha, hora } = req.body;
+    try {
+        const { id_cliente, id_servicio, fecha, hora } = req.body;
 
-    if (!id_cliente || !id_servicio || !fecha || !hora) {
-      return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
-    }
+        if (!id_cliente || !id_servicio || !fecha || !hora) {
+            return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
+        }
 
-    // Verificar disponibilidad para ese servicio y hora
-    const checkSQL = `
+        // Verificar disponibilidad para ese servicio y hora
+        const checkSQL = `
       SELECT id FROM reservas 
       WHERE fecha_reserva = $1 
       AND hora_reserva = $2 
       AND id_servicio = $3
     `;
-    const checkResult = await pool.query(checkSQL, [fecha, hora, id_servicio]);
-    if (checkResult.rowCount > 0) {
-      return res.status(409).json({ message: 'Este bloque horario ya está reservado para el servicio seleccionado.' });
-    }
+        const checkResult = await pool.query(checkSQL, [fecha, hora, id_servicio]);
+        if (checkResult.rowCount > 0) {
+            return res.status(409).json({ message: 'Este bloque horario ya está reservado para el servicio seleccionado.' });
+        }
 
-    // Insertar la reserva
-    const insertSQL = `
+        // Insertar la reserva
+        const insertSQL = `
       INSERT INTO reservas (id_cliente, id_servicio, fecha_reserva, hora_reserva, estado_reserva)
       VALUES ($1, $2, $3, $4, 'Pendiente')
       RETURNING *;
     `;
-    const result = await pool.query(insertSQL, [id_cliente, id_servicio, fecha, hora]);
+        const result = await pool.query(insertSQL, [id_cliente, id_servicio, fecha, hora]);
 
-    res.status(201).json({
-      success: true,
-      message: 'Reserva creada correctamente.',
-      reserva: result.rows[0]
-    });
+        res.status(201).json({
+            success: true,
+            message: 'Reserva creada correctamente.',
+            reserva: result.rows[0]
+        });
 
-  } catch (error) {
-    console.error('🔥 Error al crear la reserva (admin):', error);
-    res.status(500).json({ message: 'Error interno al crear la reserva.' });
-  }
+    } catch (error) {
+        console.error('🔥 Error al crear la reserva (admin):', error);
+        res.status(500).json({ message: 'Error interno al crear la reserva.' });
+    }
 });
 
 
 // ✅ GET: Pagos por reserva (arreglado el parámetro)
 app.get('/api/pagos/reserva/:id_reserva', async (req, res) => {
-  try {
-    const { id_reserva } = req.params; // ← usar el nombre correcto
+    try {
+        const { id_reserva } = req.params; // ← usar el nombre correcto
 
-    const textoSQL = `
+        const textoSQL = `
       SELECT 
         p.*,
         s.titulo AS servicio_titulo,
@@ -622,22 +622,23 @@ app.get('/api/pagos/reserva/:id_reserva', async (req, res) => {
       ORDER BY p.fecha_pago DESC;
     `;
 
-    const resultado = await pool.query(textoSQL, [id_reserva]);
-    res.status(200).json(resultado.rows);
-  } catch (error) {
-    console.error('🔥 Error en GET /api/pagos/reserva/:id_reserva:', error);
-    res.status(500).json({ message: 'Error interno del servidor.' });
-  }
+        const resultado = await pool.query(textoSQL, [id_reserva]);
+        res.status(200).json(resultado.rows);
+    } catch (error) {
+        console.error('🔥 Error en GET /api/pagos/reserva/:id_reserva:', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    }
 });
 
 
 
 
 
-// --- RUTA: ACTUALIZAR UNA RESERVA (modelo normalizado) ---
+// --- RUTA: ACTUALIZAR UNA RESERVA (modelo normalizado, incluye estado_reserva) ---
 app.put('/api/admin/reservas/:id', async (req, res) => {
-    const { id } = req.params;
-    const { id_cliente, id_servicio, fecha_reserva, hora_reserva } = req.body;
+  console.log('📦 BODY RECIBIDO PUT /reservas:', req.body);
+  const { id } = req.params;
+  const { id_cliente, id_servicio, fecha_reserva, hora_reserva, estado_reserva } = req.body;
 
     if (!id_cliente || !id_servicio || !fecha_reserva || !hora_reserva) {
         return res.status(400).json({ message: 'Todos los campos son obligatorios.' });
@@ -652,33 +653,36 @@ app.put('/api/admin/reservas/:id', async (req, res) => {
         }
         const id_area = areaResult.rows[0].id_area;
 
-        // 2️⃣ Verificar si el horario ya está ocupado en esa área
-        const checkSQL = `
-      SELECT r.id
-      FROM reservas r
-      JOIN servicios s ON r.id_servicio = s.id_servicio
-      WHERE r.fecha_reserva = $1 
-        AND r.hora_reserva = $2
-        AND s.id_area = $3
-        AND r.id != $4
-    `;
-        const checkResult = await pool.query(checkSQL, [fecha_reserva, hora_reserva, id_area, id]);
-        if (checkResult.rowCount > 0) {
-            return res.status(409).json({ message: 'Este bloque horario ya está ocupado por otra reserva en el área seleccionada.' });
+        // 2️⃣ Verificar si el horario ya está ocupado (solo si no está cancelada)
+        if (estado_reserva !== 'cancelada') {
+            const checkSQL = `
+        SELECT r.id
+        FROM reservas r
+        JOIN servicios s ON r.id_servicio = s.id_servicio
+        WHERE r.fecha_reserva = $1 
+          AND r.hora_reserva = $2
+          AND s.id_area = $3
+          AND r.id != $4
+      `;
+            const checkResult = await pool.query(checkSQL, [fecha_reserva, hora_reserva, id_area, id]);
+            if (checkResult.rowCount > 0) {
+                return res.status(409).json({ message: 'Este bloque horario ya está ocupado por otra reserva en el área seleccionada.' });
+            }
         }
 
-        // 3️⃣ Actualizar la reserva (sin campos de cliente)
+        // 3️⃣ Actualizar la reserva (incluyendo estado_reserva)
         const updateSQL = `
       UPDATE reservas
       SET 
         id_cliente = $1,
         id_servicio = $2,
         fecha_reserva = $3,
-        hora_reserva = $4
-      WHERE id = $5
+        hora_reserva = $4,
+        estado_reserva = COALESCE($5, estado_reserva)
+      WHERE id = $6
       RETURNING *;
     `;
-        const valores = [id_cliente, id_servicio, fecha_reserva, hora_reserva, id];
+        const valores = [id_cliente, id_servicio, fecha_reserva, hora_reserva, estado_reserva || null, id];
         const resultado = await pool.query(updateSQL, valores);
 
         if (resultado.rowCount === 0) {
@@ -692,6 +696,7 @@ app.put('/api/admin/reservas/:id', async (req, res) => {
         res.status(500).json({ message: 'Error interno al actualizar la reserva.' });
     }
 });
+
 
 
 
@@ -1000,57 +1005,57 @@ app.get('/api/pagos', async (req, res) => {
 
 // --- RUTA POST: REGISTRAR UN NUEVO PAGO ---
 app.post('/api/pagos', async (req, res) => {
-  const {
-    id_reserva,
-    tipo_pago,
-    monto_pagado,
-    metodo_pago,
-    fecha_pago,
-    registrado_por
-  } = req.body;
+    const {
+        id_reserva,
+        tipo_pago,
+        monto_pagado,
+        metodo_pago,
+        fecha_pago,
+        registrado_por
+    } = req.body;
 
-  // ✅ Validación de campos obligatorios
-  if (!id_reserva || !monto_pagado || !metodo_pago || !fecha_pago) {
-    return res.status(400).json({ message: 'Faltan campos obligatorios para registrar el pago.' });
-  }
+    // ✅ Validación de campos obligatorios
+    if (!id_reserva || !monto_pagado || !metodo_pago || !fecha_pago) {
+        return res.status(400).json({ message: 'Faltan campos obligatorios para registrar el pago.' });
+    }
 
-  const client = await pool.connect();
+    const client = await pool.connect();
 
-  try {
-    await client.query('BEGIN');
+    try {
+        await client.query('BEGIN');
 
-    // 💰 Registrar el pago
-    const insertSQL = `
+        // 💰 Registrar el pago
+        const insertSQL = `
       INSERT INTO pagos (id_reserva, tipo_pago, monto_pagado, metodo_pago, fecha_pago, registrado_por)
       VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING id_pago;
     `;
-    const valores = [id_reserva, tipo_pago, monto_pagado, metodo_pago, fecha_pago, registrado_por];
-    const resultado = await client.query(insertSQL, valores);
+        const valores = [id_reserva, tipo_pago, monto_pagado, metodo_pago, fecha_pago, registrado_por];
+        const resultado = await client.query(insertSQL, valores);
 
-    // 🔄 Si es un abono, actualiza el estado de la reserva a "Confirmada"
-    if (tipo_pago && tipo_pago.toLowerCase().includes('abono')) {
-      const updateSQL = `UPDATE reservas SET estado_reserva = 'Confirmada' WHERE id = $1;`;
-      await client.query(updateSQL, [id_reserva]);
-      console.log(`🟢 Reserva ${id_reserva} actualizada a estado "Confirmada" por abono.`);
+        // 🔄 Si es un abono, actualiza el estado de la reserva a "Confirmada"
+        if (tipo_pago && tipo_pago.toLowerCase().includes('abono')) {
+            const updateSQL = `UPDATE reservas SET estado_reserva = 'Confirmada' WHERE id = $1;`;
+            await client.query(updateSQL, [id_reserva]);
+            console.log(`🟢 Reserva ${id_reserva} actualizada a estado "Confirmada" por abono.`);
+        }
+
+        await client.query('COMMIT');
+
+        res.status(201).json({
+            message: tipo_pago && tipo_pago.toLowerCase().includes('abono')
+                ? 'Abono registrado y reserva confirmada.'
+                : 'Pago registrado con éxito.',
+            id_pago: resultado.rows[0].id_pago
+        });
+
+    } catch (error) {
+        await client.query('ROLLBACK');
+        console.error('🔥 Error al registrar el pago:', error);
+        res.status(500).json({ message: 'Error interno del servidor.' });
+    } finally {
+        client.release();
     }
-
-    await client.query('COMMIT');
-
-    res.status(201).json({
-      message: tipo_pago && tipo_pago.toLowerCase().includes('abono')
-        ? 'Abono registrado y reserva confirmada.'
-        : 'Pago registrado con éxito.',
-      id_pago: resultado.rows[0].id_pago
-    });
-
-  } catch (error) {
-    await client.query('ROLLBACK');
-    console.error('🔥 Error al registrar el pago:', error);
-    res.status(500).json({ message: 'Error interno del servidor.' });
-  } finally {
-    client.release();
-  }
 });
 
 
@@ -1089,37 +1094,37 @@ app.get('/api/fichas', async (req, res) => {
 });
 
 app.patch('/api/fichas/:id', async (req, res) => {
-  const { id } = req.params;
-  const { detalle, registrado_por } = req.body;
+    const { id } = req.params;
+    const { detalle, registrado_por } = req.body;
 
-  try {
-    if (!detalle || detalle.trim() === '') {
-      return res.status(400).json({ message: 'El campo "detalle" es obligatorio.' });
-    }
+    try {
+        if (!detalle || detalle.trim() === '') {
+            return res.status(400).json({ message: 'El campo "detalle" es obligatorio.' });
+        }
 
-    const result = await pool.query(
-      `
+        const result = await pool.query(
+            `
       UPDATE fichas_clinicas
       SET detalle = $1,
           registrado_por = COALESCE($2, registrado_por)
       WHERE id_ficha = $3
       RETURNING id_ficha, id_reserva, detalle, registrado_por;
       `,
-      [detalle.trim(), registrado_por || null, id]
-    );
+            [detalle.trim(), registrado_por || null, id]
+        );
 
-    if (result.rowCount === 0) {
-      return res.status(404).json({ message: 'Ficha clínica no encontrada.' });
+        if (result.rowCount === 0) {
+            return res.status(404).json({ message: 'Ficha clínica no encontrada.' });
+        }
+
+        res.json({
+            message: 'Ficha clínica actualizada correctamente (PATCH).',
+            ficha: result.rows[0]
+        });
+    } catch (err) {
+        console.error('🔥 Error al actualizar ficha clínica (PATCH):', err);
+        res.status(500).json({ message: 'Error interno al actualizar la ficha clínica.' });
     }
-
-    res.json({
-      message: 'Ficha clínica actualizada correctamente (PATCH).',
-      ficha: result.rows[0]
-    });
-  } catch (err) {
-    console.error('🔥 Error al actualizar ficha clínica (PATCH):', err);
-    res.status(500).json({ message: 'Error interno al actualizar la ficha clínica.' });
-  }
 });
 
 
@@ -1189,9 +1194,9 @@ app.get('/api/clientes', async (req, res) => {
 //   Obtener reservas por cliente
 // =====================================================
 app.get('/api/reservas/cliente/:id', async (req, res) => {
-  const { id } = req.params;
-  try {
-    const result = await pool.query(`
+    const { id } = req.params;
+    try {
+        const result = await pool.query(`
       SELECT 
         r.id,
         TO_CHAR(r.fecha_reserva, 'YYYY-MM-DD') AS fecha_reserva,
@@ -1204,30 +1209,30 @@ app.get('/api/reservas/cliente/:id', async (req, res) => {
       WHERE r.id_cliente = $1
       ORDER BY r.fecha_reserva DESC
     `, [id]);
-    res.json(result.rows);
-  } catch (err) {
-    console.error("🔥 Error al consultar reservas del cliente:", err);
-    res.status(500).json({ message: "Error al consultar reservas del cliente" });
-  }
+        res.json(result.rows);
+    } catch (err) {
+        console.error("🔥 Error al consultar reservas del cliente:", err);
+        res.status(500).json({ message: "Error al consultar reservas del cliente" });
+    }
 });
 // ===============================================================
 // --- RUTA: OBTENER SOLO RESERVAS CONFIRMADAS DEL TRABAJADOR ---
 // ===============================================================
 app.get('/api/trabajador/reservas', verificarToken, async (req, res) => {
-  try {
-    const userId = req.user.userId;
-    const { rows: userRows } = await pool.query(
-      'SELECT id_area FROM usuarios WHERE id = $1 LIMIT 1;',
-      [userId]
-    );
+    try {
+        const userId = req.user.userId;
+        const { rows: userRows } = await pool.query(
+            'SELECT id_area FROM usuarios WHERE id = $1 LIMIT 1;',
+            [userId]
+        );
 
-    if (userRows.length === 0) {
-      return res.status(404).json({ message: 'Usuario no encontrado o sin área asignada.' });
-    }
+        if (userRows.length === 0) {
+            return res.status(404).json({ message: 'Usuario no encontrado o sin área asignada.' });
+        }
 
-    const id_area = userRows[0].id_area;
+        const id_area = userRows[0].id_area;
 
-    const textoSQL = `
+        const textoSQL = `
       SELECT 
         r.id,
         r.fecha_reserva,
@@ -1250,12 +1255,12 @@ app.get('/api/trabajador/reservas', verificarToken, async (req, res) => {
       ORDER BY r.fecha_reserva ASC;
     `;
 
-    const resultado = await pool.query(textoSQL, [id_area]);
-    res.status(200).json(resultado.rows);
-  } catch (error) {
-    console.error('🔥 Error al obtener reservas del trabajador:', error);
-    res.status(500).json({ message: 'Error interno al obtener las reservas del trabajador.' });
-  }
+        const resultado = await pool.query(textoSQL, [id_area]);
+        res.status(200).json(resultado.rows);
+    } catch (error) {
+        console.error('🔥 Error al obtener reservas del trabajador:', error);
+        res.status(500).json({ message: 'Error interno al obtener las reservas del trabajador.' });
+    }
 });
 
 

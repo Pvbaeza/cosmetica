@@ -1,43 +1,40 @@
 /* ==========================================================================
-   ADMIN — Historial de Clientes / Pagos  (Morín) — CSS sin :root
+   ADMIN — Historial de Clientes / Pagos (Morín) — CSS
    ========================================================================== */
 
 /* ==========================
-   1) Base / reset de vista
+   1) Base / Reset
    ========================== */
-html, body { height: 100%; }
 * { box-sizing: border-box; }
-
+html, body { height: 100%; }
 body{
   margin: 0;
   line-height: 1.55;
   font-family: 'Poppins', 'Cerebri Sans', Arial, sans-serif;
   color: #5a3d3d;
-  background-color: #faf0eb; /* fondo suave de esta vista */
-  overflow-x: hidden; /* evita scroll lateral */
+  background-color: #faf0eb; /* fondo suave */
+  overflow-x: hidden;        /* evita scroll lateral */
 }
 
 /* ==========================
-   2) FIX header (mismo look que en el resto)
+   2) Header (look global)
    ========================== */
 header,
 .site-header{
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: #f8d9d0 !important;           /* color del brand para header */
+  background: #f8d9d0 !important;
   color: #5a3d3d !important;
   box-shadow: 0 4px 10px rgba(194,109,134,0.25) !important;
   border-color: transparent !important;
 }
-
-/* Estado con scroll (coincide con header global) */
+/* Estado con scroll */
 body.scrolled header,
 body.scrolled .site-header{
   background: #f5c8bf !important;
   box-shadow: 0 6px 18px rgba(194,109,134,0.35) !important;
 }
-
 /* Marca y enlaces */
 header .logo span,
 .site-header .logo span{ color: #c26d86 !important; }
@@ -45,15 +42,11 @@ header nav a,
 .site-header nav a{ color: #5a3d3d !important; }
 header nav a:hover,
 .site-header nav a:hover{ color: #c26d86 !important; }
-
-/* Botón hamburguesa */
+/* Hamburguesa */
 #menu-toggle span{ background-color: #5a3d3d !important; }
 #menu-toggle:hover span{ background-color: #c26d86 !important; }
-
-/* Dropdown móvil/tablet */
-#menu{
-  background-color: #f8d9d0 !important;
-}
+/* Dropdown móvil */
+#menu{ background-color: #f8d9d0 !important; }
 #menu a{ color: #5a3d3d !important; }
 #menu a:hover{
   color: #c26d86 !important;
@@ -72,8 +65,7 @@ main{
   margin-inline: auto;
   padding: clamp(16px, 3vw, 32px) 18px;
 }
-
-/* Título de página */
+/* Título */
 .titulo-pagina,
 .title-page{
   max-width: 30ch;
@@ -96,25 +88,23 @@ main{
 }
 
 /* ==========================
-   4) Buscador + Selector
+   4) Buscador + Selector cliente
    ========================== */
 .seccion-buscador{
   display: grid;
   gap: 14px;
   grid-template-columns: 1fr;
   align-items: end;
-  margin-bottom: 18px;
+  margin-bottom: 12px;
 }
 @media (min-width: 768px){
   .seccion-buscador{
     grid-template-columns: 1.2fr .8fr;
     gap: 16px;
-    margin-bottom: 22px;
+    margin-bottom: 16px;
   }
 }
-
 .contenedor-buscador{ position: relative; }
-
 .etiqueta-buscador{
   display: inline-flex;
   align-items: center;
@@ -141,15 +131,14 @@ main{
   border-color: #c26d86;
   box-shadow: 0 0 0 3px rgba(194,109,134,.15);
 }
-
-/* ícono search dentro del input */
+/* Ícono search dentro del input (centrado real) */
 .contenedor-buscador::before{
-  content: "\f002"; /* Font Awesome search */
+  content: "\f002";
   font-family: "Font Awesome 5 Free";
   font-weight: 900;
   position: absolute;
   left: 12px; top: 50%;
-  transform: translateY(-10%);
+  transform: translateY(10%);
   color: #a97979;
   font-size: .95rem;
   pointer-events: none;
@@ -176,9 +165,64 @@ main{
   border-color: #c26d86;
   box-shadow: 0 0 0 3px rgba(194,109,134,.15);
 }
+/* Evita rompimiento de grid: ancho completo en esta sección */
+.seccion-buscador .input-select{ width: 100% !important; min-width: 0; }
 
 /* ==========================
-   5) Panel de Reservas / Resultados
+   5) Filtros adicionales (Área / Fecha / Orden / Limpiar)
+   ========================== */
+.seccion-filtros{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  align-items: end;
+  margin: 10px 0 16px;
+}
+.filtro-item label{
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: .95rem;
+  color: #c26d86;
+}
+/* Campos a 100% del contenedor */
+.seccion-filtros .input-select,
+.seccion-filtros .input-buscar,
+.seccion-filtros input[type="date"]{
+  width: 100% !important;
+  min-width: 0;
+  padding: 12px 14px;
+  line-height: 1.2;
+}
+.filtro-actions{
+  display: flex;
+  justify-content: flex-start;
+  align-items: end;
+}
+#btn-limpiar-filtros{ width: 100%; }
+
+/* >= 560px: 2 columnas */
+@media (min-width: 560px){
+  .seccion-filtros{
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+  .filtro-actions{ justify-content: flex-end; }
+}
+/* >= 900px: 4 columnas (Área | Fecha | Orden | Limpiar) */
+@media (min-width: 900px){
+  .seccion-filtros{
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 16px;
+  }
+  #btn-limpiar-filtros{ width: auto; }
+}
+@media (max-width: 360px){
+  #btn-limpiar-filtros{ padding-inline: .7rem; }
+}
+
+/* ==========================
+   6) Panel de Reservas / Resultados
    ========================== */
 .panel-reservas{
   margin-top: 18px;
@@ -195,8 +239,7 @@ main{
   color: #8c5f41;
   border-bottom: 2px solid #f0e6ea;
 }
-
-/* Tarjetas (reservas) */
+/* Tarjetas */
 .reserva-card{
   background: #ffffff;
   border: 1px solid #f5e7e7;
@@ -218,7 +261,7 @@ main{
 }
 
 /* ==========================
-   6) Botones utilitarios
+   7) Botones utilitarios
    ========================== */
 .btn{
   display: inline-flex;
@@ -233,60 +276,37 @@ main{
   transition: transform .15s ease, box-shadow .15s ease, background-color .2s ease, border-color .2s ease;
 }
 .btn:active{ transform: translateY(1px); }
-
 .btn--soft{
   background: #ffeef0;
   color: #c26d86;
   border-color: #f7d6e0;
 }
 .btn--soft:hover{ background: #ffe1e6; }
-
 .btn--accent{
   background: #c26d86;
   color: #fff;
 }
 .btn--accent:hover{ background: #b45a73; }
-
-/* Alias (compatibilidad con JS) */
+/* Alias compatibilidad JS */
 .btn-primario{
-  background: #c26d86;
-  color: #fff;
-  border: 1px solid transparent;
+  background: #c26d86; color: #fff; border: 1px solid transparent;
 }
 .btn-primario:hover{ background: #b45a73; }
-
 .btn-secundario{
-  background: #ffeef0;
-  color: #c26d86;
-  border: 1px solid #f7d6e0;
+  background: #ffeef0; color: #c26d86; border: 1px solid #f7d6e0;
 }
 .btn-secundario:hover{ background: #ffe1e6; }
-
-/* Botones deshabilitados (modal Pago) */
-.btn[disabled],
-.btn.btn--disabled{
-  opacity: .65;
-  cursor: not-allowed;
-  pointer-events: none;
-  transform: none !important;
-  box-shadow: none !important;
+/* Deshabilitados */
+.btn[disabled], .btn.btn--disabled{
+  opacity: .65; cursor: not-allowed; pointer-events: none; transform: none !important; box-shadow: none !important;
 }
-.btn--soft[disabled]{
-  background: #fde8ec;
-  border-color: #f6d6de;
-  color: #b47b92;
-}
-.btn--accent[disabled]{
-  background: #d7a3b5;
-  border-color: #d7a3b5;
-  color: #fff;
-}
+.btn--soft[disabled]{ background: #fde8ec; border-color: #f6d6de; color: #b47b92; }
+.btn--accent[disabled]{ background: #d7a3b5; border-color: #d7a3b5; color: #fff; }
 
 /* ==========================
-   7) Tabla Historial de Pagos
+   8) Tabla Historial de Pagos
    ========================== */
 .payment-history{ width: 100%; margin-top: 22px; }
-
 .table-responsive-wrapper{
   width: 100%;
   overflow-x: auto;
@@ -295,7 +315,6 @@ main{
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(194,109,134,0.15);
 }
-
 .payment-history-table{
   width: 100%;
   min-width: 760px;
@@ -321,7 +340,7 @@ main{
 }
 .payment-history-table tbody tr:nth-child(even){ background: #fdf7f6; }
 .payment-history-table tbody tr:hover{ background: #f8d9d0; }
-
+/* Loading */
 .loading-message{
   padding: 2.2rem;
   font-size: 1rem;
@@ -330,8 +349,7 @@ main{
   color: #7f6e6e;
 }
 .loading-message i{ margin-right: .5rem; color: #c26d86; }
-
-/* Chips tipo de pago */
+/* Chips */
 .pago-tipo-abono{
   display: inline-block;
   padding: .2rem .6rem;
@@ -352,7 +370,7 @@ main{
 }
 
 /* ==========================
-   8) Accesibilidad / focus
+   9) Accesibilidad / Focus
    ========================== */
 .input-buscar:focus,
 .input-select:focus,
@@ -362,7 +380,7 @@ main{
 }
 
 /* ==========================
-   9) MODAL FICHA
+   10) MODAL FICHA
    ========================== */
 .modal-ficha{
   position: fixed; inset: 0;
@@ -370,13 +388,11 @@ main{
   z-index: 2000;
 }
 .modal-ficha[aria-hidden="false"]{ display: flex; }
-
 .modal-ficha__overlay{
   position: absolute; inset: 0;
   background: rgba(0,0,0,.35);
   backdrop-filter: blur(1.5px);
 }
-
 .modal-ficha__dialog{
   position: relative;
   width: min(920px, 96vw);
@@ -393,7 +409,6 @@ main{
   from{ transform: translateY(6px); opacity: .96; }
   to  { transform: translateY(0);   opacity: 1; }
 }
-
 .modal-ficha__header{
   display: flex; align-items: center; justify-content: space-between; gap: 8px;
   padding: 12px 16px;
@@ -411,7 +426,6 @@ main{
   font-size: 1.8rem; line-height: 1; color: #8c5f41; cursor: pointer; padding: 0 4px;
 }
 .modal-ficha__close:hover{ color: #c26d86; }
-
 .modal-ficha__body{
   overflow: auto;
   padding: 14px 16px 8px;
@@ -424,8 +438,7 @@ main{
   border-top: 1px solid #f0e6ea;
 }
 .modal-ficha__right, .modal-ficha__left{ display: flex; gap: 10px; }
-
-/* Tarjetas internas del modal */
+/* Tarjetas internas */
 .modal-ficha .tarjeta-resumen,
 .modal-ficha .tarjeta-ficha{
   background: #fff;
@@ -445,7 +458,6 @@ main{
 .modal-ficha .bloque-cargando{
   text-align: center; padding: 1.4rem; color: #8c5f41;
 }
-
 .modal-ficha .campo-texto{
   width: 100%; min-height: 160px;
   padding: .8rem .9rem;
@@ -468,19 +480,17 @@ main{
   border: 1px solid #f0e6ea;
   border-radius: 10px;
 }
-
 /* Responsive modal ficha */
 @media (max-width:480px){
   .modal-ficha__dialog{ width: 96vw; }
   .modal-ficha__footer{ flex-direction: column; align-items: stretch; }
   .modal-ficha__right .btn, .modal-ficha__left .btn{ width: 100%; }
 }
-
-/* Bloquea scroll del body cuando modal abierto */
+/* Bloquear scroll con modal abierto */
 body.mf-open{ overflow: hidden; }
 
 /* ==========================
-   10) MODAL PAGO
+   11) MODAL PAGO
    ========================== */
 .modal-pago{
   position: fixed; inset: 0;
@@ -488,13 +498,11 @@ body.mf-open{ overflow: hidden; }
   z-index: 2000;
 }
 .modal-pago[aria-hidden="false"]{ display: flex; }
-
 .modal-pago__overlay{
   position: absolute; inset: 0;
   background: rgba(0,0,0,.35);
   backdrop-filter: blur(1.5px);
 }
-
 .modal-pago__dialog{
   position: relative;
   width: min(920px, 96vw);
@@ -511,7 +519,6 @@ body.mf-open{ overflow: hidden; }
   from{ transform: translateY(6px); opacity: .96; }
   to  { transform: translateY(0);   opacity: 1; }
 }
-
 .modal-pago__header{
   display: flex; align-items: center; justify-content: space-between; gap: 8px;
   padding: 12px 16px;
@@ -529,7 +536,6 @@ body.mf-open{ overflow: hidden; }
   font-size: 1.8rem; line-height: 1; color: #8c5f41; cursor: pointer; padding: 0 4px;
 }
 .modal-pago__close:hover{ color: #c26d86; }
-
 .modal-pago__body{
   overflow: auto;
   padding: 14px 16px 8px;
@@ -541,7 +547,6 @@ body.mf-open{ overflow: hidden; }
   background: #fff;
   border-top: 1px solid #f0e6ea;
 }
-
 /* Tarjetas internas */
 .mp-card{
   background: #fff;
@@ -560,7 +565,6 @@ body.mf-open{ overflow: hidden; }
 .mp-loading{ text-align: center; padding: 1.4rem; color: #8c5f41; }
 .mp-details{ padding: .9rem 1rem; }
 .mp-details p{ margin: .25rem 0; }
-
 /* Info pagos existentes */
 .mp-info{
   display: flex; flex-direction: column; gap: 10px;
@@ -574,11 +578,9 @@ body.mf-open{ overflow: hidden; }
 }
 .mp-info__box--abono{ background: #f8f4ff; border-left: 6px solid #a67bd7; }
 .mp-info__box--final{ background: #f3fff3; border-left: 6px solid #4caf50; }
-
 /* Acciones */
 .mp-actions{ display: flex; flex-wrap: wrap; gap: 10px; padding: 1rem; }
-
-/* Formulario pago final */
+/* Form pago final */
 .mp-form{ padding: 1rem; }
 .mp-form__group{ margin-bottom: .85rem; }
 .mp-label{
@@ -606,18 +608,17 @@ body.mf-open{ overflow: hidden; }
 }
 .mp-grid{ display: grid; gap: 12px; grid-template-columns: 1fr; }
 @media (min-width:560px){ .mp-grid{ grid-template-columns: 1fr 1fr; } }
-
-/* Bloquea scroll del body cuando modal pago abierto */
+/* Bloquear scroll con modal pago abierto */
 body.mp-open{ overflow: hidden; }
 
 /* ==========================
-   11) Botón flotante "volver arriba"
+   12) Botón flotante "volver arriba"
    ========================== */
 #btnScrollTop{
   position: fixed;
   right: 35px; bottom: 35px;
   width: 55px; height: 55px;
-  display: none; /* oculto por defecto */
+  display: none;              /* oculto por defecto */
   align-items: center; justify-content: center;
   background-color: #c26d86;
   color: #fff;

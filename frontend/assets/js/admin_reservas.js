@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  // --- Utilidades ---
+  // --- Utilidades tiempo/orden ---
   const getSortKey = (b) => {
     const fecha = (b.fecha_reserva || '').slice(0, 10);
     let inicio = '00:00';
@@ -51,6 +51,13 @@ document.addEventListener('DOMContentLoaded', () => {
       if (m) inicio = m[1];
     }
     return `${fecha} ${inicio}`;
+  };
+
+  // Solo la fecha a medianoche local (America/Santiago)
+  const getDateOnlyMs = (b) => {
+    const dStr = String(b?.fecha_reserva || '').slice(0, 10).replace(/\//g, '-').trim();
+    if (!dStr) return NaN;
+    return new Date(`${dStr}T00:00:00`).getTime();
   };
 
   // --- Áreas ---
@@ -70,7 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // --- Clientes ---
-  // --- Clientes ---
   const loadClientesIntoSelect = async () => {
     try {
       const r = await fetch(`${API_BASE_URL}/api/clientes`);
@@ -78,7 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const clientes = await r.json();
 
       clienteSelect.innerHTML = '<option value="">Selecciona un cliente...</option>';
-
       clientes.forEach(c => {
         const opt = document.createElement('option');
         opt.value = c.id_cliente;
@@ -91,8 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-
-  // --- Obtener reservas ---
+  // --- Obtener reservas (listado) ---
   const fetchBookings = async () => {
     const selectedArea = areaFilter.value;
     const url = selectedArea === 'todos'
@@ -109,13 +113,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // --- Aplicar filtros ---
+  // --- Aplicar filtros (incluye HOY+) ---
   const applyAndRender = () => {
     const areaVal = areaFilter.value;
     const fechaVal = (dateFilter.value || '').trim();
     const ordenVal = orderSelect.value;
 
     let filtered = allBookings.slice();
+
+    // 🔥 SOLO HOY Y FUTURAS (zona local)
+    const now = new Date();
+    const startOfTodayMs = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+    filtered = filtered.filter(b => {
+      const dm = getDateOnlyMs(b);
+      return !Number.isNaN(dm) && dm >= startOfTodayMs;
+    });
+
     if (areaVal !== 'todos') {
       filtered = filtered.filter(b => String(b.id_area) === String(areaVal));
     }
@@ -144,7 +157,6 @@ document.addEventListener('DOMContentLoaded', () => {
       card.className = 'booking-card';
       card.dataset.booking = JSON.stringify(booking);
 
-      // 🧹 Evitar undefined o null
       const nombreCliente = booking.nombre_cliente || booking.cliente_nombre || 'Cliente desconocido';
       const rutCliente = booking.rut_cliente || booking.cliente_rut || 'No ingresado';
       const telefonoCliente = booking.telefono_cliente || booking.cliente_telefono || 'No disponible';
@@ -161,9 +173,10 @@ document.addEventListener('DOMContentLoaded', () => {
         : 'Desconocida';
 
       const estadoPago = (booking.estado_pago || 'Pendiente').toLowerCase();
+      const estadoReserva = (booking.estado_reserva || '').toLowerCase();
       const idReserva = booking.id;
 
-      // --- Pago ---
+      // Pago
       let pagoHTML = '';
       if (estadoPago === 'abonado') {
         pagoHTML = `
@@ -185,6 +198,11 @@ document.addEventListener('DOMContentLoaded', () => {
           </a>`;
       }
 
+      // Cancelar: si ya está cancelada, mostrar chip
+      const cancelarHTML = (estadoReserva === 'cancelada')
+        ? `<span class="btn-icon btn-chip" title="Reserva cancelada"><i class="fas fa-ban"></i> Cancelada</span>`
+        : `<button class="btn-icon btn-cancel" title="Cancelar"><i class="fas fa-ban"></i></button>`;
+
       const fichaHTML = `
         <a href="admin_ficha.html?id_reserva=${idReserva}" class="btn-icon btn-ficha" title="Ver/Añadir Ficha Clínica">
           <i class="fas fa-file-medical"></i>
@@ -197,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ${pagoHTML}
             ${fichaHTML}
             <button class="btn-icon btn-edit" title="Editar"><i class="fas fa-pencil-alt"></i></button>
-            <button class="btn-icon btn-delete" title="Eliminar"><i class="fas fa-trash-alt"></i></button>
+            ${cancelarHTML}
           </div>
         </div>
         <div class="booking-body">
@@ -300,59 +318,55 @@ document.addEventListener('DOMContentLoaded', () => {
   closeModalBtn.addEventListener('click', closeModal);
   modalOverlay.addEventListener('click', e => (e.target === modalOverlay) && closeModal());
 
-  // --- Submit ---
-bookingForm.addEventListener('submit', async (ev) => {
-  ev.preventDefault();
+  // --- Submit crear/editar ---
+  bookingForm.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
 
-  // Normaliza valores
-  const cliente = clienteSelect.value?.trim() || null;
-  const servicio = serviceSelect.value?.trim() || null;
-  const fecha = dateInput.value?.trim() || null;
-  const hora = timeSelect.value?.trim() || null;
+    const cliente = clienteSelect.value?.trim() || null;
+    const servicio = serviceSelect.value?.trim() || null;
+    const fecha = dateInput.value?.trim() || null;
+    const hora = timeSelect.value?.trim() || null;
 
-  // Validación previa
-  if (!cliente || !servicio || !fecha || !hora) {
-    alert("⚠️ Por favor completa todos los campos antes de guardar la reserva.");
-    return;
-  }
-
-  const bookingData = {
-    id_cliente: Number(cliente),
-    id_servicio: Number(servicio),
-    fecha,
-    hora
-  };
-
-  const method = editingBookingId ? 'PUT' : 'POST';
-  const url = editingBookingId
-    ? `${API_BASE_URL}/api/admin/reservas/${editingBookingId}`
-    : `${API_BASE_URL}/api/admin/reservas`;
-
-  try {
-    const r = await fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(bookingData)
-    });
-
-    if (!r.ok) {
-      const err = await r.json().catch(() => ({ message: 'Error inesperado en el servidor.' }));
-      throw new Error(err.message);
+    if (!cliente || !servicio || !fecha || !hora) {
+      alert("⚠️ Por favor completa todos los campos antes de guardar la reserva.");
+      return;
     }
 
-    closeModal();
-    fetchBookings();
-  } catch (e) {
-    alert(`❌ Error: ${e.message}`);
-  }
-});
+    const bookingData = {
+      id_cliente: Number(cliente),
+      id_servicio: Number(servicio),
+      fecha,
+      hora
+    };
 
+    const method = editingBookingId ? 'PUT' : 'POST';
+    const url = editingBookingId
+      ? `${API_BASE_URL}/api/admin/reservas/${editingBookingId}`
+      : `${API_BASE_URL}/api/admin/reservas`;
 
+    try {
+      const r = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bookingData)
+      });
 
-  // --- Editar / Eliminar ---
-  bookingListContainer.addEventListener('click', (ev) => {
+      if (!r.ok) {
+        const err = await r.json().catch(() => ({ message: 'Error inesperado en el servidor.' }));
+        throw new Error(err.message);
+      }
+
+      closeModal();
+      fetchBookings();
+    } catch (e) {
+      alert(`❌ Error: ${e.message}`);
+    }
+  });
+
+  // --- Editar / Cancelar ---
+  bookingListContainer.addEventListener('click', async (ev) => {
     const editBtn = ev.target.closest('.btn-edit');
-    const delBtn = ev.target.closest('.btn-delete');
+    const cancelBtn = ev.target.closest('.btn-cancel');
     if (ev.target.closest('.btn-pay')) return;
 
     if (editBtn) {
@@ -372,22 +386,79 @@ bookingForm.addEventListener('submit', async (ev) => {
         checkAvailability().then(() => { timeSelect.value = booking.hora_reserva; });
         openModal();
       }, 100);
+      return;
     }
 
-    if (delBtn) {
-      const card = delBtn.closest('.booking-card');
+    // --- CANCELAR (PUT con todos los campos obligatorios) ---
+    // --- CANCELAR RESERVA ---
+    // --- CANCELAR RESERVA ---
+    if (cancelBtn) {
+      const btn = cancelBtn;
+      const card = btn.closest('.booking-card');
       const booking = JSON.parse(card.dataset.booking);
-      if (confirm(`¿Seguro que quieres eliminar la reserva de ${booking.nombre_cliente || 'Cliente desconocido'}?`)) {
-        fetch(`${API_BASE_URL}/api/admin/reservas/${booking.id}`, { method: 'DELETE' })
-          .then(res => {
-            if (res.status !== 204 && !res.ok) {
-              return res.json().then(err => { throw new Error(err.message || 'Error desconocido'); });
-            }
-            fetchBookings();
+      const nombre = booking.nombre_cliente || booking.cliente_nombre || 'Cliente';
+
+      if (!confirm(`❌ ¿Deseas cancelar la reserva de ${nombre}?`)) return;
+
+      btn.disabled = true;
+
+      try {
+        // 1️⃣ Obtener reserva completa
+        const rGet = await fetch(`${API_BASE_URL}/api/admin/reservas/${booking.id}`);
+        if (!rGet.ok) {
+          const err = await rGet.json().catch(() => ({}));
+          throw new Error(err.message || 'No se pudo obtener la reserva.');
+        }
+        const full = await rGet.json();
+
+        // 2️⃣ Asegurar que los campos requeridos existan
+        const id_cliente = Number(full.id_cliente || booking.id_cliente);
+        const id_servicio = Number(full.id_servicio || booking.id_servicio);
+        const fecha_reserva = (full.fecha_reserva || booking.fecha_reserva || '').slice(0, 10);
+        const hora_reserva = full.hora_reserva || booking.hora_reserva;
+
+        if (!id_cliente || !id_servicio || !fecha_reserva || !hora_reserva) {
+          console.error('Campos incompletos:', { id_cliente, id_servicio, fecha_reserva, hora_reserva });
+          throw new Error('Faltan datos requeridos para cancelar.');
+        }
+
+        // 3️⃣ Enviar PUT
+        const rPut = await fetch(`${API_BASE_URL}/api/admin/reservas/${booking.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id_cliente,
+            id_servicio,
+            fecha_reserva,
+            hora_reserva,
+            estado_reserva: 'cancelada' // ✅ ahora sí se envía el estado
           })
-          .catch(err => alert(`Error al eliminar: ${err.message}`));
+        });
+
+
+        const result = await rPut.json().catch(() => ({}));
+        if (!rPut.ok) throw new Error(result.message || `Error ${rPut.status}`);
+
+        // 4️⃣ Cambiar visualmente a "cancelada"
+        alert('✅ Reserva marcada como cancelada (backend actualizó con éxito).');
+
+        // Opcional: cambia visualmente el botón a chip gris
+        const cancelBtnElement = card.querySelector('.btn-cancel');
+        if (cancelBtnElement) {
+          cancelBtnElement.outerHTML = `
+        <span class="btn-icon btn-chip" title="Reserva cancelada">
+          <i class="fas fa-ban"></i> Cancelada
+        </span>`;
+        }
+
+      } catch (err) {
+        alert(`❌ No se pudo cancelar: ${err.message}`);
+      } finally {
+        btn.disabled = false;
       }
     }
+
+
   });
 
   // --- Carga inicial ---
