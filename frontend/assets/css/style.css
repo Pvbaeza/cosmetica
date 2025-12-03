@@ -238,7 +238,7 @@ section {
 
 
 /* =========================================================
-   RESEÑAS
+   RESEÑAS (MODIFICADO PARA MÓVIL MÁS COMPACTO)
    ========================================================= */
 
 .reviews-section {
@@ -321,21 +321,25 @@ section {
   outline: none;
 }
 
-/* Grid fallback (si no se usa carrusel) */
+/* Grid fallback */
 .reviews-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 15px;
 }
 
-/* Tarjeta de reseña (única definición, mantiene min-height y height) */
+/* --- TARJETA DE RESEÑA (BASE / MÓVIL COMPACTA) --- */
 .review-card {
   background: #fff;
   border: 1px solid #f0e6ea;
   border-radius: 12px;
-  padding: 1rem 1.25rem;
+  /* Reducimos padding en móvil */
+  padding: 0.8rem 1rem; 
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
-  min-height: 180px;
+  
+  /* Reducimos altura mínima en móvil */
+  min-height: 130px; 
+  
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -344,13 +348,14 @@ section {
 
 .review-content {
   font-family: 'Poppins', sans-serif;
-  font-size: 0.95rem;
+  /* Letra un poco más pequeña en móvil */
+  font-size: 0.85rem; 
   color: #4b3b3b;
-  margin-bottom: 12px;
-  line-height: 1.6;
+  margin-bottom: 8px;
+  line-height: 1.5;
   font-style: italic;
   text-align: left;
-  max-width: 90%;
+  max-width: 100%;
   margin-left: 0;
   margin-right: 0;
 }
@@ -369,7 +374,7 @@ section {
 
 
 /* =========================================================
-   MEDIA QUERIES
+   MEDIA QUERIES (TABLET & DESKTOP)
    ========================================================= */
 
 @media (max-width: 768px) {
@@ -433,9 +438,16 @@ section {
     margin-right: 0;
   }
 
+  /* --- RESEÑAS EN DESKTOP (GRANDE Y ESPACIOSO) --- */
   .reviews-grid {
     grid-template-columns: repeat(4, 1fr);
     gap: 24px;
+  }
+
+  /* Restauramos estilos más grandes para PC */
+  .review-card {
+    padding: 1.5rem; /* Más padding */
+    min-height: 180px; /* Altura original */
   }
 
   .review-content {
@@ -443,6 +455,8 @@ section {
     max-width: 90%;
     margin-left: 0;
     margin-right: 0;
+    font-size: 0.95rem; /* Tamaño original */
+    margin-bottom: 12px;
   }
 }
 
@@ -567,4 +581,3 @@ section {
   .rv-prev { left: -88px; }
   .rv-next { right: -88px; }
 }
-
