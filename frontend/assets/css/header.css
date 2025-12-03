@@ -31,8 +31,7 @@ header {
   box-shadow: var(--shadow);
   padding: 12px 18px;
   transition: padding .25s ease, box-shadow .25s ease, background-color .25s ease, border-color .25s ease;
-  max-width: 100%;
-  overflow-x: clip; /* evita desborde lateral */
+  width: 100%; /* Asegura ancho total */
 }
 
 body.scrolled header {
@@ -58,37 +57,42 @@ body.scrolled .logo img { height: 30px; }
 
 /* ----- Navegación ----- */
 nav {
-  position: relative;
+  /* CORRECCIÓN CLAVE: 'static' para que el menú hijo NO se posicione respecto a este nav,
+     sino respecto al header completo */
+  position: static; 
   display: flex;
   align-items: center;
   gap: 14px;
   min-width: 0;
 }
 
-/* Lista (móvil/tablet: dropdown) */
+/* Lista (móvil: menú completo debajo del header) */
 #menu {
   list-style: none;
   margin: 0;
-  padding: 12px 14px;
+  padding: 20px;
   display: none;
   flex-direction: column;
-  gap: 12px; /* más separación entre ítems */
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  background: var(--bg-pink);
-  border: 1px solid var(--border-soft);
-  border-radius: 12px;
-  box-shadow: 0 10px 20px rgba(194, 109, 134, 0.25);
-  z-index: 1001;
+  gap: 12px;
 
-  /* Aprovecha alto de pantalla y permite scroll interno */
-  width: clamp(240px, 60vw, 420px);
-  max-height: calc(100vh - 24px);
-  overflow: auto;
+  /* Posicionamiento */
+  position: absolute;
+  top: 100%; /* Justo debajo del header */
+  left: 0;   /* Pegado al borde izquierdo de la pantalla */
+  width: 100%; /* Ocupa el 100% del ancho del header (pantalla completa) */
+  
+  /* Altura y Scroll */
+  max-height: calc(100vh - 80px); 
+  overflow-y: auto; /* Scroll si es muy largo */
+
+  /* Estética */
+  background: var(--bg-pink);
+  border-bottom: 1px solid var(--border-soft);
+  box-shadow: 0 15px 20px rgba(194, 109, 134, 0.15);
+  z-index: 1001;
   overscroll-behavior: contain;
-  scrollbar-gutter: stable;
 }
+
 #menu.open { display: flex; }
 
 /* Link con área “clickeable” más cómoda */
@@ -98,7 +102,7 @@ nav {
   font-family: 'Poppins', sans-serif;
   color: var(--text-main);
   font-weight: 500;
-  padding: 10px 12px; /* más padding vertical */
+  padding: 12px 16px;
   line-height: 1.35;
   border-radius: 8px;
   transition: color .2s ease, background-color .2s ease;
@@ -106,11 +110,11 @@ nav {
 #menu a:hover { color: var(--accent); background: rgba(194,109,134,0.08); }
 #menu a.active { color: var(--accent); background: rgba(194,109,134,0.12); }
 
-/* “Cerrar sesión” al final del menú (sin tocar HTML) */
+/* “Cerrar sesión” al final del menú */
 #menu li:has(#logout) {
   margin-top: auto;
-  padding-top: 8px;
-  border-top: 1px solid var(--border-soft);
+  padding-top: 15px;
+  border-top: 1px solid rgba(255,255,255,0.5);
 }
 
 /* Accesibilidad focus */
@@ -156,23 +160,28 @@ nav {
 .hidden { display: none !important; }
 
 /* =========================================================
-   TABLET (768–1199px) -> se mantiene hamburguesa
+   TABLET (768–1199px) -> Estilo flotante a la derecha
    ========================================================= */
 @media (min-width: 768px) and (max-width: 1199px) {
   header { padding: 16px 24px; }
-  .logo { font-size: 1.3rem; }
-  .logo img { height: 40px; }
+  
+  /* Volvemos a poner relative al nav para que el menú flote respecto al botón */
+  nav { position: relative; }
 
-  /* Menú más ancho en tablet si hay espacio */
   #menu {
-    width: clamp(260px, 50vw, 520px);
+    /* En tablet sí queremos que sea una cajita a la derecha */
+    width: clamp(260px, 50vw, 320px);
     right: 0;
-    left: auto;
+    left: auto; /* Anulamos el left:0 de móvil */
+    top: calc(100% + 12px);
+    border-radius: 12px;
+    border: 1px solid var(--border-soft);
+    box-shadow: 0 10px 20px rgba(194, 109, 134, 0.25);
   }
 }
 
 /* =========================================================
-   DESKTOP (≥1200px) -> menú horizontal
+   DESKTOP (≥1200px) -> Menú horizontal
    ========================================================= */
 @media (min-width: 1200px) {
   header { padding: 16px 30px; }
@@ -182,7 +191,7 @@ nav {
   #menu-toggle { display: none; }
 
   #menu {
-    position: static;
+    position: static; /* Ya no es flotante */
     display: flex !important;
     flex-direction: row;
     gap: 12px;
