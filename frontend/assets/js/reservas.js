@@ -1,6 +1,8 @@
+// Archivo: assets/js/reservas.js
+
 // --- LÓGICA DE ENTORNO AUTOMÁTICO ---
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-const API_BASE_URL = isLocal
+const API_BASE_URL = isLocal 
     ? 'http://localhost:3000' // URL para desarrollo local
     : 'https://cosmeticabackend-dqxh.onrender.com'; // URL para producción
 
@@ -19,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const horarioBotones = document.querySelectorAll('.horario-btn');
 
     const serviceSelect = document.getElementById('servicio');
-    const btnContinuarFecha = document.getElementById('btn-continuar-fecha');
+    const btnContinuarFecha = document.getElementById('btn-continuar-fecha'); // Ensure this matches your HTML ID
 
     let datosReserva = {}; // Objeto para guardar los datos
 
@@ -65,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
         const servicioParam = urlParams.get('servicio');
         if (servicioParam) {
+            // Find option by title (dataset.titulo) to match URL param
             const optionToSelect = Array.from(serviceSelect.options).find(opt => opt.dataset.titulo === servicioParam);
             if (optionToSelect) {
                 optionToSelect.selected = true;
@@ -132,17 +135,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // *** NUEVO: LISTENER PARA EL BOTÓN CONTINUAR ***
     if (btnContinuarFecha) {
         btnContinuarFecha.addEventListener('click', () => {
+            // Validar que se haya seleccionado un servicio
             if (!datosReserva.id_servicio || !serviceSelect.value) {
                 alert("Por favor, selecciona un servicio antes de continuar.");
                 if (serviceSelect) serviceSelect.focus();
                 return;
             }
+            // Avanzar al paso de fecha
             if (stepServicio) stepServicio.style.display = 'none';
             if (stepFecha) stepFecha.style.display = 'block';
         });
+    } else {
+        console.error("Botón 'btn-continuar-fecha' no encontrado.");
     }
+    // *** FIN NUEVO LISTENER ***
 
     // --- Paso 2: Seleccionar Fecha ---
     if (document.getElementById('calendario-inline') && typeof flatpickr === 'function') {
@@ -173,6 +182,38 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // --- Botones Volver ---
+    const btnBackServicio = document.getElementById('back-servicio');
+    const btnBackFecha = document.getElementById('back-fecha');
+    const btnBackHorario = document.getElementById('back-horario');
+    const btnBackFormulario = document.getElementById('back-formulario');
+
+    if (btnBackServicio) {
+        btnBackServicio.addEventListener('click', () => {
+            stepFecha.style.display = 'none';
+            stepServicio.style.display = 'block';
+        });
+    }
+    if (btnBackFecha) {
+        btnBackFecha.addEventListener('click', () => {
+            stepHorarios.style.display = 'none';
+            stepFecha.style.display = 'block';
+        });
+    }
+    if (btnBackHorario) {
+        btnBackHorario.addEventListener('click', () => {
+            stepFormulario.style.display = 'none';
+            stepHorarios.style.display = 'block';
+        });
+    }
+    if (btnBackFormulario) {
+        btnBackFormulario.addEventListener('click', () => {
+            stepAdvertencia.style.display = 'none';
+            stepFormulario.style.display = 'block';
+        });
+    }
+
+
     // --- Paso 4: Formulario ---
     if (stepFormulario) stepFormulario.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -180,20 +221,26 @@ document.addEventListener('DOMContentLoaded', () => {
         const rutInput = document.getElementById('rut');
         const telefonoInput = document.getElementById('telefono');
 
-        // 🧹 Solo permitir números en el campo de RUT
-        if (rutInput) {
-            rutInput.addEventListener('input', () => {
-                rutInput.value = rutInput.value.replace(/\D/g, '');
-            });
-        }
+        // 🧹 Solo permitir números en el campo de RUT (Validación básica)
+        // Nota: Es mejor hacer validación en input event, pero aquí limpiamos al enviar
+        let rutLimpio = rutInput.value.replace(/\D/g, ''); 
 
         datosReserva.nombre = nombreInput ? nombreInput.value.trim() : '';
-        datosReserva.rut = rutInput ? rutInput.value.trim() : '';
+        datosReserva.rut = rutLimpio;
         datosReserva.telefono = telefonoInput ? telefonoInput.value.trim() : '';
 
         stepFormulario.style.display = 'none';
         if (stepAdvertencia) stepAdvertencia.style.display = 'block';
     });
+    
+    // Validación en tiempo real para RUT (opcional pero recomendado)
+    const rutInput = document.getElementById('rut');
+    if (rutInput) {
+        rutInput.addEventListener('input', () => {
+            rutInput.value = rutInput.value.replace(/[^0-9kK]/g, ''); // Permitir números y K
+        });
+    }
+
 
     // --- Envío final ---
     const btnConfirmar = document.getElementById('confirmar-reserva');
