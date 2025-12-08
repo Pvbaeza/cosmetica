@@ -1,5 +1,5 @@
 /* =========================================================
-   ADMINISTRAR SERVICIOS — Mobile First (Morín • Poppins + Playfair)
+   ADMINISTRAR SERVICIOS — Mobile First (Morín)
    Paleta: fondo #faf0eb, texto #5a3d3d, acento #c26d86, hover #b45a73
    ========================================================= */
 
@@ -10,7 +10,7 @@
   box-sizing: border-box;
 }
 
-/* --------- Base --------- */
+/* --------- Base (Móvil) --------- */
 body {
   margin: 0;
   padding: 0;
@@ -22,6 +22,9 @@ body {
 
 .container {
   padding: 1rem;
+  max-width: 1280px; /* Ancho máximo general */
+  margin: 0 auto;
+  width: 100%;
 }
 
 /* --------- Título de página --------- */
@@ -32,459 +35,335 @@ body {
   color: #c26d86;
   font-weight: 600;
   margin: 3rem auto 1.25rem;
-  max-width: 24ch;
+  max-width: 90%; /* Evita desborde en móvil */
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+@media (min-width: 768px) {
+  .title-page { max-width: 24ch; }
 }
 
 .title-page::after {
-  content: "";
-  display: block;
-  width: 110px;
-  height: 3px;
-  background-color: #c26d86;
-  margin: 1rem auto 0;
-  border-radius: 2px;
-  box-shadow: 0 2px 8px rgba(194,109,134,0.25);
+  content: ""; display: block; width: 110px; height: 3px;
+  background-color: #c26d86; margin: 1rem auto 0;
+  border-radius: 2px; box-shadow: 0 2px 8px rgba(194,109,134,0.25);
 }
 
 /* --------- Acciones superiores --------- */
-.actions {
-  margin-bottom: 2rem;
+.actions { margin-bottom: 2rem; text-align: center; }
+
+@media (min-width: 1024px) {
+  .actions { text-align: right; }
 }
 
 /* --------- Botones --------- */
 .btn {
   padding: 0.8rem 1.5rem;
-  border: 1px solid #e7ccd5;            /* borde rosado muy suave */
+  border: 1px solid #e7ccd5;
   border-radius: 10px;
   font-size: 1rem;
   cursor: pointer;
-  background-color: #f8d9d0;             /* rosa claro */
+  background-color: #f8d9d0;
   color: #5a3d3d;
-  transition: background-color 0.25s ease, transform 0.2s ease;
+  transition: all 0.25s ease;
   width: 100%;
   text-align: center;
+  display: inline-block;
 }
 
 .btn:hover {
-  background-color: #f4c6c0;             /* hover un poco más intenso */
+  background-color: #f4c6c0;
   transform: translateY(-1px);
 }
 
 .btn-primary {
-  background-color: #c26d86;             /* acento principal */
+  background-color: #c26d86;
   color: #fff;
   border: none;
+  box-shadow: 0 4px 10px rgba(194,109,134,0.2);
 }
+.btn-primary:hover { background-color: #b45a73; }
 
-.btn-primary:hover {
-  background-color: #b45a73;             /* hover acento */
+@media (min-width: 768px) {
+  .btn { width: auto; }
 }
 
 /* =========================================================
-   LISTADO DE SERVICIOS (estructura base)
+   LISTADO DE SERVICIOS
    ========================================================= */
 
+.services-list { width: 100%; }
+
 .services-list h2 {
-  margin-bottom: 1rem;
-  font-size: 1.1rem;
-  color: #8a4a4a;
-  font-weight: 600;
+  margin-bottom: 1.5rem;
+  font-size: 1.3rem;
+  color: #8c5f41;
+  font-weight: 700;
+  text-align: center;
+  border-bottom: 2px solid #e0d8e0;
+  padding-bottom: 0.5rem;
 }
 
+/* --- TARJETA SERVICIO (Base Móvil) --- */
 .service-card {
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  gap: 8px;
-  padding: 1rem;
   background-color: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 3px 12px rgba(0,0,0,0.06);
-  margin-bottom: 1rem;
-}
-
-/* Imagen móvil sin recortes */
-.service-image {
-  order: 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  margin-bottom: 2rem;
+  overflow: hidden;
+  border: 1px solid #f0e6ea;
+  position: relative;
   width: 100%;
-  height: auto;
-  object-fit: contain;
-  background-color: #ffffff;
-  border-radius: 10px;
-  margin: 0;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.04);
-  flex-shrink: 0;
-  display: block;
-  margin-bottom: -7rem;  /* (mantengo tu layout) */
-  margin-top: -2rem;
+  min-height: 350px;
 }
 
-/* Texto con ancho cómodo */
+.service-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.service-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  background-color: #f9f9f9;
+  display: block;
+  border-bottom: 1px solid #eee;
+  flex-shrink: 0;
+  
+}
+
 .service-info {
-  order: 1;
+  padding: 1.5rem;
   flex-grow: 1;
-  min-width: 0;
-  max-width: 60ch;
-  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .service-info .service-title {
   font-family: 'Playfair Display', serif;
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #c26d86;
-  margin-bottom: 0.25rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
   word-wrap: break-word;
   overflow-wrap: break-word;
 }
-
 .service-info .service-subtitle {
-  font-size: 0.95rem;
-  font-style: italic;
-  color: #8a4a4a;
-  margin-bottom: 0.75rem;
+  font-size: 0.95rem; 
+  font-style: italic; 
+  color: #c26d86; 
+  margin-bottom: 0.8rem;
 }
-
 .service-info .service-description {
-  font-size: 0.95rem;
-  color: #4b3b3b;
-  line-height: 1.6;
-  margin-bottom: 1rem;
+  font-size: 0.9rem; 
+  color: #555; 
+  line-height: 1.6; 
+  margin-bottom: 1rem; 
+  overflow-wrap: break-word;
 }
-
+.service-info .service-staff {
+  font-size: 0.85rem; color: #888; margin-bottom: 0.5rem; text-transform: uppercase; font-weight: 600;
+}
 .service-info .service-price {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #5a3d3d;
+  font-size: 1.2rem; font-weight: 700; color: #8c5f41;
+  margin-top: auto; padding-top: 0.5rem;
 }
 
-/* Acciones en móvil */
+/* Acciones Móvil (Flotantes) */
 .service-actions {
-  order: 2;
-  display: flex;
-  flex-direction: row;
-  align-self: flex-start;
-  flex-wrap: wrap;
+  position: absolute;
+  top: 15px; right: 15px;
+  display: flex; gap: 8px; z-index: 10;
 }
 
 .btn-icon {
-  background: none;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-  padding: 0.5rem;
-  color: #c26d86;
-  transition: color 0.2s ease, transform 0.2s ease;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  width: 40px; height: 40px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem; cursor: pointer; color: #555;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
+.btn-icon:hover { transform: scale(1.05); }
+.btn-icon[title="Editar"]:hover { background-color: #fff8e1; color: #f59e0b; border-color: #f59e0b; }
+.btn-icon[title="Eliminar"]:hover { background-color: #ffebee; color: #d32f2f; border-color: #d32f2f; }
 
-.btn-icon:hover {
-  color: #b45a73;
-  transform: translateY(-1px);
-}
 
-/* =========================================================
-   MODAL (añadir/editar servicio)
-   ========================================================= */
-
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0,0,0,0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.3s ease, visibility 0.3s ease;
-  padding: 1rem;
-}
-
-.modal-overlay.active {
-  opacity: 1;
-  visibility: visible;
-}
-
-.modal-content {
-  background: #ffffff;
-  padding: 2rem;
-  border-radius: 12px;
-  width: 100%;
-  max-width: 500px;
-  position: relative;
-  box-shadow: 0 10px 28px rgba(0,0,0,0.18);
-  max-height: 90vh;
-  overflow-y: auto;
-  border: 1px solid rgba(194,109,134,0.18);
-}
-
-.modal-content h2 {
-  margin-bottom: 1.25rem;
-  text-align: center;
-  font-family: 'Playfair Display', serif;
-  color: #c26d86;
-  font-weight: 600;
-}
-
-.modal-close {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: none;
-  border: none;
-  font-size: 1.6rem;
-  cursor: pointer;
-  color: #b3a7ac;
-  transition: color 0.2s ease;
-}
-
-.modal-close:hover { color: #c26d86; }
-
-.modal-content select {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #e0d8e0;
-  border-radius: 8px;
-  font-size: 1rem;
-  box-sizing: border-box;
-  color: #5a3d3d;
-  background: #fff;
-}
-
-.form-group { margin-bottom: 1rem; }
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  color: #5a3d3d;
-}
-
-.form-group input,
-.form-group textarea {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #e0d8e0;
-  border-radius: 8px;
-  font-size: 1rem;
-  color: #5a3d3d;
-  background: #fff;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.form-group input:focus,
-.form-group textarea:focus,
-.modal-content select:focus {
-  outline: none;
-  border-color: #c26d86;
-  box-shadow: 0 0 0 3px rgba(194,109,134,0.15);
-}
-
-/* Staff/Área (texto auxiliar) */
-.service-staff {
-  font-size: 0.9rem;
-  color: #8a4a4a;
-  font-style: italic;
-  margin-bottom: 0.5rem;
-}
-
-/* Previsualización imagen */
-#image-preview {
-  display: none;
-  max-width: 150px;
-  max-height: 150px;
-  margin-top: 1rem;
-  border-radius: 8px;
-  border: 2px dashed #e7ccd5;
-  padding: 5px;
-  object-fit: cover;
-}
-
-/* =========================================================
-   RESPONSIVE — TABLET
-   ========================================================= */
-
-@media (min-width: 768px) {
-  .container {
-    max-width: 800px;
-    margin: 2rem auto;
-  }
-
-  .btn { width: auto; }
-
-  .actions { text-align: right; }
-
-  .service-actions {
-    gap: 8px;
-    align-self: flex-start;
-  }
-}
-
-/* =========================================================
-   RESPONSIVO — WEB 
-   ========================================================= */
-
+/* --- RESPONSIVO WEB (Desktop >= 1024px) --- */
 @media (min-width: 1024px) {
-  .container {
-    max-width: 1200px;
-  }
-
   .services-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-  }
-
-  .services-list > h2,
-  .services-list > p {
-    flex: 1 1 100%;
+    display: flex; flex-direction: column; gap: 1.5rem;
   }
 
   .service-card {
-    border-radius: 12px;
-    display: flex;
-    flex-direction: row;
-    position: relative;
-    padding: 1.25rem 1.5rem;
-  }
+    flex-direction: row; /* Horizontal */
+    align-items: center;
+    min-height: 220px;
+    margin-bottom: 1.5rem;
+    padding: 0;
 
+  }
+  
   .service-image {
-    flex: 0 0 420px;
-    width: 420px;
-    height: 240px;
-    object-fit: contain;
-    background-color: #ffffff;
-    border-radius: 10px;
-    align-self: center;
-    margin: 0;
+      width: 30%; /* Ancho fijo */
+      height: 30%;
+      min-height: 100%;
+      border-bottom: none;
+      border-right: 1px solid #eee;
+      padding-left: 40px;
   }
 
-  /* Deja espacio para las acciones */
   .service-info {
-    flex: 1 1 auto;
-    max-width: none;
-    margin-inline: 0;
-    padding-right: 120px;
+    padding: 1.5rem 2rem;
+    padding-right: 2rem; /* Reset padding móvil */
+    border-right: 1px solid #f5f5f5;
   }
+  .service-description {
+    overflow-wrap: break-word; 
+    word-wrap: break-word; 
+    word-break: break-word; 
+}
+  
+  
 
-  /* Acciones arriba a la derecha */
   .service-actions {
-    position: absolute;
-    top: 14px;
-    right: 16px;
-    flex-direction: row;
-    gap: 6px;
-    align-self: auto;
+    position: static; /* Ya no flota */
+    width: 100px; /* Ancho fijo reservado */
+    height: auto;
+    flex-direction: column; /* Vertical */
+    justify-content: center;
+    align-items: center;
+    padding: 0 1rem;
+    gap: 1rem;
+    border-left: 1px solid #eee;
+    flex-shrink: 0;
+    margin-top: 0;
   }
-
-  .service-actions .btn,
-  .service-actions .btn-icon {
-    margin-top: 2rem;
-    padding: 0.35rem 0.55rem;
-    margin-left: -4rem; /* respeté tu layout actual */
+  
+  .btn-icon {
+      background: #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   }
 }
 
-/* =========================================
-   Filtros — Admin Servicios (mobile-first)
-   ========================================= */
-.seccion-filtros {
-  background-color: #f7f2f0;
-  padding: 1rem 15px;
-  border-bottom: 1px solid #e0d8e0;
-}
+/* =========================================================
+   MODAL & FILTROS
+   ========================================================= */
 
-.contenedor-filtros {
-  max-width: 320px;
-  margin: 0 auto;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.75rem 1rem;
+/* Modal */
+.modal-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.6);
+  display: flex; justify-content: center; align-items: center;
+  padding: 1rem; z-index: 2000;
+  opacity: 0; visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
 }
+.modal-overlay.active { opacity: 1; visibility: visible; }
 
-.etiqueta-filtro {
-  font-weight: 600;
-  color: #5a3d3d;
-  font-size: 0.9rem;
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
+.modal-content {
+  background: #ffffff; padding: 2rem; border-radius: 12px;
+  width: 100%; max-width: 500px; position: relative;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.18);
+  max-height: 90vh; overflow-y: auto;
+  border: 1px solid rgba(194,109,134,0.18);
 }
-
-.etiqueta-filtro i {
-  margin-right: 0.35rem;
-  color: #c26d86;
+.modal-close {
+  position: absolute; top: 1rem; right: 1rem;
+  background: none; border: none; font-size: 1.6rem;
+  cursor: pointer; color: #b3a7ac; transition: color 0.2s ease;
 }
+.modal-close:hover { color: #c26d86; }
+.modal-content h2 { margin-bottom: 1.25rem; text-align: center; color: #c26d86; }
 
-.select-filtro,
-.input-buscar {
-  padding: 0.7rem 1rem;
-  border: 1px solid #d1c6be;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  background-color: #fff;
-  color: #5a3d3d;
-  flex-grow: 1;
-  min-width: 160px;
-  box-sizing: border-box;
+/* Formulario Modal */
+.form-group { margin-bottom: 1rem; }
+.form-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: #5a3d3d; }
+.form-group input, .form-group textarea, .modal-content select {
+  width: 100%; padding: 0.75rem;
+  border: 1px solid #e0d8e0; border-radius: 8px;
+  font-size: 1rem; color: #5a3d3d; background: #fff;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
+.form-group input:focus, .form-group textarea:focus, .modal-content select:focus {
+  outline: none; border-color: #c26d86;
+  box-shadow: 0 0 0 3px rgba(194,109,134,0.15);
+}
+#image-preview {
+  display: none; max-width: 150px; max-height: 150px;
+  margin-top: 1rem; border-radius: 8px; border: 2px dashed #e7ccd5;
+  padding: 5px; object-fit: cover;
+}
 
-.select-filtro { cursor: pointer; }
+/* Filtros */
+.seccion-filtros {
+  background-color: #f7f2f0; padding: 1rem 15px;
+  border-bottom: 1px solid #e0d8e0; margin-bottom: 2rem;
+  border-radius: 10px;
+}
+.contenedor-filtros {
+  max-width: 320px; margin: 0 auto;
+  display: flex; flex-wrap: wrap;
+  align-items: center; gap: 0.75rem 1rem;
+  justify-content: center;
+}
+.etiqueta-filtro {
+  font-weight: 600; color: #5a3d3d; font-size: 0.9rem;
+  white-space: nowrap; display: inline-flex; align-items: center;
+}
+.etiqueta-filtro i { margin-right: 0.35rem; color: #c26d86; }
 
-.select-filtro:focus,
-.input-buscar:focus {
-  outline: none;
-  border-color: #c26d86;
+.select-filtro, .input-buscar {
+  padding: 0.7rem 1rem; border: 1px solid #d1c6be;
+  border-radius: 8px; font-size: 0.95rem; background-color: #fff;
+  color: #5a3d3d; flex-grow: 1; min-width: 160px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.select-filtro:focus, .input-buscar:focus {
+  outline: none; border-color: #c26d86;
   box-shadow: 0 0 0 3px rgba(194,109,134,0.15);
 }
 
-.input-buscar::placeholder {
-  color: #7a6a6a;
-  font-style: italic;
-}
-
-/* Ocultar tarjetas filtradas */
-.service-card.oculta { display: none !important; }
-
-/* ===== Web / Desktop ===== */
-@media (min-width: 1024px) {
-  .seccion-filtros {
-    padding: 1.25rem 24px;
-  }
-  .contenedor-filtros {
-    max-width: 1200px;
-    flex-wrap: nowrap;
-  }
-  .etiqueta-filtro { font-size: 1rem; }
+@media (min-width: 768px) {
+  .seccion-filtros { padding: 1.25rem 24px; }
+  .contenedor-filtros { max-width: 1200px; flex-wrap: nowrap; justify-content: flex-start; }
   .select-filtro { min-width: 200px; flex-grow: 0; }
-  .input-buscar { flex-grow: 1; }
+  .input-buscar { flex-grow: 1; min-width: 300px; }
 }
+
+
+
 
 /* --- Botón Flotante Volver Arriba --- */
 #btnScrollTop {
   position: fixed;
   bottom: 35px;
   right: 35px;
-  background-color: #c26d86; /* Rosa acento */
+  background-color: #c26d86; 
   color: white;
   border: none;
   outline: none;
   width: 55px;
   height: 55px;
-  border-radius: 50%; /* más redondeado */
+  border-radius: 50%;
   box-shadow: 0 8px 20px rgba(194, 109, 134, 0.25);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;
-  display: none; /* oculto por defecto */
+  transition: all 0.3s ease;display: none;
   z-index: 99;
 }
 
-#btnScrollTop:hover {
-  background-color: #b45a73; /* tono más oscuro al pasar el cursor */
-  transform: translateY(-3px);
-  box-shadow: 0 10px 25px rgba(194, 109, 134, 0.35);
-}
+  #btnScrollTop:hover {
+    background-color: #b45a73; 
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(194, 109, 134, 0.35);
+  }

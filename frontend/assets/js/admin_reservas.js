@@ -236,17 +236,27 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   };
 
-  // --- Servicios ---
+// --- Servicios ---
   const loadServicesIntoSelect = async () => {
     try {
       const r = await fetch(`${API_BASE_URL}/api/servicios`);
       if (!r.ok) throw new Error('No se pudieron cargar los servicios.');
       const services = await r.json();
+      
       serviceSelect.innerHTML = '<option value="" disabled selected>Selecciona un servicio...</option>';
+      
       services.forEach(s => {
         const opt = document.createElement('option');
         opt.value = s.id_servicio;
-        opt.textContent = s.titulo;
+        
+        // --- LÓGICA DE CONCATENACIÓN (Igual que en reservas.js) ---
+        const tituloCompleto = s.subtitulo
+          ? `${s.titulo} ${s.subtitulo}`
+          : s.titulo;
+
+        opt.textContent = tituloCompleto;
+        // ----------------------------------------------------------
+
         opt.dataset.area = s.id_area;
         serviceSelect.appendChild(opt);
       });
@@ -256,43 +266,81 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // --- Disponibilidad ---
+// --- Disponibilidad ---
   const checkAvailability = async () => {
     const date = dateInput.value;
     const selectedOpt = serviceSelect.options[serviceSelect.selectedIndex];
     const area = selectedOpt ? selectedOpt.dataset.area : null;
 
+    // Resetear si no hay fecha o área
     if (!date || !area) {
       Array.from(timeSelect.options).forEach(opt => {
-        if (opt.value) opt.disabled = true;
-        else opt.textContent = "Selecciona servicio y fecha";
+        if (opt.value) {
+          opt.disabled = true;
+          // Restaurar texto original limpio si es posible
+          opt.textContent = opt.value.replace('-', ' a '); 
+        } else {
+          opt.textContent = "Selecciona servicio y fecha";
+        }
       });
       return;
     }
 
+    // Poner estado de "Cargando..."
     Array.from(timeSelect.options).forEach(opt => {
-      if (opt.value) { opt.disabled = true; opt.textContent = 'Cargando...'; }
+      if (opt.value) { 
+        opt.disabled = true; 
+        opt.textContent = 'Cargando...'; 
+      }
     });
 
     try {
       const r = await fetch(`${API_BASE_URL}/api/horarios-ocupados?fecha=${date}&id_area=${area}`);
       if (!r.ok) throw new Error('Error al consultar disponibilidad.');
-      const occupied = await r.json();
+      
+      const occupiedRaw = await r.json();
+
+      // --- CORRECCIÓN CLAVE ---
+      // Aseguramos que los horarios ocupados sean strings "HH:MM" (cortando los segundos si vienen)
+      const occupied = occupiedRaw.map(t => String(t).slice(0, 5));
 
       Array.from(timeSelect.options).forEach(opt => {
         if (!opt.value) return;
+
+        // Limpiamos el texto primero (quitamos el "(Reservado)" anterior si existía)
         opt.textContent = opt.value.replace('-', ' a ');
-        const isCurrent = editingBookingId && timeSelect.dataset.originalTime === opt.value;
-        const isOccupied = occupied.includes(opt.value);
+
+        // Normalizamos el valor del option también a "HH:MM" para comparar
+        const optTime = String(opt.value).slice(0, 5);
+        
+        // Verificamos si es la hora original de la reserva que estamos editando
+        // (para no bloquear tu propia hora si estás editando)
+        const originalTime = editingBookingId && timeSelect.dataset.originalTime 
+          ? String(timeSelect.dataset.originalTime).slice(0, 5) 
+          : null;
+        
+        const isCurrent = (originalTime === optTime);
+        const isOccupied = occupied.includes(optTime);
+
         if (isOccupied && !isCurrent) {
-          opt.disabled = true; opt.style.color = '#aaa'; opt.textContent += ' (Reservado)';
+          opt.disabled = true;
+          opt.style.color = '#aaa'; // Color gris visual
+          opt.textContent += ' (Reservado)';
         } else {
-          opt.disabled = false; opt.style.color = '';
+          opt.disabled = false;
+          opt.style.color = ''; // Color normal
         }
       });
+
     } catch (e) {
       console.error(e);
-      Array.from(timeSelect.options).forEach(opt => { if (opt.value) opt.textContent = 'Error al verificar'; });
+      Array.from(timeSelect.options).forEach(opt => { 
+        if (opt.value) {
+           opt.textContent = opt.value.replace('-', ' a '); // Restaurar texto
+           opt.disabled = false; // Habilitar por defecto si falla la API para no bloquear
+        }
+      });
+      alert('Hubo un error verificando la disponibilidad, revisa la consola.');
     }
   };
 
@@ -338,6 +386,30 @@ document.addEventListener('DOMContentLoaded', () => {
       fecha,
       hora
     };
+
+        // --- Prevención duplicados (admin) ---
+    // Comprueba en allBookings si ya existe una reserva no cancelada con mismo cliente, servicio, fecha y hora
+    const existeDuplicada = allBookings.some(b => {
+      const bFecha = (b.fecha_reserva || '').slice(0, 10);
+      const bHora = b.hora_reserva || '';
+      const bCliente = String(b.id_cliente || b.cliente_id || b.id || '');
+      const bServicio = String(b.id_servicio || b.servicio_id || '');
+      const estado = String(b.estado_reserva || b.estado || '').toLowerCase();
+      // ignorar canceladas
+      if (estado === 'cancelada') return false;
+      // si estamos editando, permitir que compare con la misma reserva (no la considere duplicado)
+      if (editingBookingId && Number(b.id) === Number(editingBookingId)) return false;
+      return bCliente === String(bookingData.id_cliente)
+          && bServicio === String(bookingData.id_servicio)
+          && bFecha === String(bookingData.fecha)
+          && bHora === String(bookingData.hora);
+    });
+
+    if (existeDuplicada) {
+      alert('⚠️ Ya existe una reserva para ese cliente, servicio, fecha y hora. Evita duplicados.');
+      return;
+    }
+
 
     const method = editingBookingId ? 'PUT' : 'POST';
     const url = editingBookingId

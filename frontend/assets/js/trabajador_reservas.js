@@ -454,7 +454,7 @@ async function mpOpenAndLoad(idReserva, token) {
   const mpForm       = modalPago.querySelector('#mp-form');
   const mpMonto      = modalPago.querySelector('#mp-monto');
   const mpMetodo     = modalPago.querySelector('#mp-metodo');
-  const mpFechaPago  = modalPago.querySelector('#mp-fecha');
+  const mpFechaPago  = modalPago.querySelector('#mp-fecha-pago');
   const mpBtnCerrar  = modalPago.querySelector('#mp-btn-cerrar');
 
   let mpReservaId = idReserva;

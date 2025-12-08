@@ -155,69 +155,73 @@
   <!-- ============ FIN MODAL FICHA ============ -->
 
   <!-- ============== MODAL PAGO (solo pago final) ============== -->
-  <div class="modal-pago" id="modal-pago" aria-hidden="true">
-    <div class="modal-pago__overlay" data-close="true"></div>
+<div class="modal-pago" id="modal-pago" aria-hidden="true">
+  <div class="modal-pago__overlay" data-close="true"></div>
 
-    <div class="modal-pago__dialog" role="dialog" aria-modal="true" aria-labelledby="modal-pago-title">
-      <header class="modal-pago__header">
-        <h3 id="modal-pago-title">Registrar pago final</h3>
-        <button class="modal-pago__close" id="modal-pago-close" aria-label="Cerrar">&times;</button>
-      </header>
+  <div class="modal-pago__dialog" role="dialog" aria-modal="true" aria-labelledby="modal-pago-title">
+    <header class="modal-pago__header">
+      <h3 id="modal-pago-title">Registrar pago final</h3>
+      <button class="modal-pago__close" id="modal-pago-close" aria-label="Cerrar">&times;</button>
+    </header>
 
-      <section class="modal-pago__body">
-        <article class="mp-card">
-          <h4 class="mp-card__title">Detalles de la reserva</h4>
-          <div id="mp-loading" class="mp-loading">
-            <i class="fas fa-spinner fa-spin fa-2x"></i>
-            <p>Cargando datos…</p>
+    <section class="modal-pago__body">
+      <article class="mp-card">
+        <h4 class="mp-card__title">Detalles de la reserva</h4>
+        <div id="mp-loading" class="mp-loading">
+          <i class="fas fa-spinner fa-spin fa-2x"></i>
+          <p>Cargando datos…</p>
+        </div>
+        <div id="mp-details" class="mp-details" style="display:none;">
+          <p><strong>Cliente:</strong> <span id="mp-cliente">—</span></p>
+          <p><strong>Servicio:</strong> <span id="mp-servicio">—</span></p>
+          <p><strong>Fecha:</strong> <span id="mp-fecha">—</span></p>
+          <p><strong>Área:</strong> <span id="mp-area">—</span></p>
+          <p><strong>ID Reserva:</strong> <span id="mp-id">—</span></p>
+        </div>
+      </article>
+
+      <!-- Info de pagos encontrados -->
+      <div id="mp-info" class="mp-info"></div>
+
+      <!-- Form pago final -->
+      <article class="mp-card" id="mp-form-container" style="display:none;">
+        <h4 class="mp-card__title">Detalles del pago final</h4>
+        <form id="mp-form" class="mp-form">
+          <div class="mp-form__group">
+            <label for="mp-monto" class="mp-label">Monto Final Pagado (CLP)</label>
+            <input type="number" id="mp-monto" class="mp-input" placeholder="Ej: 25000" required>
           </div>
-          <div id="mp-details" class="mp-details" style="display:none;">
-            <p><strong>Cliente:</strong> <span id="mp-cliente">—</span></p>
-            <p><strong>Servicio:</strong> <span id="mp-servicio">—</span></p>
-            <p><strong>Fecha:</strong> <span id="mp-fecha">—</span></p>
-            <p><strong>Área:</strong> <span id="mp-area">—</span></p>
-            <p><strong>ID Reserva:</strong> <span id="mp-id">—</span></p>
-          </div>
-        </article>
-
-        <!-- Info de pagos encontrados -->
-        <div id="mp-info" class="mp-info"></div>
-
-        <!-- Form pago final -->
-        <article class="mp-card" id="mp-form-container" style="display:none;">
-          <h4 class="mp-card__title">Detalles del pago final</h4>
-          <form id="mp-form" class="mp-form">
+          <div class="mp-grid">
             <div class="mp-form__group">
-              <label for="mp-monto" class="mp-label">Monto Final Pagado (CLP)</label>
-              <input type="number" id="mp-monto" class="mp-input" placeholder="Ej: 25000" required>
+              <label for="mp-metodo" class="mp-label">Método de Pago</label>
+              <select id="mp-metodo" class="mp-select" required>
+                <option value="Transferencia">Transferencia</option>
+                <option value="Efectivo">Efectivo</option>
+                <option value="Tarjeta">Tarjeta</option>
+              </select>
             </div>
-            <div class="mp-grid">
-              <div class="mp-form__group">
-                <label for="mp-metodo" class="mp-label">Método de Pago</label>
-                <select id="mp-metodo" class="mp-select" required>
-                  <option value="Transferencia">Transferencia</option>
-                  <option value="Efectivo">Efectivo</option>
-                  <option value="Tarjeta">Tarjeta</option>
-                </select>
-              </div>
-              <div class="mp-form__group">
-                <label for="mp-fecha-pago" class="mp-label">Fecha del Pago</label>
-                <input type="date" id="mp-fecha-pago" class="mp-input" required>
-              </div>
-            </div>
-            <button type="submit" class="btn btn--accent" id="mp-btn-guardar-final">
-              <i class="fas fa-save"></i> Guardar pago final
-            </button>
-          </form>
-        </article>
-      </section>
 
-      <footer class="modal-pago__footer">
-        <button type="button" id="mp-btn-cerrar" class="btn btn--soft">Cerrar</button>
-      </footer>
-    </div>
+            <!-- 🔥 CORREGIDO: antes tenía id="mp-fecha" -->
+            <div class="mp-form__group">
+              <label for="mp-fecha-pago" class="mp-label">Fecha del Pago</label>
+              <input type="date" id="mp-fecha-pago" class="mp-input" required>
+            </div>
+
+          </div>
+          <button type="submit" class="btn btn--accent" id="mp-btn-guardar-final">
+            <i class="fas fa-save"></i> Guardar pago final
+          </button>
+        </form>
+      </article>
+    </section>
+
+    <footer class="modal-pago__footer">
+      <button type="button" id="mp-btn-cerrar" class="btn btn--soft">Cerrar</button>
+    </footer>
   </div>
-  <!-- ============ FIN MODAL PAGO ============ -->
+</div>
+<!-- ============ FIN MODAL PAGO ============ -->
+
 
 </main>
 
@@ -254,7 +258,7 @@
 
 
       <div class="footer-social">
-        <a href="https://w.app/hlfagu" aria-label="WhatsApp">
+        <a href="https://w.app/mxrzbo" aria-label="WhatsApp">
           <img src="assets/img/Logos/whatsapp.png" alt="WhatsApp" loading="lazy" decoding="async">
         </a>
         <span class="social-text">WhatsApp</span>
